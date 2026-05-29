@@ -1,0 +1,40 @@
+{
+  "results": [
+    {
+      "mechanism": "contained_apoptosis",
+      "cancer_killed_frac": 0.03,
+      "healthy_killed_frac": 0.0,
+      "therapeutic_margin": 0.03,
+      "steps": 4
+    },
+    {
+      "mechanism": "diffusive_ligand",
+      "cancer_killed_frac": 0.728,
+      "healthy_killed_frac": 0.0,
+      "therapeutic_margin": 0.728,
+      "steps": 4
+    },
+    {
+      "mechanism": "ungated_wave",
+      "cancer_killed_frac": 1.0,
+      "healthy_killed_frac": 1.0,
+      "therapeutic_margin": 0.0,
+      "steps": 65
+    },
+    {
+      "mechanism": "recognition_gated",
+      "cancer_killed_frac": 0.956,
+      "healthy_killed_frac": 0.0,
+      "therapeutic_margin": 0.956,
+      "steps": 14
+    }
+  ],
+  "checks": {
+    "contained apoptosis fizzles (cancer_killed < 25%)": true,
+    "recognition_gated clears tumour (cancer_killed > 80%)": true,
+    "recognition_gated spares healthy (healthy_killed < 10%)": true,
+    "ungated wave LEAKS to healthy (healthy_killed > recognition_gated)": true,
+    "recognition_gated has the best therapeutic margin": true
+  },
+  "hypothesis_supported": true
+}
