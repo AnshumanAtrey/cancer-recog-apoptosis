@@ -1,0 +1,36 @@
+# cancer-recon-apoptosis — run log
+# step          : step2
+# utc           : 20260529T113931Z
+# commit_short  : 3ede974
+# commit_full   : 3ede974a934f32d2b59a24015b847f427ae326a0
+# branch        : main
+# python        : 3.12.13
+# platform      : Linux-6.6.122+-x86_64-with-glibc2.35
+#================================================================
+
+$ /usr/bin/python3 -u scripts/05_surfaceome_filter.py
+11:39:31 [INFO] cancer-recon-apoptosis — Step 2b.2 — surfaceome filter
+11:39:32 [INFO] NumExpr defaulting to 2 threads.
+11:39:33 [INFO] loaded shortlist: 916 receptors
+11:39:33 [WARNING] omnipath surfaceome unavailable (ModuleNotFoundError: No module named 'omnipath') — using curated fallback
+11:39:33 [INFO] surface gene set source=curated-fallback size=85
+11:39:33 [INFO] of 916 receptors, 65 are cell-surface (7%)
+11:39:33 [INFO] of the original top-25, 9/25 are cell-surface
+11:39:33 [INFO] ================================================================
+11:39:33 [INFO] ACTIONABLE SURFACE TARGETS (surface ∧ enriched in >=2 tissues ∧ meanL2FC>=0.5): 10
+11:39:33 [INFO] receptor      nEnr  meanL2FC   maxL2FC   meanPct
+11:39:33 [INFO] ADGRG1           3      2.15      2.79      0.32
+11:39:33 [INFO] EPHB4            3      1.55      3.31      0.22
+11:39:33 [INFO] CD74             3      1.49      1.84      0.56
+11:39:33 [INFO] SDC1             3      1.42      1.68      0.46
+11:39:33 [INFO] ERBB3            3      0.98      1.57      0.51
+11:39:33 [INFO] ERBB2            3      0.92      0.99      0.36
+11:39:33 [INFO] PTPRF            3      0.82      1.23      0.54
+11:39:33 [INFO] ITGB4            2      1.68      3.13      0.39
+11:39:33 [INFO] SDC3             2      1.47      4.09      0.11
+11:39:33 [INFO] MUC1             2      0.66      1.17      0.48
+11:39:33 [INFO] sanity TNFRSF10B is_surface=True (expect True)
+11:39:33 [INFO] sanity TNFRSF10A is_surface=True (expect True)
+11:39:33 [INFO] surface shortlist saved → data/cellxgene/targets_surface_shortlist.csv (65 receptors)
+11:39:33 [INFO] ✓ done — pick the target thesis from the actionable surface list.
+[exit 0]
