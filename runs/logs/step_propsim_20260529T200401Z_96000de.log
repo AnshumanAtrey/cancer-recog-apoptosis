@@ -1,0 +1,33 @@
+# cancer-recon-apoptosis — run log
+# step          : step_propsim
+# utc           : 20260529T200401Z
+# commit_short  : 96000de
+# commit_full   : 96000de58d75bd9eaf7f96bc0ab46f9aefb7ce44
+# branch        : main
+# python        : 3.12.6
+# platform      : macOS-26.3-arm64-arm-64bit
+#================================================================
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/08_propagation_sim.py
+01:34:01 [INFO] propagation sim — does recognition-gated self-propagating death reverse a tumour?
+01:34:01 [INFO] grid=121 seed_frac=3% steps=120
+01:34:01 [INFO] [contained_apoptosis ] cancer_killed=3.0%  healthy_killed=0.0%  margin=+0.03  (steps=4)
+01:34:01 [INFO] [diffusive_ligand    ] cancer_killed=72.8%  healthy_killed=0.0%  margin=+0.73  (steps=4)
+01:34:01 [INFO] [ungated_wave        ] cancer_killed=100.0%  healthy_killed=100.0%  margin=+0.00  (steps=65)
+01:34:01 [INFO] [recognition_gated   ] cancer_killed=95.6%  healthy_killed=0.0%  margin=+0.96  (steps=14)
+01:34:01 [INFO] ================================================================
+01:34:01 [INFO]   [✓] contained apoptosis fizzles (cancer_killed < 25%)
+01:34:01 [INFO]   [✓] recognition_gated clears tumour (cancer_killed > 80%)
+01:34:01 [INFO]   [✓] recognition_gated spares healthy (healthy_killed < 10%)
+01:34:01 [INFO]   [✓] ungated wave LEAKS to healthy (healthy_killed > recognition_gated)
+01:34:01 [INFO]   [✓] recognition_gated has the best therapeutic margin
+01:34:01 [INFO] ================================================================
+01:34:01 [INFO] ✅ HYPOTHESIS SUPPORTED (in this model): a SELF-PROPAGATING death reverses the tumour,
+01:34:01 [INFO]    and RECOGNITION-GATING is what makes it both lethal-to-cancer AND safe — contained
+01:34:01 [INFO]    apoptosis fizzles; an ungated wave clears but leaks into healthy tissue.
+01:34:01 [INFO]    → This is Shriya's pillar 1 (cell-cell recognition) made load-bearing, not optional.
+01:34:01 [INFO] CAVEAT: abstract agent-based model with assumed parameters — tests the LOGIC of
+01:34:01 [INFO] propagation+recognition, NOT quantitative tumour kinetics. Next: PhysiCell with real params.
+01:34:02 [INFO] figure → runs/propagation_sim/propagation_sim.png
+01:34:02 [INFO] results → runs/propagation_sim/propagation_results.json
+[exit 0]
