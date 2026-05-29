@@ -1,0 +1,43 @@
+# cancer-recon-apoptosis — run log
+# step          : rung1_earm
+# utc           : 20260529T211915Z
+# commit_short  : 213c9f4
+# commit_full   : 213c9f41085a2a4e7af885bad8ff70ea0285c2a9
+# branch        : main
+# python        : 3.12.6
+# platform      : macOS-26.3-arm64-arm-64bit
+#================================================================
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/11_earm_kinetics.py
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/bionetgen/main.py:21: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import packaging
+02:49:16 [INFO] RUNG 1 — EARM single-cell death-commitment kinetics (real model)
+02:49:23 [INFO] building '_cython_inline_621c51e7809bd30bf7efbcf45adc6f1aec77e57bbaa8456a22708cfa9c1ec946' extension
+02:49:23 [INFO] clang -fno-strict-overflow -Wsign-compare -Wunreachable-code -fno-common -dynamic -DNDEBUG -g -O3 -Wall -arch arm64 -arch x86_64 -g -I/Library/Frameworks/Python.framework/Versions/3.12/include/python3.12 -c /Users/atrey/Library/Caches/cython/inline/_cython_inline_621c51e7809bd30bf7efbcf45adc6f1aec77e57bbaa8456a22708cfa9c1ec946.c -o /Users/atrey/Library/Caches/cython/inline/Users/atrey/Library/Caches/cython/inline/_cython_inline_621c51e7809bd30bf7efbcf45adc6f1aec77e57bbaa8456a22708cfa9c1ec946.o
+02:49:24 [INFO] clang -bundle -undefined dynamic_lookup -arch arm64 -arch x86_64 -g /Users/atrey/Library/Caches/cython/inline/Users/atrey/Library/Caches/cython/inline/_cython_inline_621c51e7809bd30bf7efbcf45adc6f1aec77e57bbaa8456a22708cfa9c1ec946.o -o /Users/atrey/Library/Caches/cython/inline/_cython_inline_621c51e7809bd30bf7efbcf45adc6f1aec77e57bbaa8456a22708cfa9c1ec946.cpython-312-darwin.so
+02:49:27 [INFO] EARM loaded: 42 rules, 88 params. default L_0=3000 PARP_0=1000000
+02:49:27 [INFO] [default L_0=3000] committed=True  Td=3.65 h  Ts=30.6 min  (cPARP max=9.99e+05 of 1e+06)
+02:49:29 [INFO] [dose-response] commitment threshold L_0* = 12.0 (below it the cell LIVES; all-or-none)
+02:49:30 [INFO]   [priming] Bcl2_0 x0.25 -> death threshold L_0* = 2.0
+02:49:30 [INFO]   [priming] Bcl2_0 x0.50 -> death threshold L_0* = 4.0
+02:49:30 [INFO]   [priming] Bcl2_0 x1.00 -> death threshold L_0* = 12.0
+02:49:31 [INFO]   [priming] Bcl2_0 x2.00 -> death threshold L_0* = 19.0
+02:49:32 [INFO]   [priming] Bcl2_0 x4.00 -> death threshold L_0* = 52.0
+02:49:33 [INFO]   [priming] Bcl2_0 x8.00 -> death threshold L_0* = None
+02:49:41 [INFO] [population n=60, lognormal CV=0.25] kill_fraction=0.98  Td mean=3.77 h  Td CV=0.16
+02:49:41 [INFO] ================================================================
+02:49:41 [INFO] CALIBRATION GATE (Albeck/Spencer 2008-2009 qualitative signatures):
+02:49:41 [INFO]   [✓] default cell commits to death (cleaved PARP -> full)
+02:49:41 [INFO]   [✓] variable delay Td is hours-scale (0.5-8 h)
+02:49:41 [INFO]   [✓] switch is snap-action (Ts < Td, i.e. < 60 min and < Td*60)
+02:49:41 [INFO]   [✓] dose threshold exists (all-or-none, not graded)
+02:49:41 [INFO]   [✓] priming raises threshold (more brake -> higher L_0*)
+02:49:41 [INFO]   [✓] cell-to-cell timing variability present (Td CV > 0.05)
+02:49:42 [INFO] figure → runs/earm_kinetics/earm_kinetics.png
+02:49:42 [INFO] ================================================================
+02:49:42 [INFO] ✅ RUNG 1 PASS: real EARM kinetics reproduce the all-or-none, variable-delay death switch;
+02:49:42 [INFO]    a death-commitment THRESHOLD exists and is raised by anti-apoptotic priming (Bcl-2/XIAP).
+02:49:42 [INFO]    This upgrades the ABM's instantaneous death to a real per-cell latency distribution.
+02:49:42 [INFO] CEILING: EARM does NOT touch agonism (binding->clustering->caspase-8). That is the wet-lab handoff.
+02:49:42 [INFO] results → runs/earm_kinetics/earm_results.json
+[exit 0]
