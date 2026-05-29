@@ -30,11 +30,13 @@ fastapi>=0.110
 uvicorn[standard]>=0.30
 pydantic>=2.6
 
-# Cell-cell communication inference (Phase 0 Step 2)
-# CellChat is R-only; install via R:
-#   install.packages("BiocManager"); BiocManager::install("CellChat")
-# We call it from Python via rpy2 or write outputs as CSV.
-rpy2>=3.5                   # optional bridge to CellChat in R
+# Cancer-restricted target discovery (Phase 0 Step 2) — CPU, no GPU
+# Decided against CellChat-in-R (heavy Bioconductor stack on Colab). LIANA+ natively
+# reimplements the CellChat method in Python (+ CellPhoneDB/NATMI/Connectome/log2FC +
+# consensus rank-aggregate) on AnnData — faithful to the plan, multi-method robust.
+cellxgene-census            # CELLxGENE Census Python API (scRNA-seq pull)
+scanpy>=1.10                # AnnData / single-cell toolkit
+liana                       # LIANA+ cell-cell communication (CellChat method + consensus)
 
 # Misc
 wandb                       # training logging

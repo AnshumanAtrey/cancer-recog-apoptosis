@@ -32,3 +32,7 @@ Thumbs.db
 # Heavy model caches (HF, torch hub)
 .cache/
 hf_cache/
+
+# Step 2 — scRNA-seq data pulls (large; re-fetchable from CELLxGENE Census)
+data/cellxgene/
+*.h5ad
