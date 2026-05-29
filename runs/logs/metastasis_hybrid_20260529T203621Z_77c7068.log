@@ -1,0 +1,38 @@
+# cancer-recon-apoptosis — run log
+# step          : metastasis_hybrid
+# utc           : 20260529T203621Z
+# commit_short  : 77c7068
+# commit_full   : 77c706898b62dabe0c8b287e29cfc727b3a67ef3
+# branch        : main
+# python        : 3.12.6
+# platform      : macOS-26.3-arm64-arm-64bit
+#================================================================
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/10_metastasis_hybrid.py
+02:06:21 [INFO] metastasis hybrid — scout(systemic) + amplify(gated propagation) vs the gap
+02:06:21 [INFO] [local_only]  cleared=58.4%  healthy=0.00%  (primary cleared, metastases survive)
+02:06:21 [INFO]   p_seed=0.005 | systemic cleared=0.4% | hybrid cleared=76.2% (dose=0.4%, healthy=0.00%)
+02:06:21 [INFO]   p_seed=0.010 | systemic cleared=1.0% | hybrid cleared=82.2% (dose=1.0%, healthy=0.00%)
+02:06:21 [INFO]   p_seed=0.020 | systemic cleared=1.9% | hybrid cleared=88.1% (dose=1.9%, healthy=0.00%)
+02:06:21 [INFO]   p_seed=0.050 | systemic cleared=5.3% | hybrid cleared=100.0% (dose=5.3%, healthy=0.00%)
+02:06:21 [INFO]   p_seed=0.100 | systemic cleared=10.8% | hybrid cleared=100.0% (dose=10.8%, healthy=0.00%)
+02:06:21 [INFO]   p_seed=0.200 | systemic cleared=20.6% | hybrid cleared=100.0% (dose=20.6%, healthy=0.00%)
+02:06:21 [INFO]   p_seed=0.500 | systemic cleared=49.4% | hybrid cleared=100.0% (dose=49.4%, healthy=0.00%)
+02:06:21 [INFO]   p_seed=0.990 | systemic cleared=99.0% | hybrid cleared=100.0% (dose=99.0%, healthy=0.00%)
+02:06:21 [INFO] ================================================================
+02:06:21 [INFO] min p_seed for >99% clearance:  systemic_only=0.99  hybrid=0.05
+02:06:21 [INFO] → hybrid clears disseminated disease at 20x LESS dose than pure-systemic (amplification)
+02:06:21 [INFO]   [✓] local_only leaves metastases (cleared < 90%)
+02:06:21 [INFO]   [✓] hybrid clears everything (>99%) at low dose (p_seed <= 0.1)
+02:06:21 [INFO]   [✓] systemic_only needs near-saturating dose (p_seed >= 0.5 for >99%)
+02:06:21 [INFO]   [✓] hybrid spares healthy (<1%)
+02:06:21 [INFO]   [✓] hybrid >> systemic dose economy (>=5x)
+02:06:21 [INFO] ================================================================
+02:06:21 [INFO] ✅ HYBRID SOLVES THE METASTASIS GAP (in-model): low systemic 'scout' seeding reaches every
+02:06:21 [INFO]    focus, gated propagation amplifies locally → disseminated disease cleared at a fraction
+02:06:21 [INFO]    of the dose, healthy spared. Local-only alone leaves metastases; systemic-only alone
+02:06:21 [INFO]    needs to hit ~every cell. Scout+amplify is the regime that clears AND is dose-economical.
+02:06:21 [INFO] CAVEAT: abstract ABM, assumed parameters — tests the LOGIC, not real tumour/PK kinetics.
+02:06:21 [INFO] figure → runs/metastasis_hybrid/metastasis_hybrid.png
+02:06:21 [INFO] results → runs/metastasis_hybrid/metastasis_hybrid_results.json
+[exit 0]
