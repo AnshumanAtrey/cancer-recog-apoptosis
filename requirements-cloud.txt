@@ -38,6 +38,11 @@ cellxgene-census            # CELLxGENE Census Python API (scRNA-seq pull)
 scanpy>=1.10                # AnnData / single-cell toolkit
 liana                       # LIANA+ cell-cell communication (CellChat method + consensus)
 
+# Molecular apoptosis kinetics (Phase 0 RUNG 1) — single-cell ODE model (CPU, no GPU)
+pysb>=1.17                  # rule-based biochemical kinetics; ships EARM 1.0 (Albeck/Sorger 2008)
+bionetgen                   # BNG2.pl network generator PySB needs (set BNGPATH from the pip package)
+# (GTEx/HPA for Step 3 used urllib + pandas — no extra dependency)
+
 # Misc
 wandb                       # training logging
 omegaconf                   # config files
