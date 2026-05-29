@@ -1,0 +1,102 @@
+# cancer-recon-apoptosis — run log
+# step          : step2
+# utc           : 20260529T111043Z
+# commit_short  : 5bcced1
+# commit_full   : 5bcced15a10326d3827639d3940d7ed10c3bee9e
+# branch        : main
+# python        : 3.12.13
+# platform      : Linux-6.6.122+-x86_64-with-glibc2.35
+#================================================================
+
+$ /usr/bin/python3 -u scripts/04_receptor_targets.py
+11:10:43 [INFO] cancer-recon-apoptosis — Step 2b — cancer-enriched receptor shortlist
+11:10:44 [INFO] NumExpr defaulting to 2 threads.
+11:11:14 [INFO] receptor set from LIANA consensus: 926 unique subunits
+11:11:14 [INFO] ================================================================
+11:11:20 [INFO] [lung] tumour=(20000, 60530) normal=(20000, 60530)
+11:11:20 [INFO] [lung] tumour cell_type (top 10):
+11:11:20 [INFO]           3147  CD4-positive, alpha-beta T cell
+11:11:20 [INFO]           2518  CD8-positive, alpha-beta T cell
+11:11:20 [INFO]           1659  alveolar macrophage
+11:11:20 [INFO]           1581  T cell
+11:11:20 [INFO]           1444  macrophage
+11:11:20 [INFO]           1119  B cell
+11:11:20 [INFO]           1058  natural killer cell
+11:11:20 [INFO]            759  classical monocyte
+11:11:20 [INFO]            733  malignant cell
+11:11:20 [INFO]            708  epithelial cell
+11:11:20 [INFO] [lung] cancer-cell selection mode=explicit-malignant → ['malignant cell']
+11:11:20 [INFO] [lung] cancer cells=733  normal-epithelial cells=5013
+/usr/local/lib/python3.12/dist-packages/anndata/_core/anndata.py:1882: UserWarning: Observation names are not unique. To make them unique, call `.obs_names_make_unique`.
+11:12:42 [INFO] [lung] receptors tested=916  enriched(log2fc>=0.5,padj<0.05,pct>=10%)=106
+11:12:42 [INFO] [lung] ref TNFRSF10B (DR5 (Step-1 target)): log2fc=-0.18 padj=1.0e+00 pct_cancer=0.18
+11:12:42 [INFO] [lung] ref TNFRSF10A (DR4 (paralog)): log2fc=1.70 padj=3.6e-04 pct_cancer=0.14
+11:12:42 [INFO] ================================================================
+11:12:47 [INFO] [breast] tumour=(20000, 60530) normal=(20000, 60530)
+11:12:47 [INFO] [breast] tumour cell_type (top 10):
+11:12:47 [INFO]           3837  CD4-positive, alpha-beta T cell
+11:12:48 [INFO]           2810  luminal epithelial cell of mammary gland
+11:12:48 [INFO]           2691  mammary gland epithelial cell
+11:12:48 [INFO]           2340  CD8-positive, alpha-beta T cell
+11:12:48 [INFO]           1447  endothelial cell
+11:12:48 [INFO]           1343  fibroblast of breast
+11:12:48 [INFO]           1211  macrophage
+11:12:48 [INFO]           1080  pericyte
+11:12:48 [INFO]            731  plasmablast
+11:12:48 [INFO]            521  memory B cell
+11:12:48 [INFO] [breast] cancer-cell selection mode=epithelial-fallback → ['luminal epithelial cell of mammary gland', 'mammary gland epithelial cell', 'myoepithelial cell of mammary gland']
+11:12:48 [INFO] [breast] cancer cells=5698  normal-epithelial cells=8546
+/usr/local/lib/python3.12/dist-packages/anndata/_core/anndata.py:1882: UserWarning: Observation names are not unique. To make them unique, call `.obs_names_make_unique`.
+11:14:40 [INFO] [breast] receptors tested=916  enriched(log2fc>=0.5,padj<0.05,pct>=10%)=61
+11:14:40 [INFO] [breast] ref TNFRSF10B (DR5 (Step-1 target)): log2fc=-1.39 padj=1.2e-50 pct_cancer=0.16
+11:14:40 [INFO] [breast] ref TNFRSF10A (DR4 (paralog)): log2fc=-0.77 padj=9.8e-02 pct_cancer=0.10
+11:14:40 [INFO] ================================================================
+11:14:42 [INFO] [colon] tumour=(5642, 60530) normal=(20000, 60530)
+11:14:42 [INFO] [colon] tumour cell_type (top 10):
+11:14:42 [INFO]           1575  absorptive cell
+11:14:42 [INFO]            752  neoplastic cell
+11:14:42 [INFO]            599  myeloid cell
+11:14:42 [INFO]            586  goblet cell
+11:14:42 [INFO]            445  T cell
+11:14:42 [INFO]            361  fibroblast
+11:14:42 [INFO]            306  transit amplifying cell
+11:14:42 [INFO]            251  endothelial cell
+11:14:42 [INFO]            241  intestinal crypt stem cell of colon
+11:14:42 [INFO]            225  abnormal cell
+11:14:42 [INFO] [colon] cancer-cell selection mode=explicit-malignant → ['neoplastic cell']
+11:14:42 [INFO] [colon] cancer cells=752  normal-epithelial cells=5556
+/usr/local/lib/python3.12/dist-packages/anndata/_core/anndata.py:1882: UserWarning: Observation names are not unique. To make them unique, call `.obs_names_make_unique`.
+11:15:37 [INFO] [colon] receptors tested=916  enriched(log2fc>=0.5,padj<0.05,pct>=10%)=130
+11:15:37 [INFO] [colon] ref TNFRSF10B (DR5 (Step-1 target)): log2fc=1.41 padj=1.2e-04 pct_cancer=0.19
+11:15:37 [INFO] [colon] ref TNFRSF10A (DR4 (paralog)): log2fc=1.71 padj=2.7e-01 pct_cancer=0.09
+11:15:37 [INFO] ================================================================
+11:15:37 [INFO] PAN-CANCER RECEPTOR SHORTLIST (top 25 by tissues-enriched, then mean log2FC)
+11:15:37 [INFO] receptor       nEnr  nTest  meanL2FC   maxL2FC   meanPct
+11:15:37 [INFO] ADGRG1            3      3      2.15      2.79      0.32
+11:15:37 [INFO] FLOT1             3      3      1.68      2.64      0.52
+11:15:37 [INFO] CD82              3      3      1.58      1.95      0.33
+11:15:37 [INFO] EPHB4             3      3      1.55      3.31      0.22
+11:15:37 [INFO] CD74              3      3      1.49      1.84      0.56
+11:15:37 [INFO] MAGED1            3      3      1.43      1.86      0.39
+11:15:37 [INFO] SDC1              3      3      1.42      1.68      0.46
+11:15:37 [INFO] RACK1             3      3      1.36      2.05      0.94
+11:15:37 [INFO] NCSTN             3      3      1.19      1.29      0.25
+11:15:37 [INFO] BTN3A2            3      3      1.18      1.51      0.17
+11:15:37 [INFO] ERBB3             3      3      0.98      1.57      0.51
+11:15:37 [INFO] SORL1             3      3      0.98      1.17      0.27
+11:15:37 [INFO] ERBB2             3      3      0.92      0.99      0.36
+11:15:37 [INFO] PTPRF             3      3      0.82      1.23      0.54
+11:15:37 [INFO] SIGIRR            3      3      0.76      1.06      0.30
+11:15:37 [INFO] LAMP1             3      3      0.75      1.04      0.52
+11:15:37 [INFO] TSPAN15           3      3      0.73      0.81      0.30
+11:15:37 [INFO] RAMP1             2      3      2.07      4.22      0.19
+11:15:37 [INFO] KCNN4             2      3      1.94      3.24      0.26
+11:15:37 [INFO] ITGB4             2      3      1.68      3.13      0.39
+11:15:37 [INFO] SEMA4C            2      3      1.47      2.71      0.11
+11:15:37 [INFO] SDC3              2      3      1.47      4.09      0.11
+11:15:37 [INFO] TMEM219           2      3      1.27      1.79      0.61
+11:15:37 [INFO] PLXNA3            2      3      1.23      2.17      0.15
+11:15:37 [INFO] RHBDF2            2      3      1.21      2.93      0.12
+11:15:37 [INFO] shortlist saved → data/cellxgene/targets_shortlist.csv (916 receptors)
+11:15:37 [INFO] ✓ done — feeds Step 3 (specificity audit). Communication annotation = scripts/05 (LIANA).
+[exit 0]
