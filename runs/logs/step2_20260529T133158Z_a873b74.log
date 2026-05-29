@@ -1,0 +1,106 @@
+# cancer-recon-apoptosis — run log
+# step          : step2
+# utc           : 20260529T133158Z
+# commit_short  : a873b74
+# commit_full   : a873b7477b24951cf2f9be20302176650dcef85b
+# branch        : main
+# python        : 3.12.13
+# platform      : Linux-6.6.122+-x86_64-with-glibc2.35
+#================================================================
+
+$ /usr/bin/python3 -u scripts/06_liana_communication.py
+13:31:58 [INFO] cancer-recon-apoptosis — Step 2c — LIANA communication annotation
+13:32:00 [INFO] NumExpr defaulting to 2 threads.
+13:32:12 [INFO] targets from targets_surface_shortlist.csv: 847 receptors (+DR5)
+13:32:12 [INFO] ================================================================
+13:32:18 [INFO] [lung] cancer cell types: ['malignant cell']
+13:32:24 [INFO] [lung/tumour] kept 18 cell types (>=50 cells; +cancer): ['CD4-positive, alpha-beta T cell', 'CD8-positive, alpha-beta T cell', 'alveolar macrophage', 'T cell', 'macrophage', 'B cell']
+13:32:24 [INFO] [lung/tumour] subsampled to 10000 cells (RAM guard)
+13:32:24 [INFO] [lung/tumour] 10000 cells x 1854 L-R genes; running rank_aggregate (min_cells=10, n_perms=100)…
+/usr/local/lib/python3.12/dist-packages/legacy_api_wrap/__init__.py:88: FutureWarning: The dtype argument is deprecated and will be removed in late 2024.
+/usr/local/lib/python3.12/dist-packages/liana/method/_pipe_utils/_pre.py:165: ImplicitModificationWarning: Trying to modify attribute `.obs` of view, initializing view as actual.
+/usr/local/lib/python3.12/dist-packages/liana/method/_pipe_utils/_pre.py:168: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+/usr/lib/python3.12/functools.py:912: UserWarning: zero-centering a sparse array/matrix densifies it.
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:288: ImplicitModificationWarning: Setting element `.layers['scaled']` of view, initializing view as actual.
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:293: FutureWarning: The method uns_keys is deprecated and will be removed in the future. Use uns instead of uns_keys. (e.g. `k in adata.uns` or `sorted(adata.uns)`)
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:296: FutureWarning: The method uns_keys is deprecated and will be removed in the future. Use uns instead of uns_keys. (e.g. `k in adata.uns` or `sorted(adata.uns)`)
+13:33:13 [INFO] [lung/tumour] LIANA interactions: 46947
+13:33:14 [INFO] [lung/normal] kept 19 cell types (>=50 cells; +cancer): ['alveolar macrophage', 'type II pneumocyte', 'epithelial cell of lower respiratory tract', 'unknown', 'stromal cell', 'natural killer cell']
+13:33:14 [INFO] [lung/normal] subsampled to 10000 cells (RAM guard)
+13:33:14 [INFO] [lung/normal] 10000 cells x 1854 L-R genes; running rank_aggregate (min_cells=10, n_perms=100)…
+/usr/local/lib/python3.12/dist-packages/legacy_api_wrap/__init__.py:88: FutureWarning: The dtype argument is deprecated and will be removed in late 2024.
+/usr/local/lib/python3.12/dist-packages/liana/method/_pipe_utils/_pre.py:165: ImplicitModificationWarning: Trying to modify attribute `.obs` of view, initializing view as actual.
+/usr/local/lib/python3.12/dist-packages/liana/method/_pipe_utils/_pre.py:168: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+/usr/lib/python3.12/functools.py:912: UserWarning: zero-centering a sparse array/matrix densifies it.
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:288: ImplicitModificationWarning: Setting element `.layers['scaled']` of view, initializing view as actual.
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:293: FutureWarning: The method uns_keys is deprecated and will be removed in the future. Use uns instead of uns_keys. (e.g. `k in adata.uns` or `sorted(adata.uns)`)
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:296: FutureWarning: The method uns_keys is deprecated and will be removed in the future. Use uns instead of uns_keys. (e.g. `k in adata.uns` or `sorted(adata.uns)`)
+13:34:07 [INFO] [lung/normal] LIANA interactions: 56895
+13:34:07 [INFO] [lung] TRAIL→DR5 axis not in top interactions
+13:34:07 [INFO] ================================================================
+13:34:13 [INFO] [breast] cancer cell types: ['luminal epithelial cell of mammary gland', 'mammary gland epithelial cell', 'myoepithelial cell of mammary gland']
+13:34:15 [INFO] [breast/tumour] kept 17 cell types (>=50 cells; +cancer): ['CD4-positive, alpha-beta T cell', 'luminal epithelial cell of mammary gland', 'mammary gland epithelial cell', 'CD8-positive, alpha-beta T cell', 'endothelial cell', 'fibroblast of breast']
+13:34:15 [INFO] [breast/tumour] subsampled to 10000 cells (RAM guard)
+13:34:15 [INFO] [breast/tumour] 10000 cells x 1854 L-R genes; running rank_aggregate (min_cells=10, n_perms=100)…
+/usr/local/lib/python3.12/dist-packages/legacy_api_wrap/__init__.py:88: FutureWarning: The dtype argument is deprecated and will be removed in late 2024.
+/usr/local/lib/python3.12/dist-packages/liana/method/_pipe_utils/_pre.py:165: ImplicitModificationWarning: Trying to modify attribute `.obs` of view, initializing view as actual.
+/usr/local/lib/python3.12/dist-packages/liana/method/_pipe_utils/_pre.py:168: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+/usr/lib/python3.12/functools.py:912: UserWarning: zero-centering a sparse array/matrix densifies it.
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:288: ImplicitModificationWarning: Setting element `.layers['scaled']` of view, initializing view as actual.
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:293: FutureWarning: The method uns_keys is deprecated and will be removed in the future. Use uns instead of uns_keys. (e.g. `k in adata.uns` or `sorted(adata.uns)`)
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:296: FutureWarning: The method uns_keys is deprecated and will be removed in the future. Use uns instead of uns_keys. (e.g. `k in adata.uns` or `sorted(adata.uns)`)
+13:34:58 [INFO] [breast/tumour] LIANA interactions: 44335
+13:34:59 [INFO] [breast/normal] kept 19 cell types (>=50 cells; +cancer): ['luminal adaptive secretory precursor cell of mammary gland', 'fibroblast of mammary gland', 'fibroblast', 'luminal hormone-sensing cell of mammary gland', 'luminal epithelial cell of mammary gland', 'myoepithelial cell of mammary gland']
+13:34:59 [INFO] [breast/normal] subsampled to 10000 cells (RAM guard)
+13:34:59 [INFO] [breast/normal] 10000 cells x 1854 L-R genes; running rank_aggregate (min_cells=10, n_perms=100)…
+/usr/local/lib/python3.12/dist-packages/legacy_api_wrap/__init__.py:88: FutureWarning: The dtype argument is deprecated and will be removed in late 2024.
+/usr/local/lib/python3.12/dist-packages/liana/method/_pipe_utils/_pre.py:165: ImplicitModificationWarning: Trying to modify attribute `.obs` of view, initializing view as actual.
+/usr/local/lib/python3.12/dist-packages/liana/method/_pipe_utils/_pre.py:168: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+/usr/lib/python3.12/functools.py:912: UserWarning: zero-centering a sparse array/matrix densifies it.
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:288: ImplicitModificationWarning: Setting element `.layers['scaled']` of view, initializing view as actual.
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:293: FutureWarning: The method uns_keys is deprecated and will be removed in the future. Use uns instead of uns_keys. (e.g. `k in adata.uns` or `sorted(adata.uns)`)
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:296: FutureWarning: The method uns_keys is deprecated and will be removed in the future. Use uns instead of uns_keys. (e.g. `k in adata.uns` or `sorted(adata.uns)`)
+13:36:03 [INFO] [breast/normal] LIANA interactions: 85681
+13:36:03 [INFO] [breast] TRAIL→DR5 axis not in top interactions
+13:36:03 [INFO] ================================================================
+13:36:06 [INFO] [colon] cancer cell types: ['neoplastic cell']
+13:36:07 [INFO] [colon/tumour] kept 13 cell types (>=50 cells; +cancer): ['absorptive cell', 'neoplastic cell', 'myeloid cell', 'goblet cell', 'T cell', 'fibroblast']
+13:36:07 [INFO] [colon/tumour] 5585 cells x 1854 L-R genes; running rank_aggregate (min_cells=10, n_perms=100)…
+/usr/local/lib/python3.12/dist-packages/legacy_api_wrap/__init__.py:88: FutureWarning: The dtype argument is deprecated and will be removed in late 2024.
+/usr/local/lib/python3.12/dist-packages/liana/method/_pipe_utils/_pre.py:165: ImplicitModificationWarning: Trying to modify attribute `.obs` of view, initializing view as actual.
+/usr/local/lib/python3.12/dist-packages/liana/method/_pipe_utils/_pre.py:168: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+/usr/lib/python3.12/functools.py:912: UserWarning: zero-centering a sparse array/matrix densifies it.
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:288: ImplicitModificationWarning: Setting element `.layers['scaled']` of view, initializing view as actual.
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:293: FutureWarning: The method uns_keys is deprecated and will be removed in the future. Use uns instead of uns_keys. (e.g. `k in adata.uns` or `sorted(adata.uns)`)
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:296: FutureWarning: The method uns_keys is deprecated and will be removed in the future. Use uns instead of uns_keys. (e.g. `k in adata.uns` or `sorted(adata.uns)`)
+13:36:31 [INFO] [colon/tumour] LIANA interactions: 23432
+13:36:32 [INFO] [colon/normal] kept 19 cell types (>=50 cells; +cancer): ['absorptive cell', 'enterocyte', 'fibroblast', 'IgA plasma cell', 'intestinal epithelial cell', 'transit amplifying cell of colon']
+13:36:32 [INFO] [colon/normal] subsampled to 10000 cells (RAM guard)
+13:36:32 [INFO] [colon/normal] 10000 cells x 1854 L-R genes; running rank_aggregate (min_cells=10, n_perms=100)…
+/usr/local/lib/python3.12/dist-packages/legacy_api_wrap/__init__.py:88: FutureWarning: The dtype argument is deprecated and will be removed in late 2024.
+/usr/local/lib/python3.12/dist-packages/liana/method/_pipe_utils/_pre.py:165: ImplicitModificationWarning: Trying to modify attribute `.obs` of view, initializing view as actual.
+/usr/local/lib/python3.12/dist-packages/liana/method/_pipe_utils/_pre.py:168: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+/usr/lib/python3.12/functools.py:912: UserWarning: zero-centering a sparse array/matrix densifies it.
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:288: ImplicitModificationWarning: Setting element `.layers['scaled']` of view, initializing view as actual.
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:293: FutureWarning: The method uns_keys is deprecated and will be removed in the future. Use uns instead of uns_keys. (e.g. `k in adata.uns` or `sorted(adata.uns)`)
+/usr/local/lib/python3.12/dist-packages/liana/method/sc/_liana_pipe.py:296: FutureWarning: The method uns_keys is deprecated and will be removed in the future. Use uns instead of uns_keys. (e.g. `k in adata.uns` or `sorted(adata.uns)`)
+13:37:32 [INFO] [colon/normal] LIANA interactions: 66659
+13:37:33 [INFO] [colon] TRAIL→DR5 axis not in top interactions
+13:37:33 [INFO] ================================================================
+13:37:33 [INFO] COMMUNICATION-ACTIVE SURFACE TARGETS (badge is a tumour receiver; ★=cancer→cancer bystander)
+13:37:33 [INFO] receptor      nTiss  cancerRcv   bystdr nInteract
+13:37:33 [INFO] FZD3              1        yes        ★         2
+13:37:33 [INFO] FZD7              1        yes        ★         2
+13:37:33 [INFO] LRP5              1        yes        ★         2
+13:37:33 [INFO] LRP6              1        yes        ★         2
+13:37:33 [INFO] APLP2             2        yes        -        98
+13:37:33 [INFO] CD4               3        yes        -        55
+13:37:33 [INFO] CD44              3        yes        -        55
+13:37:33 [INFO] CD6               3        yes        -        53
+13:37:33 [INFO] CD63              3        yes        -        30
+13:37:33 [INFO] DDR1              1        yes        -        11
+13:37:33 [INFO] CFTR              1        yes        -         3
+13:37:33 [INFO] AMFR              1        yes        -         1
+13:37:33 [INFO] annotated shortlist saved → data/cellxgene/targets_communication_annotated.csv
+13:37:33 [INFO] ✓ done — Step 2 complete. Next: Step 3 anchor specificity audit.
+[exit 0]
