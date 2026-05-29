@@ -1,0 +1,19 @@
+gene,class,tau,vital_parenchyma_ihc,protein_confirmed,verdict,max_vital_TPM,max_vital_organ,risky_parenchyma,note,form_note
+CLDN18,bench_good,0.92,0.0,True,PASS,151.0,Lung,,,
+TNFRSF17,bench_good,0.872,,False,PASS,0.9,Whole_Blood,,protein-unconfirmed (no HPA IHC; RNA-restricted only),
+MSLN,bench_good,0.845,0.0,True,PASS,80.3,Lung,,,
+FOLR1,bench_good,0.83,,False,PASS,109.9,Lung,,protein-unconfirmed (no HPA IHC; RNA-restricted only),
+NECTIN4,bench_good,0.816,1.0,True,PASS,6.0,Lung,,,
+DLL3,bench_good,0.787,,False,PASS,12.1,Brain_Nucleus_accumbens_basal_ganglia,,protein-unconfirmed (no HPA IHC; RNA-restricted only),
+TACSTD2,bench_good,0.713,1.0,True,PASS,332.0,Kidney_Medulla,,,
+SDC1,candidate,0.655,2.0,True,FAIL,304.8,Liver,bone marrow/hematopoietic cells=Medium; liver/hepatocytes=Medium,,
+MUC1,candidate,0.574,2.0,True,FAIL,327.9,Lung,pancreas/exocrine glandular cells=Medium,,bare-gene verdict; targetable only as tumour glycoform (Tn/STn)
+ERBB3,candidate,0.497,3.0,True,FAIL,51.5,Brain_Spinal_cord_cervical_c-1,bone marrow/hematopoietic cells=Medium; cerebellum/Purkinje cells=High; cerebellum/cells in granular layer=Medium,,
+ITGB4,candidate,0.482,2.0,True,FAIL,18.6,Lung,heart muscle/cardiomyocytes=Medium; liver/hepatocytes=Medium,,
+CD44,candidate,0.442,3.0,True,FAIL,137.6,Whole_Blood,bone marrow/hematopoietic cells=High; kidney/cells in glomeruli=Medium; pancreas/exocrine glandular cells=Medium,,bare-gene verdict; targetable only as v6 splice variant
+EPHB4,candidate,0.398,3.0,True,FAIL,69.2,Adrenal_Gland,cerebral cortex/neuronal cells=Medium; heart muscle/cardiomyocytes=Medium; hippocampus/neuronal cells=Medium,,
+ADGRG1,candidate,0.35,3.0,True,FAIL,92.0,Kidney_Medulla,bone marrow/hematopoietic cells=High; kidney/cells in glomeruli=Medium; kidney/cells in tubules=Medium,,
+ERBB2,candidate,0.34,2.0,True,FAIL,92.3,Kidney_Medulla,heart muscle/cardiomyocytes=Medium; skeletal muscle/myocytes=Medium,,
+CD74,candidate,0.29,2.0,True,FAIL,2723.0,Lung,kidney/cells in glomeruli=Medium,,
+DDR1,candidate,0.256,3.0,True,FAIL,107.2,Brain_Spinal_cord_cervical_c-1,bone marrow/hematopoietic cells=Medium; cerebellum/Purkinje cells=Medium; cerebellum/cells in granular layer=Medium,,
+TNFRSF10B,trigger,0.295,3.0,True,FAIL,69.9,Lung,bone marrow/hematopoietic cells=High; cerebellum/Purkinje cells=High; cerebellum/cells in granular layer=Medium,,

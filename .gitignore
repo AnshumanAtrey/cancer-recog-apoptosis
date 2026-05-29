@@ -36,3 +36,8 @@ hf_cache/
 # Step 2 — scRNA-seq data pulls (large; re-fetchable from CELLxGENE Census)
 data/cellxgene/
 *.h5ad
+
+# Step 3 — raw GTEx/HPA downloads (large; re-fetchable). Track the audit CSV result only.
+data/specificity/*.gct.gz
+data/specificity/*.tsv.zip
+data/specificity/*.tsv
