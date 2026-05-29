@@ -1,0 +1,55 @@
+# cancer-recon-apoptosis — run log
+# step          : step3
+# utc           : 20260529T143448Z
+# commit_short  : 3b5a302
+# commit_full   : 3b5a302e58ad7762a1a5e60b93fb55dd02efd655
+# branch        : main
+# python        : 3.12.6
+# platform      : macOS-26.3-arm64-arm-64bit
+#================================================================
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/07_specificity_audit.py --cache data/specificity
+20:04:48 [INFO] cancer-recon-apoptosis — Step 3 — anchor specificity/safety audit
+20:04:48 [INFO] thresholds (frozen): TAU_PASS=0.70 TAU_FAIL=0.55 PARENCHYMA_FAIL=2 (Medium/High)
+20:04:48 [INFO] cache hit: gtex_v10_median_tpm.gct.gz (8846936 bytes)
+20:04:49 [INFO] GTEx: 59033 genes x 68 tissue cols → clean bulk panel = 53 tissues
+20:04:49 [INFO] cache hit: hpa_normal_ihc.tsv.zip (5732831 bytes)
+20:04:49 [WARNING] Step-2 shortlist absent (targets_surface_shortlist.csv) — cancer-side context omitted
+20:04:49 [INFO] ================================================================
+20:04:49 [INFO] BENCHMARK CALIBRATION (labelled validated targets): sensitivity=7/7=1.00 (good->PASS), specificity=5/5=1.00 (bad->FAIL)
+20:04:49 [INFO] RUN-TRUST CONTROLS (verdicts published only if ALL pass):
+20:04:49 [INFO]   [PASS] HER2->FAIL (cardiomyocyte)
+20:04:49 [INFO]   [PASS] good benchmark PASS>=5/7 (got 7)
+20:04:49 [INFO]   [PASS] bad benchmark FAIL==5/5 (got 5)
+20:04:49 [INFO]   [PASS] DR5 non-selective tau<0.55 (got 0.29)
+20:04:49 [INFO] ================================================================
+20:04:49 [INFO] ANCHOR AUDIT (calibrated; controls passed). PASS=clean window, CAUTION=marginal, FAIL=no window
+20:04:49 [INFO] gene       class         tau  paren   verdict  max_vital_organ / risky
+20:04:49 [INFO] CLDN18     bench_good   0.92    0.0      PASS  Lung
+20:04:49 [INFO] TNFRSF17   bench_good   0.87    nan      PASS  Whole_Blood
+20:04:49 [INFO] MSLN       bench_good   0.84    0.0      PASS  Lung
+20:04:49 [INFO] FOLR1      bench_good   0.83    nan      PASS  Lung
+20:04:49 [INFO] NECTIN4    bench_good   0.82    1.0      PASS  Lung
+20:04:49 [INFO] DLL3       bench_good   0.79    nan      PASS  Brain_Nucleus_accumbens_basal_ganglia
+20:04:49 [INFO] TACSTD2    bench_good   0.71    1.0      PASS  Kidney_Medulla
+20:04:49 [INFO] SDC1       candidate    0.66    2.0      FAIL  bone marrow/hematopoietic cells=Medium; liver/hepatocytes=Medium
+20:04:49 [INFO] MUC1       candidate    0.57    2.0      FAIL  pancreas/exocrine glandular cells=Medium
+20:04:49 [INFO] ERBB3      candidate    0.50    3.0      FAIL  bone marrow/hematopoietic cells=Medium; cerebellum/Purkinje cells=High; cerebellum/cells in granular layer=Medium
+20:04:49 [INFO] ITGB4      candidate    0.48    2.0      FAIL  heart muscle/cardiomyocytes=Medium; liver/hepatocytes=Medium
+20:04:49 [INFO] CD44       candidate    0.44    3.0      FAIL  bone marrow/hematopoietic cells=High; kidney/cells in glomeruli=Medium; pancreas/exocrine glandular cells=Medium
+20:04:49 [INFO] EPHB4      candidate    0.40    3.0      FAIL  cerebral cortex/neuronal cells=Medium; heart muscle/cardiomyocytes=Medium; hippocampus/neuronal cells=Medium
+20:04:49 [INFO] ADGRG1     candidate    0.35    3.0      FAIL  bone marrow/hematopoietic cells=High; kidney/cells in glomeruli=Medium; kidney/cells in tubules=Medium
+20:04:49 [INFO] ERBB2      candidate    0.34    2.0      FAIL  heart muscle/cardiomyocytes=Medium; skeletal muscle/myocytes=Medium
+20:04:49 [INFO] CD74       candidate    0.29    2.0      FAIL  kidney/cells in glomeruli=Medium
+20:04:49 [INFO] DDR1       candidate    0.26    3.0      FAIL  bone marrow/hematopoietic cells=Medium; cerebellum/Purkinje cells=Medium; cerebellum/cells in granular layer=Medium
+20:04:49 [INFO] TNFRSF10B  trigger      0.29    3.0      FAIL  bone marrow/hematopoietic cells=High; cerebellum/Purkinje cells=High; cerebellum/cells in granular layer=Medium
+20:04:49 [INFO] ================================================================
+20:04:49 [INFO] ⚠️ HONEST RESULT: NO Step-2 candidate has a clean therapeutic window.
+20:04:49 [INFO]    All are broadly expressed (low tau) and/or hit vital parenchyma (Medium/High IHC).
+20:04:49 [INFO]    The audit DOES discriminate (good benchmark PASSes), so this is a real finding, not a broken test.
+20:04:49 [INFO]    RECOMMENDATION: (a) pivot the anchor to a tissue-RESTRICTED tumour antigen that PASSes
+20:04:49 [INFO]    here and is relevant to our cancers (e.g. CLDN18.2, MSLN, FOLR1, DLL3, NECTIN4);
+20:04:49 [INFO]    or (b) combinatorial logic-gating (require TWO sub-threshold antigens; Perna&Sadelain).
+20:04:49 [INFO] audit saved → data/specificity/specificity_audit.csv
+20:04:49 [INFO] ✓ done
+[exit 0]
