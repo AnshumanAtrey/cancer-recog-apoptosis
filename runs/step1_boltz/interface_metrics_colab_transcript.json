@@ -1,0 +1,28 @@
+{
+  "_provenance": "Transcribed from the ACTUAL Colab run of scripts/02_interface_metrics.py on the Step-1 Boltz outputs (Boltz-2 ran on a Colab T4; raw .cif/affinity outputs live on Colab and are gitignored as heavy artifacts). These are the real values that run produced (Cell-8 metric panel). To regenerate the canonical artifact, re-run scripts/01_boltz_smoketest.py + scripts/02_interface_metrics.py on Colab and it will write runs/step1_boltz/specificity-style outputs + a runlog. This file exists so the lysozyme/ipTM/pDockQ result cited elsewhere is backed by a committed artifact, not only chat history.",
+  "_what_it_shows": "Raw ipTM and pDockQ are FOOLED by confident non-binders: the scrambled decoy out-scored the real TRAIL binder on ipTM (0.859 vs 0.769), and the folded non-binder lysozyme TIED the real binder on pDockQ (0.742 vs 0.742). Only the two-axis filter (interface pLDDT high AND inter-chain PAE low) separates the real binder. This is the firsthand evidence behind the two-axis interface filter used project-wide.",
+  "complexes": {
+    "positive_DR5_TRAIL_ECD": {
+      "iptm": 0.769, "ptm": 0.839, "complex_plddt": 0.803, "complex_iplddt": 0.797,
+      "mean_interchain_pae": 10.645, "interface_pae": 4.488, "n_interface_contacts": 41,
+      "interface_plddt_0_100": 79.065, "pdockq": 0.742
+    },
+    "negative_DR5_scrambled": {
+      "iptm": 0.859, "ptm": 0.842, "complex_plddt": 0.511, "complex_iplddt": 0.479,
+      "mean_interchain_pae": 8.687, "interface_pae": 3.094, "n_interface_contacts": 78,
+      "interface_plddt_0_100": 46.213, "pdockq": 0.689
+    },
+    "negative_folded_DR5_lysozyme": {
+      "iptm": 0.761, "ptm": 0.635, "complex_plddt": 0.868, "complex_iplddt": 0.819,
+      "mean_interchain_pae": 18.174, "interface_pae": 6.891, "n_interface_contacts": 68,
+      "interface_plddt_0_100": 79.280, "pdockq": 0.742
+    }
+  },
+  "two_axis_verdict": {
+    "filter": "credible iff complex_iplddt >= 0.70 AND mean_interchain_pae <= 15.0",
+    "positive": "PASS (iplddt 0.797 ok, pae 10.6 ok)",
+    "negative_scrambled": "FAIL (iplddt 0.479 < 0.70)",
+    "negative_folded_lysozyme": "FAIL (pae 18.2 > 15.0)",
+    "conclusion": "Only the real binder passes both axes — raw ipTM/pDockQ alone do not discriminate."
+  }
+}
