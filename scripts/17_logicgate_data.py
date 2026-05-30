@@ -76,44 +76,34 @@ def _q(items):
     return "[" + ", ".join(f"'{x}'" for x in items) + "]"
 
 
-CHUNK = 60000   # cells per get_anndata materialization batch (so the heavy fetch logs progress, not silence)
-
-
-def _capped_get(census, value_filter, group_keys, label):
-    """ONE metadata scan + STRATIFIED per-cell-type subsample + CHUNKED, LOGGED materialize. One Census obs
-    scan for ALL tissues at once (not one full-Census scan per tissue). Returns (counts, cell_types, tissues)
-    or None. Every step is logged with elapsed time so the run is never a blind box."""
+def _stream_pull(census, value_filter, label):
+    """STREAM one slice via get_anndata(obs_value_filter=...) — a CONTIGUOUS, predicate-pushed read — then
+    stratified-subsample per cell_type IN MEMORY. This replaces the obs_coords=[scattered ids] approach,
+    which forced TileDB random-access seeks (~35 min per 60k-cell chunk). Returns (counts, cell_types, tissues)
+    or None. One tissue in RAM at a time bounds memory."""
     import cellxgene_census
-    log(f"{label}: scanning Census obs (one pass over the full census; this is the heavy step) ...")
-    obs = cellxgene_census.get_obs(census, "Homo sapiens", value_filter=value_filter,
-                                   column_names=["soma_joinid"] + group_keys)
-    if len(obs) == 0:
+    log(f"{label}: streaming get_anndata (contiguous predicate read) ...")
+    ad = cellxgene_census.get_anndata(
+        census, organism="Homo sapiens", obs_value_filter=value_filter,
+        var_value_filter=f"feature_name in {ALL_GENES}",
+        column_names={"obs": ["cell_type", "tissue_general"]})
+    if ad.n_obs == 0:
         log(f"{label}: 0 cells matched — check disease/tissue labels"); return None
+    log(f"{label}: {ad.n_obs:,} cells read; stratified-subsampling <= {MAX_PER_TYPE}/cell_type ...")
     rng = np.random.default_rng(SEED)
-    keep, groups = [], obs.groupby(group_keys, observed=True)
-    for _, grp in groups:
-        ids = grp["soma_joinid"].to_numpy()
-        keep.append(rng.choice(ids, MAX_PER_TYPE, replace=False) if len(ids) > MAX_PER_TYPE else ids)
-    keep = np.concatenate(keep).astype(int)
-    log(f"{label}: {len(obs):,} cells matched -> {len(keep):,} kept ({groups.ngroups} groups @ cap {MAX_PER_TYPE})")
-    # CHUNKED materialize (this was the previously-SILENT ~10-min step)
-    counts_parts, cts, tss = [], [], []
-    for i in range(0, len(keep), CHUNK):
-        sub = keep[i:i + CHUNK]
-        log(f"{label}: materializing cells {i:,}–{i + len(sub):,} / {len(keep):,} (x{len(ALL_GENES)} antigens) ...")
-        ad = cellxgene_census.get_anndata(
-            census, organism="Homo sapiens", obs_coords=[int(x) for x in sub],
-            var_value_filter=f"feature_name in {ALL_GENES}",
-            column_names={"obs": ["cell_type", "tissue_general"]})
-        counts_parts.append(_dense_over(ad, ALL_GENES))
-        cts += list(ad.obs["cell_type"].astype(str)); tss += list(ad.obs["tissue_general"].astype(str))
-    total = sum(p.shape[0] for p in counts_parts)
-    log(f"{label}: ✓ materialized {total:,} cells")
-    return np.vstack(counts_parts), cts, tss
+    ct_arr = ad.obs["cell_type"].astype(str).to_numpy()
+    keep = []
+    for c in np.unique(ct_arr):
+        idx = np.where(ct_arr == c)[0]
+        keep.append(rng.choice(idx, MAX_PER_TYPE, replace=False) if len(idx) > MAX_PER_TYPE else idx)
+    keep = np.sort(np.concatenate(keep))
+    ad = ad[keep]
+    log(f"{label}: kept {ad.n_obs:,} cells ({len(np.unique(ct_arr))} cell types)")
+    return _dense_over(ad, ALL_GENES), list(ad.obs["cell_type"].astype(str)), list(ad.obs["tissue_general"].astype(str))
 
 
 def fetch_panel():
-    """Per-cell Panel over ALL_GENES from TWO combined Census scans (normal, tumour), fully logged."""
+    """Per-cell Panel over ALL_GENES, streamed PER TISSUE (contiguous reads), fully logged."""
     import cellxgene_census
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     counts_blocks, ct, ts, comp = [], [], [], []
@@ -121,15 +111,16 @@ def fetch_panel():
     census = cellxgene_census.open_soma(census_version=CENSUS_VERSION)
     log("census open ✓")
     try:
-        res = _capped_get(census,
-                          f"is_primary_data == True and disease == 'normal' and tissue_general in {_q(NORMAL_TISSUES)}",
-                          ["tissue_general", "cell_type"], "NORMAL (all tissues)")
-        if res is not None:
-            c, cts, tss = res
-            counts_blocks.append(c); ct += list(_map_celltype(cts)); ts += tss; comp += ["normal"] * len(cts)
-        res = _capped_get(census,
-                          f"is_primary_data == True and disease in {_q(TUMOUR_DISEASES)}",
-                          ["cell_type"], "TUMOUR (all diseases)")
+        for tissue in NORMAL_TISSUES:   # one streaming read per tissue (bounds RAM; brain is the big one)
+            res = _stream_pull(census,
+                               f"is_primary_data == True and disease == 'normal' and tissue_general == '{tissue}'",
+                               f"NORMAL {tissue}")
+            if res is not None:
+                c, cts, tss = res
+                counts_blocks.append(c); ct += list(_map_celltype(cts)); ts += tss; comp += ["normal"] * len(cts)
+        res = _stream_pull(census,
+                           f"is_primary_data == True and disease in {_q(TUMOUR_DISEASES)}",
+                           "TUMOUR (all diseases)")
         if res is not None:
             c, cts, tss = res
             counts_blocks.append(c); ct += ["tumour_epithelium"] * len(cts)
