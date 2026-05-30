@@ -94,6 +94,16 @@ def main() -> int:
         print(f"{r['gate']:28s} {r['tumour_coverage']:5.2f} {r['vital_leak']:6.2f} {r['strict_leak']:6.2f} "
               f"{r['regen_leak']:6.2f} {r['pseudobulk_leak']:6.2f}  {r['verdict']}")
 
+    # validate the FAST batch scorer (used by scripts/17 on real data) is IDENTICAL to the per-gate scorer
+    batch = lg.score_gates_batch(panel, [(A, B, logic) for A, B, logic, _, _ in GATES])
+    batch_matches = all(
+        b["verdict"] == r["verdict"]
+        and abs(b["vital_leak"] - r["vital_leak"]) < 1e-9
+        and abs(b["tumour_coverage"] - r["tumour_coverage"]) < 1e-9
+        and abs(b["worst_normal_leak"] - r["worst_normal_leak"]) < 1e-9
+        for b, r in zip(batch, rows))
+    print(f"[batch-scorer] fast vectorised scorer identical to per-gate scorer: {batch_matches}")
+
     by_gate = {r["gate"]: r for r in rows}
     her2 = by_gate["ERBB2 (single)"]
     copos = by_gate["SCV_A AND SCV_B"]
@@ -148,6 +158,7 @@ def main() -> int:
         "NOT-arm dropout-falsifiability enforced": controls["NOT-arm dropout-falsifiability computed (Tmod blocker falsifiable; undetectable blocker flagged)"],
         "escape-durability reported as a SEPARATE axis (not multiplied)": esc["durability_delta_div"] > 0,
         "no-multiply HARD RULE asserted": lg.MULTIPLY_RECOGNITION_WITH_OTHER_AXES is False,
+        "fast batch scorer IDENTICAL to per-gate scorer (used on real data)": batch_matches,
         "method validated, NOT a discovered gate (real run = Colab atlases)": True,
     }
     print("-" * 86); print("METHODOLOGY-INTEGRITY CHECKS:")

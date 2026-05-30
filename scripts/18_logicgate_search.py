@@ -82,6 +82,23 @@ def not_arm_falsifiable(panel: Panel, B, k, min_detect=0.10):
     return best >= min_detect, round(best, 3)
 
 
+def _decide(tumour_coverage, vital_leak, strict_leak, regen_leak, not_ok, logic, leak_bar, regen_bar, cov_bar):
+    """The TIERED safety verdict — single source of truth, shared by score_gate (per-gate) and
+    score_gates_batch (vectorised) so they CANNOT diverge. Strict near-zero bar on non-regenerating
+    tissue (heart/brain/kidney FORBID); a higher but finite ceiling on regenerating tissue."""
+    if tumour_coverage < cov_bar:
+        return "NON-SELECTIVE (insufficient tumour coverage)"
+    if vital_leak > leak_bar:
+        return "NON-SELECTIVE (vital parenchyma co-expression — heart/brain/kidney FORBID)"
+    if strict_leak > leak_bar:
+        return "NON-SELECTIVE (non-regenerating normal leak)"
+    if regen_leak > regen_bar:
+        return "NON-SELECTIVE (regenerating-tissue leak exceeds the recovery ceiling)"
+    if logic == "AND_NOT" and not not_ok:
+        return "UNCERTAIN (NOT-arm dropout-unfalsifiable: blocker not robustly detectable)"
+    return "SELECTIVE" + (" (regen leak tolerated)" if regen_leak > leak_bar else "")
+
+
 def score_gate(panel: Panel, A, B=None, logic="SINGLE", k=2, leak_bar=0.02, regen_bar=0.15, cov_bar=0.30):
     """Score one gate. Returns coverage, worst normal leak (vital broken out), bulk-vs-single-cell gap,
     NOT-falsifiability, and a verdict under the TIERED safety rule (strict near-zero bar on
@@ -126,20 +143,7 @@ def score_gate(panel: Panel, A, B=None, logic="SINGLE", k=2, leak_bar=0.02, rege
     if logic == "AND_NOT":
         not_ok, not_detect = not_arm_falsifiable(panel, B, k)
 
-    # TIERED safety verdict: strict near-zero bar on non-regenerating tissue (heart/brain/kidney FORBID);
-    # a higher but finite ceiling on regenerating tissue (tolerate transient loss, not denudation).
-    if tumour_coverage < cov_bar:
-        verdict = "NON-SELECTIVE (insufficient tumour coverage)"
-    elif vital_leak > leak_bar:
-        verdict = "NON-SELECTIVE (vital parenchyma co-expression — heart/brain/kidney FORBID)"
-    elif strict_leak > leak_bar:
-        verdict = "NON-SELECTIVE (non-regenerating normal leak)"
-    elif regen_leak > regen_bar:
-        verdict = "NON-SELECTIVE (regenerating-tissue leak exceeds the recovery ceiling)"
-    elif logic == "AND_NOT" and not not_ok:
-        verdict = "UNCERTAIN (NOT-arm dropout-unfalsifiable: blocker not robustly detectable)"
-    else:
-        verdict = "SELECTIVE" + (" (regen leak tolerated)" if regen_leak > leak_bar else "")
+    verdict = _decide(tumour_coverage, vital_leak, strict_leak, regen_leak, not_ok, logic, leak_bar, regen_bar, cov_bar)
 
     return {
         "gate": f"{A}" + (f" {logic} {B}" if logic != "SINGLE" else " (single)"),
@@ -157,6 +161,87 @@ def score_gate(panel: Panel, A, B=None, logic="SINGLE", k=2, leak_bar=0.02, rege
         "not_arm_falsifiable": not_ok, "not_arm_detect": not_detect,
         "verdict": verdict, "selective": verdict.startswith("SELECTIVE"),
     }
+
+
+def score_gates_batch(panel: Panel, specs, k=2, leak_bar=0.02, regen_bar=0.15, cov_bar=0.30,
+                      not_min_detect=0.10, progress=None):
+    """Score MANY gates fast: precompute per-cell-type/tissue group ids + per-gene positives ONCE, then
+    each gate is a couple of boolean ops + one np.bincount (milliseconds), instead of re-scanning every
+    group per gate. Returns the SAME dicts as score_gate (verdict via the shared _decide), so results are
+    identical — verified against score_gate in scripts/20. `specs` = list of (A, B, logic). `progress`
+    = optional callback(i, n, result) for live logging."""
+    import pandas as pd
+    norm = panel.compartment == "normal"
+    tum = panel.compartment == "tumour"
+    # --- precompute group ids over NORMAL cells (only groups with >=20 cells, matching score_gate) ---
+    gkey = pd.Series([f"{c}\t{t}" for c, t in zip(panel.cell_type, panel.tissue)])
+    gid = np.full(len(panel.cell_type), -1, dtype=np.int64)
+    glabels, gvital, gregen, gsize = [], [], [], []
+    for key in pd.unique(gkey[norm]):
+        ct, ts = key.split("\t")
+        m = norm.copy() & (gkey.values == key)
+        if m.sum() < 20:
+            continue
+        idx = len(glabels)
+        gid[m] = idx
+        glabels.append((ct, ts)); gvital.append(ct in VITAL_NONREGEN)
+        gregen.append(ct in REGEN_TYPES); gsize.append(int(m.sum()))
+    gvital = np.array(gvital); gregen = np.array(gregen); gsize = np.array(gsize); ng = len(glabels)
+    # --- precompute per-gene positives, per-gene max detection (for NOT falsifiability), per-tissue marginals ---
+    pos = {g: panel.positive(g, k) for g in panel.genes}
+    cts = np.unique(panel.cell_type)
+    gene_max_detect = {g: max((pos[g][panel.cell_type == c].mean() for c in cts
+                               if (panel.cell_type == c).sum() >= 20), default=0.0) for g in panel.genes}
+    tissues_norm = [t for t in np.unique(panel.tissue[norm])]
+    tmask = {t: (norm & (panel.tissue == t)) for t in tissues_norm}
+
+    def grp_leak(fire_norm):
+        sel = gid[fire_norm]
+        cnt = np.bincount(sel[sel >= 0], minlength=ng) if ng else np.zeros(0)
+        return cnt / np.maximum(gsize, 1) if ng else np.zeros(0)
+
+    out = []
+    for i, (A, B, logic) in enumerate(specs):
+        a = pos[A]
+        fire = a if logic == "SINGLE" else (a & pos[B] if logic == "AND" else a & ~pos[B])
+        tumour_coverage = float(fire[tum].mean()) if tum.any() else 0.0
+        fr = grp_leak(fire & norm)
+        worst_leak = float(fr.max()) if ng else 0.0
+        wi = int(fr.argmax()) if ng else -1
+        vital_leak = float(fr[gvital].max()) if gvital.any() else 0.0
+        vi = int(np.where(gvital)[0][fr[gvital].argmax()]) if gvital.any() else -1
+        strict_leak = float(fr[~gregen].max()) if (~gregen).any() else 0.0
+        si = int(np.where(~gregen)[0][fr[~gregen].argmax()]) if (~gregen).any() else -1
+        regen_leak = float(fr[gregen].max()) if gregen.any() else 0.0
+        pseudobulk = 0.0
+        if logic in ("AND", "AND_NOT"):
+            for t in tissues_norm:
+                m = tmask[t]
+                if m.sum() >= 20:
+                    ap = pos[A][m].mean(); bt = (1 - pos[B][m].mean()) if logic == "AND_NOT" else pos[B][m].mean()
+                    pseudobulk = max(pseudobulk, float(min(ap, bt)))
+        not_ok, not_detect = (True, None)
+        if logic == "AND_NOT":
+            not_detect = round(gene_max_detect[B], 3); not_ok = gene_max_detect[B] >= not_min_detect
+        verdict = _decide(tumour_coverage, vital_leak, strict_leak, regen_leak, not_ok, logic, leak_bar, regen_bar, cov_bar)
+        r = {"gate": f"{A}" + (f" {logic} {B}" if logic != "SINGLE" else " (single)"),
+             "logic": logic, "A": A, "B": B, "k": k,
+             "tumour_coverage": round(tumour_coverage, 3),
+             "worst_normal_leak": round(worst_leak, 3),
+             "worst_group": f"{glabels[wi][0]}@{glabels[wi][1]}" if wi >= 0 else None,
+             "vital_leak": round(vital_leak, 3),
+             "vital_group": f"{glabels[vi][0]}@{glabels[vi][1]}" if vi >= 0 else None,
+             "strict_leak": round(strict_leak, 3),
+             "strict_group": f"{glabels[si][0]}@{glabels[si][1]}" if si >= 0 else None,
+             "regen_leak": round(regen_leak, 3),
+             "pseudobulk_leak": round(pseudobulk, 3),
+             "bulk_trap_gap": round(pseudobulk - worst_leak, 3),
+             "not_arm_falsifiable": not_ok, "not_arm_detect": not_detect,
+             "verdict": verdict, "selective": verdict.startswith("SELECTIVE")}
+        out.append(r)
+        if progress:
+            progress(i + 1, len(specs), r)
+    return out
 
 
 def scrambled_null(panel: Panel, A, B, logic, k, n_perm=200, seed=20260530):

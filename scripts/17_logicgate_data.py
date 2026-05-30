@@ -31,9 +31,17 @@ from __future__ import annotations
 import importlib.util
 import json
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
+
+_T0 = time.monotonic()
+
+
+def log(msg):
+    """Timestamped (elapsed-seconds) progress line so the run is never a blind box."""
+    print(f"[+{time.monotonic() - _T0:7.1f}s] [rung4] {msg}", flush=True)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = PROJECT_ROOT / "runs" / "rung4_logicgate"
@@ -68,59 +76,74 @@ def _q(items):
     return "[" + ", ".join(f"'{x}'" for x in items) + "]"
 
 
+CHUNK = 60000   # cells per get_anndata materialization batch (so the heavy fetch logs progress, not silence)
+
+
 def _capped_get(census, value_filter, group_keys, label):
-    """ONE metadata scan + STRATIFIED per-cell-type subsample + ONE bounded materialize. The whole point:
-    do a SINGLE Census obs scan for ALL tissues at once instead of one full-Census scan per tissue (the
-    ~1hr/2-tissue slowdown). group_keys are the obs columns to stratify on (keeps rare vital types)."""
+    """ONE metadata scan + STRATIFIED per-cell-type subsample + CHUNKED, LOGGED materialize. One Census obs
+    scan for ALL tissues at once (not one full-Census scan per tissue). Returns (counts, cell_types, tissues)
+    or None. Every step is logged with elapsed time so the run is never a blind box."""
     import cellxgene_census
-    cols = ["soma_joinid"] + group_keys
-    print(f"[fetch] {label}: scanning Census obs (one pass) ...", flush=True)
-    obs = cellxgene_census.get_obs(census, "Homo sapiens", value_filter=value_filter, column_names=cols)
+    log(f"{label}: scanning Census obs (one pass over the full census; this is the heavy step) ...")
+    obs = cellxgene_census.get_obs(census, "Homo sapiens", value_filter=value_filter,
+                                   column_names=["soma_joinid"] + group_keys)
     if len(obs) == 0:
-        print(f"[fetch] {label}: 0 cells — check disease/tissue labels", flush=True); return None
+        log(f"{label}: 0 cells matched — check disease/tissue labels"); return None
     rng = np.random.default_rng(SEED)
-    keep = []
-    for _, grp in obs.groupby(group_keys, observed=True):
+    keep, groups = [], obs.groupby(group_keys, observed=True)
+    for _, grp in groups:
         ids = grp["soma_joinid"].to_numpy()
         keep.append(rng.choice(ids, MAX_PER_TYPE, replace=False) if len(ids) > MAX_PER_TYPE else ids)
-    keep = np.concatenate(keep)
-    print(f"[fetch] {label}: {len(obs):,} matching -> {len(keep):,} kept "
-          f"({len(obs.groupby(group_keys, observed=True))} groups @ cap {MAX_PER_TYPE})", flush=True)
-    return cellxgene_census.get_anndata(
-        census, organism="Homo sapiens", obs_coords=[int(x) for x in keep],
-        var_value_filter=f"feature_name in {ALL_GENES}",
-        column_names={"obs": ["cell_type", "tissue_general"]})
+    keep = np.concatenate(keep).astype(int)
+    log(f"{label}: {len(obs):,} cells matched -> {len(keep):,} kept ({groups.ngroups} groups @ cap {MAX_PER_TYPE})")
+    # CHUNKED materialize (this was the previously-SILENT ~10-min step)
+    counts_parts, cts, tss = [], [], []
+    for i in range(0, len(keep), CHUNK):
+        sub = keep[i:i + CHUNK]
+        log(f"{label}: materializing cells {i:,}–{i + len(sub):,} / {len(keep):,} (x{len(ALL_GENES)} antigens) ...")
+        ad = cellxgene_census.get_anndata(
+            census, organism="Homo sapiens", obs_coords=[int(x) for x in sub],
+            var_value_filter=f"feature_name in {ALL_GENES}",
+            column_names={"obs": ["cell_type", "tissue_general"]})
+        counts_parts.append(_dense_over(ad, ALL_GENES))
+        cts += list(ad.obs["cell_type"].astype(str)); tss += list(ad.obs["tissue_general"].astype(str))
+    total = sum(p.shape[0] for p in counts_parts)
+    log(f"{label}: ✓ materialized {total:,} cells")
+    return np.vstack(counts_parts), cts, tss
 
 
 def fetch_panel():
-    """Per-cell Panel over ALL_GENES from TWO combined Census scans (normal, tumour) — bounded + fast."""
+    """Per-cell Panel over ALL_GENES from TWO combined Census scans (normal, tumour), fully logged."""
     import cellxgene_census
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     counts_blocks, ct, ts, comp = [], [], [], []
+    log(f"opening CELLxGENE Census version {CENSUS_VERSION} ...")
     census = cellxgene_census.open_soma(census_version=CENSUS_VERSION)
+    log("census open ✓")
     try:
-        # ONE scan for ALL normal tissues, stratified by (tissue, cell_type)
-        ad = _capped_get(census,
-                         f"is_primary_data == True and disease == 'normal' and tissue_general in {_q(NORMAL_TISSUES)}",
-                         ["tissue_general", "cell_type"], "normal (all tissues)")
-        if ad is not None and ad.n_obs:
-            counts_blocks.append(_dense_over(ad, ALL_GENES))
-            ct += list(_map_celltype(ad.obs["cell_type"].astype(str)))
-            ts += list(ad.obs["tissue_general"].astype(str)); comp += ["normal"] * ad.n_obs
-        # ONE scan for ALL tumour diseases, stratified by cell_type
-        adt = _capped_get(census,
+        res = _capped_get(census,
+                          f"is_primary_data == True and disease == 'normal' and tissue_general in {_q(NORMAL_TISSUES)}",
+                          ["tissue_general", "cell_type"], "NORMAL (all tissues)")
+        if res is not None:
+            c, cts, tss = res
+            counts_blocks.append(c); ct += list(_map_celltype(cts)); ts += tss; comp += ["normal"] * len(cts)
+        res = _capped_get(census,
                           f"is_primary_data == True and disease in {_q(TUMOUR_DISEASES)}",
-                          ["cell_type"], "tumour (all diseases)")
-        if adt is not None and adt.n_obs:
-            counts_blocks.append(_dense_over(adt, ALL_GENES))
-            ct += ["tumour_epithelium"] * adt.n_obs
-            ts += ["tumour"] * adt.n_obs; comp += ["tumour"] * adt.n_obs
+                          ["cell_type"], "TUMOUR (all diseases)")
+        if res is not None:
+            c, cts, tss = res
+            counts_blocks.append(c); ct += ["tumour_epithelium"] * len(cts)
+            ts += ["tumour"] * len(cts); comp += ["tumour"] * len(cts)
     finally:
-        census.close()
+        census.close(); log("census closed")
     if not counts_blocks:
         raise RuntimeError("no cells fetched — check Census version / tissue & disease labels / network")
-    counts = np.vstack(counts_blocks)
-    return lg.Panel(counts, ALL_GENES, np.array(ct), np.array(ts), np.array(comp))
+    panel = lg.Panel(np.vstack(counts_blocks), ALL_GENES, np.array(ct), np.array(ts), np.array(comp))
+    n_norm = int((panel.compartment == "normal").sum()); n_tum = int((panel.compartment == "tumour").sum())
+    log(f"panel assembled: {panel.counts.shape[0]:,} cells ({n_norm:,} normal, {n_tum:,} tumour) x {len(ALL_GENES)} antigens")
+    for tis in sorted(set(panel.tissue)):
+        log(f"  tissue {tis:14s}: {int((panel.tissue == tis).sum()):,} cells")
+    return panel
 
 
 def _dense_over(ad, genes):
@@ -174,29 +197,31 @@ def main() -> int:
         print("[rung4-data] on Colab:  pip install cellxgene-census scanpy  then re-run.")
         return 0
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    log("=== RUNG 4 real discovery — CELLxGENE single-cell logic-gate search ===")
     panel = fetch_panel()
-    print(f"[rung4-data] panel: {panel.counts.shape[0]} cells x {len(ALL_GENES)} antigens")
 
     cov = vital_coverage_census(panel)
-    print("[rung4-data] VITAL-COVERAGE CENSUS:")
+    log("VITAL-COVERAGE CENSUS (heart/brain/kidney must be AUDITED to certify vital-safe):")
     for r in cov:
-        print(f"  {r['vital_type']:16s} n={r['n_cells']:6d}  {r['status']}")
+        log(f"  {r['vital_type']:16s} n={r['n_cells']:6d}  {r['status']}")
     unaudited = [r["vital_type"] for r in cov if r["status"].startswith("UNAUDITED")]
 
-    rows = []
-    for a, b, logic in candidate_gates():
-        if a not in ALL_GENES:
-            continue
-        if logic == "AND_NOT":
-            continue  # HLA-LOH is a per-patient GENOTYPE gate, scored from NGS LOH, not the atlas — skip here
-        if b not in ALL_GENES:
-            continue
-        r = lg.score_gate(panel, a, b, logic, k=K)
-        # any gate whose only protection is in an UNAUDITED vital type cannot be certified vital-safe
+    # HLA-LOH is a per-patient GENOTYPE gate (NGS LOH), not an atlas-expression NOT -> not searched here.
+    specs = [(a, b, logic) for a, b, logic in candidate_gates()
+             if logic == "AND" and a in ALL_GENES and b in ALL_GENES]
+    log(f"scoring {len(specs)} candidate AND gates over {panel.counts.shape[0]:,} cells (vectorised) ...")
+
+    def _prog(i, n, r):
+        if i % 10 == 0 or i == n or r["selective"]:
+            tag = "SELECTIVE" if r["selective"] else "no"
+            log(f"  scored {i:3d}/{n}  {r['gate']:26s} cov={r['tumour_coverage']:.2f} "
+                f"leak={r['worst_normal_leak']:.2f} vital={r['vital_leak']:.2f} -> {tag}")
+
+    rows = lg.score_gates_batch(panel, specs, k=K, progress=_prog)
+    for r in rows:
         r["vital_unaudited"] = unaudited
         r["protein_copositivity_status"] = "NO_SINGLECELL_PROTEIN_DATA"  # transcript-only until CITE-seq
         r["transcript_only"] = True
-        rows.append(r)
     rows.sort(key=lambda r: (not r["selective"], r["worst_normal_leak"], -r["tumour_coverage"]))
 
     import csv
@@ -207,10 +232,13 @@ def main() -> int:
     with open(DATA_DIR / "vital_coverage_census.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["vital_type", "n_cells", "status"]); w.writeheader(); w.writerows(cov)
 
+    log(f"wrote data/logicgate/gate_selectivity.csv ({len(rows)} gates) + vital_coverage_census.csv")
     selective = [r for r in rows if r["selective"]]
-    print(f"[rung4-data] scored {len(rows)} AND gates; {len(selective)} predicted SELECTIVE (transcript-only).")
+    log(f"scored {len(rows)} AND gates; {len(selective)} predicted SELECTIVE (transcript-only).")
+    for r in selective[:10]:
+        log(f"  SELECTIVE: {r['gate']:26s} cov={r['tumour_coverage']:.2f} leak={r['worst_normal_leak']:.2f}")
     if not selective:
-        print("[rung4-data] NO clean gate found in this pool — a FIRST-CLASS, valid outcome (no forced winner).")
+        log("NO clean gate found in this pool — a FIRST-CLASS, valid outcome (no forced winner).")
     (OUT_DIR / "rung4_results.json").write_text(json.dumps({
         "census_version": CENSUS_VERSION, "n_cells": int(panel.counts.shape[0]),
         "vital_coverage": cov, "unaudited_vital_types": unaudited,
