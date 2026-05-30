@@ -1,0 +1,113 @@
+# =============================================================================
+# RUNG 2 — PRE-REGISTRATION (freeze this BEFORE the first fit; record git SHA below)
+# "DR5-agonist clustering-geometry CONSISTENCY CHECK against a valency baseline."
+# NOT a geometry predictor. The default, most-likely, fully-acceptable output is the
+# honest_failure_report: "a valency lookup table dressed in structure."
+# =============================================================================
+
+title: RUNG2 clustering-geometry consistency check vs valency baseline
+frozen_git_sha: TO_BE_STAMPED_AT_COMMIT     # scripts/12 records the actual SHA into rung2_results.json
+seed: 20260530
+
+# ----- endpoint tables (SPLIT — adversary C3 fix) -----
+endpoints:
+  table_A_potency:
+    file: data/dr5_agonists/dr5_agonist_ladder.csv
+    n: 9
+    y: potency_rank                          # 1=weakest .. 9=strongest
+    declaration: >
+      QUALITATIVE cross-assay ordering (COLO205 / H-EMC-SS / PC3 / various, different crosslinker
+      conditions) — NOT a single-assay leaderboard. Assay heterogeneity is the dominant
+      endpoint-validity uncertainty. There is NO head-to-head FcgammaR-KO / crosslinker-titration
+      assay placing tigatuzumab / conatumumab / lexatumumab side by side under identical conditions
+      (the 'missing keystone').
+  table_B_tox:
+    file: data/dr5_agonists/tox_inversion_tableB.csv
+    n: 3
+    y: tox_window_rank
+    use: illustrative tox-inversion consistency check ONLY (tertiary, NOT credited, ~0 out-of-sample bits)
+
+# ----- feature blocks -----
+features:
+  valency_block_M0:                          # the ONLY input to the baseline
+    - valency
+    - log_valency
+  geometry_block_M1_adds:                    # blind-labeled; see data/dr5_agonists/label_provenance.md
+    - g1_firing_fraction_nocrosslink         # from scripts/13 clustering sim, cancer density
+    - g2_mean_cluster_size
+    - g3_percolation_margin
+    - g4_geometry_match                       # r_arm vs ~6nm dimer-of-trimers pitch
+    - g5_epitope_proximity                    # structural; literature-derived -> negative-control gates it
+    # g6_hyperclustering_propensity is computed but used ONLY against Table B, NEVER against Table A
+  excluded_from_blind_vector:
+    - literature_crosslink_dependence_flag   # construct-level leakage; recorded, not used by default
+
+# ----- composite score: FIXED A PRIORI, no fitting of the collapse (adversary C1 fix) -----
+composite:
+  functional_form: equal_weight_z_of_rank
+  weights: {g1: 1.0, g2: 1.0, g3: 1.0, g4: 1.0, g5_offset: 0.5}   # FROZEN; any fit weight counts vs n
+  note: the 6->1 collapse is fixed; isotonic is fit ONLY on the single composite score (1 effective param)
+
+# ----- model -----
+model:
+  family: monotone/isotonic                  # sklearn IsotonicRegression on the single composite
+  forbidden: [RandomForest, GBM, NN, free_form_ML]
+  capacity_note: isotonic-on-1D is near-degenerate (rho_LOO ~ in-sample rho); reported as such
+
+# ----- the printed statistical ceiling (computed LIVE by scripts/12 and printed before any fit) -----
+ceiling:
+  spearman_rank_vs_valency: COMPUTED_LIVE    # ~0.9 expected; printed in manifest echo + every caption
+  max_delta_rho: "1 - spearman(rank,valency)"  # ~0.10 expected -> below permutation null 95th pctile
+  delta_rho_status: SIGN_ONLY                # global delta_rho test is UNREACHABLE at n=9; direction only
+  spearman_quantization_per_swap: ~0.012
+
+# ----- pre-registered tests (NO composite AND-gate; each reported with honest low power) -----
+tests:
+  PRIMARY_within_valency:
+    subset: the 4 bivalent IgG1s {conatumumab, lexatumumab, drozitumab, tigatuzumab}
+    statistic: exact enumerated combinatorial p over ordered pairs (M0 ties them — mathematically blind)
+    honest_power: best-case p ~ 1/24 = 0.042 (4 items); tigatuzumab CONTESTED -> effective n=2 pairs
+    verdict_cap: at most "suggestive", NEVER confirmatory
+  SECONDARY_delta_rho:
+    statistic: rho_LOO(M1) - rho_LOO(M0)
+    reported_as: SIGN/DIRECTION ONLY (unreachable significance at this n; ceiling printed)
+    permutation_null: shuffle SAME labels, refit BOTH M0 and M1 inside LOO, +1 correction, full histogram (context only)
+  TERTIARY_tox_inversion:
+    on: Table B {TAS266, INBRX-109, IGM-8444}
+    reported_as: illustrative consistency check, NOT credited
+
+# ----- decisive gates for emitting the (suggestive) geometry label -----
+geometry_label_emitted_iff:
+  - blinding executed & label_provenance.md committed
+  - PRIMARY within-valency exact-p is small
+  - NEGATIVE-CONTROL arm (scrambled epitope + random features) does NOT reproduce it
+  - Boltz-2 resolution probe does NOT show oracle-noise domination (within_molecule_spread < between_molecule)
+default_output: honest_failure_report        # absent ALL of the above
+
+honest_failure_report: >
+  This is a valency lookup table dressed in structure, not a geometry predictor; the within-valency
+  signal is either absent, reproduced by a scrambled-feature control, or driven by an answer-aware
+  label on an oracle (Boltz-2) demonstrated unreliable on this exact receptor.
+
+# ----- hard rules -----
+hard_rules:
+  - The RUNG-2 clustering/geometry score is NEVER multiplied or combined with the RUNG-1 EARM
+    gate-strength into a pseudo-efficacy/kill number. Two separate axes, separate ceilings, no
+    measured map between them. (Asserted in scripts/12 and printed in every caption.)
+  - No BCa bootstrap on the rank statistic anywhere (invalid at n=9 with ties). Permutation/exact only.
+  - The phrase "geometry predictor" does not appear as a credited verdict in the codebase.
+
+# ----- verbatim ceiling block (copied into rung2_results.json + figure caption) -----
+verbatim_ceiling: >
+  STATISTICAL CEILING: n=9 (potency table; TAS266 moved to a separate tox table); potency rank is
+  ~0.9-collinear with valency by construction, so (a) the valency-only baseline already explains ~90%
+  of rank variance; (b) max global delta_rho <= 1 - rho(rank,valency) ~ 0.10, below the permutation-null
+  95th percentile — the global delta_rho test is UNREACHABLE and is reported as direction only;
+  (c) Spearman is quantized at ~0.012 per swapped pair; (d) the within-valency contrast rests on 4
+  near-duplicate bivalents with one CONTESTED label (tigatuzumab), giving at best p~0.042 and at most
+  'suggestive'; (e) the tox-inversion item is a toxicity phenotype on a SEPARATE endpoint and carries
+  ~0 out-of-sample bits. ZERO out-of-class validation — every molecule is in the calibration set —
+  so NO claim of predictive generalization is permitted; only retrospective description of the n=9 panel.
+  RUNG 2 does NOT prove agonism: the binding->caspase-8 step (cooperative DISC enzymatic threshold) is
+  the irreducible wet-lab crux (Caspase-Glo 8). The single most likely and fully acceptable outcome is
+  the honest_failure_report.

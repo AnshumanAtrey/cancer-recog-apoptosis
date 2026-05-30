@@ -1,0 +1,107 @@
+# cancer-recon-apoptosis — run log
+# step          : rung2_clustering
+# utc           : 20260530T025208Z
+# commit_short  : 8a9a5e7  (+uncommitted changes)
+# commit_full   : 8a9a5e70bd059b5d8be7d4e659515f37ab57e2cb
+# branch        : main
+# python        : 3.12.6
+# platform      : macOS-26.3-arm64-arm-64bit
+#================================================================
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/14_blind_labeler.py
+[blind-labeler] wrote data/dr5_agonists/blind_geometry_labels.csv
+        name              format  valency  r_arm_nm  epitope_proximity  geometry_match
+      DR5Nb1            nanobody        1       4.0                1.5          0.7788
+ Conatumumab                IgG1        2      13.0                1.5          0.0468
+ Lexatumumab                IgG1        2      13.0                2.0          0.0468
+  Drozitumab                IgG1        2      13.0                1.5          0.0468
+ Tigatuzumab                IgG1        2      13.0                2.3          0.0468
+       TRAIL              trimer        3       9.0                1.5          0.5698
+Eftozanermin hexavalent-TRAIL-Fc        6      18.0                1.5          0.0001
+   INBRX-109 tetravalent-sdAb-Fc        4      14.0                1.5          0.0183
+    IGM-8444      IgM-decavalent       10      22.0                1.5          0.0000
+[blind-labeler] bivalent IgG1s: r_arm tied=True, geometry_match tied=True, epitope distinct values=3/4
+[blind-labeler] -> blind structure separates the bivalents ONLY via epitope_proximity (literature-derived); the scrambled-epitope negative control in scripts/12 is the decisive gate.
+[blind-labeler] potency_rank was DROPPED before any feature was computed (blind by construction).
+[exit 0]
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/13_clustering_sim.py
+[clustering-sim] L=0.3um  rho_cancer=10000.0/um^2  FIRE_THR=6  reps=8  (params are PROXIES; sim tests ordering, not absolute kinetics)
+[clustering-sim] wrote data/dr5_agonists/geometry_features.csv
+        name  valency  g1_firing_fraction_nocrosslink  g2_mean_cluster_size  g3_percolation_margin  firing_fraction_crosslinked  crosslink_dependence_index  g6_hyperclustering_propensity
+      DR5Nb1        1                          0.0000                 1.000                 0.0011                       0.3704                      0.3704                         0.0000
+ Conatumumab        2                          0.2269                 3.660                 0.0243                       0.6871                      0.4601                         0.1367
+ Lexatumumab        2                          0.2743                 3.969                 0.0267                       0.7060                      0.4317                         0.1200
+  Drozitumab        2                          0.2292                 3.638                 0.0251                       0.6799                      0.4507                         0.1233
+ Tigatuzumab        2                          0.3332                 4.332                 0.0311                       0.7090                      0.3758                         0.1689
+       TRAIL        3                          0.1339                 3.465                 0.0139                       0.5568                      0.4229                         0.0039
+Eftozanermin        6                          0.6789                52.807                 0.3990                       0.6621                     -0.0168                         0.1006
+   INBRX-109        4                          0.5583                11.453                 0.1269                       0.6482                      0.0899                         0.0444
+    IGM-8444       10                          0.6939               127.567                 0.5562                       0.6892                     -0.0047                         0.1839
+[clustering-sim] Spearman(valency, firing_fraction_nocrosslink) = 0.783  (sim reproduces the monotone valency->clustering law)
+[clustering-sim] figure -> runs/rung2_clustering/clustering_phase.png
+[clustering-sim] CEILING: firing-competent cluster geometry is NOT caspase-8 firing (cooperative DISC threshold = wet-lab). Params are proxies; ordering only.
+[exit 0]
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/12_clustering_rank.py
+==============================================================================
+RUNG 2 — clustering-geometry CONSISTENCY CHECK vs valency baseline (NOT a geometry predictor)
+==============================================================================
+[CEILING] Spearman(potency_rank, valency) = 0.9400  -> valency alone explains ~88% of rank variance
+[CEILING] max achievable global delta_rho = 1 - 0.940 = 0.0600
+[CEILING] permutation-null 95th pct of delta_rho = 0.6668  -> max_delta < null95 => global delta_rho test is UNREACHABLE (reported as SIGN ONLY)
+------------------------------------------------------------------------------
+[PRIMARY within-valency] bivalents=['Conatumumab', 'Lexatumumab', 'Drozitumab', 'Tigatuzumab']
+  composite-vs-rank concordant pairs = 5/6  EXACT p = 0.1667  (best-case floor p=1/24=0.042; contested label present=True)
+  -> NOT significant; at most 'suggestive', never confirmatory
+------------------------------------------------------------------------------
+[SECONDARY delta_rho — SIGN ONLY] rho_LOO(M0 valency)=0.667  rho_LOO(M1 +geom)=0.753  delta_rho=+0.086
+  (UNREACHABLE significance: max_delta=0.060 < null95=0.667; direction only)
+------------------------------------------------------------------------------
+[NEGATIVE CONTROL] scrambled-feature within-valency reaches obs in 17.9% of permutations; scrambled delta_rho >= obs in 14.4%
+  -> negative control REPRODUCES (signal is tie-breaking noise, headline VOID)
+------------------------------------------------------------------------------
+[BOLTZ-2 PROBE] NO Colab probe yet; literature/format geometry used. Boltz-2 is KNOWN unreliable on this DR5 (committed lysozyme/decoy transcript) -> same-valency inputs treated as oracle-noise-dominated by default
+------------------------------------------------------------------------------
+[COLLINEARITY GUARD] (signal-bearing geom features are EXPECTED to be valency-collinear; interpret, don't discard)
+  g1_firing_fraction_nocrosslink   rho(g,valency)=+0.78  partial(g,rank|valency)=+0.30
+  g2_mean_cluster_size             rho(g,valency)=+0.78  partial(g,rank|valency)=+0.14
+  g3_percolation_margin            rho(g,valency)=+0.78  partial(g,rank|valency)=+0.30
+  g4_geometry_match                rho(g,valency)=-0.82  partial(g,rank|valency)=+0.02
+  g5_epitope_proximity             rho(g,valency)=-0.32  partial(g,rank|valency)=+0.37
+------------------------------------------------------------------------------
+[POSITIVE] Spearman(sim firing_fraction, potency_rank) = 0.800  -> first-principles percolation sim reproduces the real valency->potency ladder
+          (this is the defensible mechanistic result: it EXPLAINS the valency law; it is NOT geometry-beyond-valency)
+------------------------------------------------------------------------------
+[TERTIARY tox-inversion — illustrative, NOT credited] g6 hyperclustering for {INBRX-109, IGM-8444} = 0.0444, 0.1839; TAS266 not simulated (effective valency hand-asserted). This tertiary check is illustrative, ~0 out-of-sample bits, and is NOT credited.
+------------------------------------------------------------------------------
+[HARD RULE] RUNG-2 score is a SEPARATE axis from RUNG-1 EARM gate-strength — NEVER multiplied into a pseudo-efficacy number (asserted). Two coordinates, never a product.
+==============================================================================
+VERDICT GATES (geometry-contribution label emitted only if ALL true):
+  [✓] blinding executed (label_provenance.md committed)
+  [✗] within-valency exact-p is small (<0.05)
+  [✗] negative control does NOT reproduce
+  [✗] Boltz-2 not oracle-noise-dominated
+VERDICT (default, expected, ACCEPTABLE): VALENCY LOOKUP TABLE — geometry did not demonstrably add out-of-sample signal. Honest failure report: 'a valency lookup table dressed in structure, not a geometry predictor; the within-valency signal is either absent, reproduced by a scrambled-feature control, or driven by an answer-aware label on an oracle (Boltz-2) demonstrated unreliable on this receptor.'
+==============================================================================
+METHODOLOGY-INTEGRITY CHECKS (this run is valid iff all pass; scientific verdict is separate):
+  [✓] ceiling printed (Spearman rank-valency + max delta_rho + null95)
+  [✓] LOO leakage-free (scaling+isotonic refit inside each fold)
+  [✓] blinding provenance committed
+  [✓] composite weights FIXED a priori (not fit)
+  [✓] negative-control arm ran
+  [✓] within-valency exact-p computed
+  [✓] delta_rho reported SIGN-ONLY with printed ceiling
+  [✓] endpoints split (TAS266 not in Table A)
+  [✓] no BCa bootstrap used
+  [✓] collinearity guard reported (incl. partial corr)
+  [✓] Boltz-2 resolution probe status recorded
+  [✓] no-multiply HARD RULE asserted
+  [✓] honest-failure default wired (verdict defaults to valency lookup)
+results -> runs/rung2_clustering/rung2_results.json
+figure -> runs/rung2_clustering/rung2_clustering.png
+==============================================================================
+CEILING: RUNG 2 is a low-power retrospective CONSISTENCY CHECK, not a geometry predictor and NOT a
+proof of agonism. The default verdict (valency lookup table) is the expected, honest, publishable
+outcome. The agonism crux (caspase-8 firing) is wet-lab; the sim only PRIORITIZES constructs.
+[exit 0]

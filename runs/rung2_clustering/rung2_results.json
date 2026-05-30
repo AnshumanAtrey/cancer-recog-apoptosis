@@ -1,0 +1,94 @@
+{
+  "frozen_git_sha": "8a9a5e7",
+  "ceiling": {
+    "spearman_rank_vs_valency": 0.9400193421607683,
+    "max_delta_rho": 0.05998065783923168,
+    "perm_null95_delta_rho": 0.6668064296835622,
+    "global_delta_rho_unreachable": true
+  },
+  "PRIMARY_within_valency": {
+    "bivalents": [
+      "Conatumumab",
+      "Lexatumumab",
+      "Drozitumab",
+      "Tigatuzumab"
+    ],
+    "concordant_pairs": 5,
+    "n_pairs": 6,
+    "exact_p": 0.16666666666666666,
+    "contested_label_present": true,
+    "interpretation": "at most suggestive; NOT significant"
+  },
+  "SECONDARY_delta_rho_sign_only": {
+    "rho_LOO_M0_valency": 0.6666666666666667,
+    "rho_LOO_M1_geom": 0.7531446678801508,
+    "delta_rho": 0.08647800121348403,
+    "reported_as": "SIGN/DIRECTION ONLY"
+  },
+  "negative_control": {
+    "obs_within_concordant": 5,
+    "neg_ctrl_frac_concordance_ge_obs": 0.1789,
+    "obs_delta_rho": 0.0865,
+    "neg_ctrl_frac_delta_ge_obs": 0.1439
+  },
+  "negative_control_reproduces": true,
+  "boltz_probe": {
+    "status": "NO Colab probe yet; literature/format geometry used. Boltz-2 is KNOWN unreliable on this DR5 (committed lysozyme/decoy transcript) -> same-valency inputs treated as oracle-noise-dominated by default",
+    "oracle_noise_dominated": true
+  },
+  "collinearity_guard": {
+    "g1_firing_fraction_nocrosslink": {
+      "spearman_vs_valency": 0.783,
+      "partial_corr_with_rank_given_valency": 0.3
+    },
+    "g2_mean_cluster_size": {
+      "spearman_vs_valency": 0.783,
+      "partial_corr_with_rank_given_valency": 0.143
+    },
+    "g3_percolation_margin": {
+      "spearman_vs_valency": 0.783,
+      "partial_corr_with_rank_given_valency": 0.3
+    },
+    "g4_geometry_match": {
+      "spearman_vs_valency": -0.818,
+      "partial_corr_with_rank_given_valency": 0.016
+    },
+    "g5_epitope_proximity": {
+      "spearman_vs_valency": -0.322,
+      "partial_corr_with_rank_given_valency": 0.371
+    }
+  },
+  "POSITIVE_sim_reproduces_ladder": {
+    "spearman_simfiring_vs_potency": 0.7999999999999999
+  },
+  "TERTIARY_tox_inversion": {
+    "note": "g6 hyperclustering for {INBRX-109, IGM-8444} = 0.0444, 0.1839; TAS266 not simulated (effective valency hand-asserted). This tertiary check is illustrative, ~0 out-of-sample bits, and is NOT credited.",
+    "credited": false
+  },
+  "verdict_gates": {
+    "blinding executed (label_provenance.md committed)": true,
+    "within-valency exact-p is small (<0.05)": false,
+    "negative control does NOT reproduce": false,
+    "Boltz-2 not oracle-noise-dominated": false
+  },
+  "verdict": "VALENCY LOOKUP TABLE \u2014 geometry did not demonstrably add out-of-sample signal. Honest failure report: 'a valency lookup table dressed in structure, not a geometry predictor; the within-valency signal is either absent, reproduced by a scrambled-feature control, or driven by an answer-aware label on an oracle (Boltz-2) demonstrated unreliable on this receptor.'",
+  "geometry_label_emitted": false,
+  "methodology_checks": {
+    "ceiling printed (Spearman rank-valency + max delta_rho + null95)": true,
+    "LOO leakage-free (scaling+isotonic refit inside each fold)": true,
+    "blinding provenance committed": true,
+    "composite weights FIXED a priori (not fit)": true,
+    "negative-control arm ran": true,
+    "within-valency exact-p computed": true,
+    "delta_rho reported SIGN-ONLY with printed ceiling": true,
+    "endpoints split (TAS266 not in Table A)": true,
+    "no BCa bootstrap used": true,
+    "collinearity guard reported (incl. partial corr)": true,
+    "Boltz-2 resolution probe status recorded": true,
+    "no-multiply HARD RULE asserted": true,
+    "honest-failure default wired (verdict defaults to valency lookup)": true
+  },
+  "methodology_valid": true,
+  "HARD_RULE": "RUNG-2 score is NEVER multiplied/combined with RUNG-1 EARM gate-strength (separate axes).",
+  "AGONISM_CEILING": "RUNG 2 does NOT prove agonism; binding->caspase-8 (cooperative DISC threshold) is the irreducible wet-lab crux (Caspase-Glo 8). Zero out-of-class validation -> no generalization claim permitted."
+}

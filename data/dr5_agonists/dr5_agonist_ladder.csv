@@ -1,0 +1,19 @@
+# TABLE A — DR5-agonist INTRINSIC-POTENCY ladder (n=9). FROZEN before any fit.
+# y = potency_rank (1 = weakest, 9 = strongest), pre-declared endpoint = crosslinker-INDEPENDENT
+#     in-vitro apoptosis potency (intrinsic agonism). Ties -> mid-ranks.
+# This is a QUALITATIVE CROSS-ASSAY ordering across DIFFERENT cell lines / crosslinker conditions
+# (COLO205 / H-EMC-SS / PC3 / various) — NOT a single-assay leaderboard. Assay heterogeneity is the
+# dominant endpoint-validity uncertainty (see README + open_risks). TAS266 is NOT here: its rank-10 was
+# a TOXICITY phenotype, moved to Table B (tox_inversion_tableB.csv).
+# epitope_crd / format are STRUCTURAL facts (allowed as blind features); potency_rank is the y and must
+# NEVER be read by scripts/14_blind_labeler.py.
+name,aliases,format,valency,epitope_crd,crosslink_dependence,potency_rank,label_contested,assay_cell_line,source
+DR5Nb1,DR5-Nb1,nanobody,1,CRD2-CRD3,inert,1,FALSE,various,PMC4623017_Huet2014
+Conatumumab,AMG655;AMG-655,IgG1,2,CRD2-CRD3,dependent,2,FALSE,COLO205,Kaplan-Lefko2010
+Lexatumumab,HGS-ETR2,IgG1,2,CRD3,dependent,3,FALSE,H-EMC-SS,Plummer2007;Shivange2021
+Drozitumab,Apomab;PRO95780,IgG1,2,CRD2-CRD3,dependent,4,FALSE,COLO205,Adams2008
+Tigatuzumab,CS-1008;TRA-8,IgG1,2,CRD3-proximal,partially_independent,5,TRUE,various,Ichikawa2001_contested
+TRAIL,dulanermin;Apo2L,trimer,3,native-trimeric,independent,6,FALSE,various,DuBois2023
+Eftozanermin,ABBV-621;eftozanermin-alfa,hexavalent-TRAIL-Fc,6,native-TRAIL,independent,7,FALSE,various,Wei2021
+INBRX-109,ozekibart,tetravalent-sdAb-Fc,4,CRD2-CRD3,independent,8,FALSE,various,DuBois2023_Patnaik
+IGM-8444,aplitabart,IgM-decavalent,10,CRD2-CRD3,independent,9,FALSE,various,Wang2021

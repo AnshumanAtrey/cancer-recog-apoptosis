@@ -1,0 +1,8 @@
+# TABLE B — OVER-CLUSTERING / HEPATOCYTE-TOX endpoint. A SEPARATE qualitative table, NOT a potency rank.
+# Used ONLY for the illustrative tox-inversion CONSISTENCY CHECK (tertiary, NOT credited; ~0 out-of-sample bits).
+# tox_window_rank: 1 = hepatotoxic (bad window), 3 = hepatocyte-sparing (good window).
+# TAS266 effective valency is HAND-ASSERTED (~8 via pre-existing anti-drug antibody crosslinking) — flagged.
+name,format,nominal_valency,effective_valency,effective_valency_source,tox_phenotype,tox_window_rank,hand_asserted,source
+TAS266,nanobody-tetravalent,4,8,ADA_crosslink,hepatotoxic,1,TRUE,Papadopoulos2015
+INBRX-109,tetravalent-sdAb-Fc,4,4,nominal,safe-efficacy-window,2,FALSE,DuBois2023_Patnaik
+IGM-8444,IgM-decavalent,10,10,nominal,hepatocyte-sparing,3,FALSE,Wang2021
