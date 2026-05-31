@@ -42,10 +42,12 @@ REGEN_TYPES = {"hepatocyte", "marrow_hsc", "enterocyte", "keratinocyte", "liver_
 
 class Panel:
     """Per-cell counts matrix + labels (plain class — importlib-safe). counts:(n_cells,n_genes) int UMI;
-    genes:list; cell_type/tissue/compartment:(n_cells,) str arrays ('normal'|'tumour')."""
-    def __init__(self, counts, genes, cell_type, tissue, compartment):
+    genes:list; cell_type/tissue/compartment:(n_cells,) str arrays ('normal'|'tumour'). donor:(n_cells,)
+    str donor_key (= dataset_id::donor_id) for donor-level held-out validation; None if not donor-resolved."""
+    def __init__(self, counts, genes, cell_type, tissue, compartment, donor=None):
         self.counts = counts; self.genes = list(genes)
         self.cell_type = cell_type; self.tissue = tissue; self.compartment = compartment
+        self.donor = donor
 
     def gidx(self, name):
         return self.genes.index(name)

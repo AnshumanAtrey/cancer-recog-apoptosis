@@ -1,0 +1,41 @@
+# cancer-recon-apoptosis — run log
+# step          : rung5_optimizer
+# utc           : 20260531T174817Z
+# commit_short  : 0f1740a  (+uncommitted changes)
+# commit_full   : 0f1740a4c44ecbfb1a1b55f1e608cae514af1550
+# branch        : main
+# python        : 3.12.6
+# platform      : macOS-26.3-arm64-arm-64bit
+#================================================================
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/22_gate_optimizer.py
+====================================================================================
+RUNG 5 — gate-optimizer GUARD validation on synthetic planted attacks
+====================================================================================
+panel: 7800 cells, 14 donors, vital=[np.str_('cardiomyocyte')]
+------------------------------------------------------------------------------------
+[planted CLEAN]  ACT AND CLEAN        cov=0.97 vital=0.009 -> SELECTIVE
+[ATTACK-3 pool]  ACT AND ATK3         pooled-cardiomyocyte UB=0.009 (a naive scorer calls this SAFE)
+[ATTACK-3 fix]   ACT AND ATK3         max-over-donor vital=0.090@cardiomyocyte@ds::donor0 -> NON-SELECTIVE (vital leak 0.090 @ cardiomyocyte@ds::donor0 — FORBID)
+[ATTACK-1 drop]  ACT AND ATK1_undetect cov=0.00 vital=0.018 -> UNCERTAIN (AND-arm near-undetectable, dropout-deflated: ['ATK1_undetect'])
+------------------------------------------------------------------------------------
+optimizer shortlist (11 gates; search on DISCOVERY/SELECT donors, certified on ALL donors):
+  ACT AND CLEAN                cov=0.97 vital=0.009 -> SELECTIVE
+  ACT AND ATK3 AND CLEAN       cov=0.95 vital=0.009 -> SELECTIVE
+  ACT AND DECOY AND CLEAN      cov=0.60 vital=0.009 -> SELECTIVE
+  ACT AND DECOY AND ATK3       cov=0.59 vital=0.009 -> SELECTIVE
+  ACT AND ATK1_undetect AND CLEAN cov=0.00 vital=0.009 -> UNCERTAIN (AND-arm near-undetectable, dropout-deflated: ['ATK1_undetect'])
+  ACT AND ATK1_undetect AND ATK3 cov=0.00 vital=0.009 -> UNCERTAIN (AND-arm near-undetectable, dropout-deflated: ['ATK1_undetect'])
+====================================================================================
+GUARD CHECKS:
+  [OK] planted CLEAN gate scores SELECTIVE
+  [OK] ATTACK-3 (donor-pooling): naive pooled UB looks SAFE (<bar)
+  [OK] ATTACK-3 FIX: max-over-donor catches the lethal donor -> NON-SELECTIVE
+  [OK] ATTACK-1 (dropout-deflation): near-undetectable arm -> UNCERTAIN (not SELECTIVE)
+  [OK] fail-closed: unsafe gate fitness == -inf
+  [OK] objective is lexicographic (no-multiply): scalarized rank raises
+  [OK] optimizer top gate is the planted CLEAN gate (not an attack)
+====================================================================================
+CEILING: transcript-level hypothesis; mRNA!=protein (CITE-seq confirms co-positivity); a top gate
+is the best NEXT wet-lab experiment, not a cure or a safety proof. Real Census run = Colab (next).
+[exit 0]

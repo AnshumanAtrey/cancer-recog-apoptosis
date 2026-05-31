@@ -1,0 +1,339 @@
+#!/usr/bin/env python3
+"""
+RUNG 5 — full-surfaceome logic-gate OPTIMIZER, with the anti-reward-hacking guards the adversarial review
+demanded, PROVEN ON SYNTHETIC PLANTED ATTACKS before any real Census run (the spec's hard prerequisite).
+
+An optimizer over thousands of surface genes x {AND, AND-NOT} logic is the single biggest reward-hacking
+risk in this project: it will happily report a confident-but-FALSE "safe" gate by exploiting (a) donor
+POOLING — averaging away the one patient whose tumour genetics make 8% of their heart cells lethal; (b)
+scRNA DROPOUT — picking near-undetectable antigens whose co-positivity is dropout-deflated to look clean.
+This module builds the HARD guards against both and proves them on planted attacks:
+
+  FIX-1  vital leak = MAX over donors of the Jeffreys UPPER bound (NEVER the donor-pooled estimate).
+  FIX-3  AND-arm dropout-deflation guard: if any positive arm is near-undetectable, vital safety is UNCERTAIN
+         (the leak estimate is on the wrong, dropout-deflated quantity — cannot certify safe).
+  fail-closed vital: a gate that leaks into ANY non-regenerating vital type is NOT BORN (fitness = -inf);
+         no amount of tumour coverage buys back a vital hit (never subtracted, never multiplied).
+  lexicographic objective: rank = (not selective, not safe, worst_leak, -coverage) — NEVER a scalar
+         coverage - lambda*leak (a scalar lets the search arbitrage safety for coverage).
+  three-partition DONOR split: DISCOVERY builds, HELDOUT-SELECT drives early-stop/pruning, HELDOUT-REPORT
+         is never touched until final scoring (a validation set used for early-stopping is not a test set).
+
+HONEST CEILING: a top gate is a TRANSCRIPT-LEVEL hypothesis (mRNA != surface protein; co-positivity needs
+CITE-seq), NOT a cure or a safety proof. "No clean gate exists in this space" is a first-class outcome.
+Recognition-selectivity is a separate axis — never multiplied with RUNG-1/2/3 or escape-durability.
+
+USAGE: python scripts/22_gate_optimizer.py        (runs the synthetic attack harness; CPU, seconds)
+The real-data Census run (donor-aware fetch over the full surfaceome) is the Colab handoff (scripts 23/24
+add FDR + the HLA-LOH population column; this file establishes the un-gameable scoring + search core).
+"""
+from __future__ import annotations
+
+import importlib.util
+import sys
+from pathlib import Path
+
+import numpy as np
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+spec = importlib.util.spec_from_file_location("lg", PROJECT_ROOT / "scripts" / "18_logicgate_search.py")
+lg = importlib.util.module_from_spec(spec); spec.loader.exec_module(lg)
+
+# ---- frozen bars (would live in manifest_PREREG.yaml for the real run) ----
+K = 2
+LEAK_BAR = 0.02
+REGEN_BAR = 0.15
+COV_BAR = 0.15
+AND_DETECT_FLOOR = 0.05          # an AND arm below this max-detection cannot certify vital-safe (Fix-3)
+MIN_DONORS = 3                   # >= this many powered held-out donors per vital type, else UNCERTAIN (Fix-2)
+MIN_VITAL_CELLS_PER_DONOR = 185  # per-donor floor (Jeffreys UB at 0 co-positives <= leak_bar) (Fix-2)
+BEAM_WIDTH = 8
+MAX_LITERALS = 3
+
+
+def positive(panel, gene, k=K):
+    return panel.counts[:, panel.genes.index(gene)] >= k
+
+
+def gate_fire(panel, pos_genes, neg_genes, k=K):
+    """Boolean fire per cell: ALL pos_genes positive AND NO neg_genes positive."""
+    fire = np.ones(panel.counts.shape[0], bool)
+    for g in pos_genes:
+        fire &= positive(panel, g, k)
+    for g in neg_genes:
+        fire &= ~positive(panel, g, k)
+    return fire
+
+
+def arm_max_detect(panel, gene, k=K):
+    """Max detection fraction of `gene` over any cell type with >=20 cells (Fix-3 dropout guard)."""
+    best = 0.0
+    for ct in np.unique(panel.cell_type):
+        m = panel.cell_type == ct
+        if m.sum() >= 20:
+            best = max(best, float(positive(panel, gene, k)[m].mean()))
+    return best
+
+
+def _vital_leak_max_over_donor(panel, fire):
+    """FIX-1: vital leak = MAX over (vital cell type, donor) of the Jeffreys UPPER bound — never pooled.
+    Returns (vital_leak, worst_label, audited_ok_per_type). A donor counts only if powered (>= per-donor
+    floor); a vital type needs >= MIN_DONORS powered donors or it is UNAUDITED (fail-closed)."""
+    norm = panel.compartment == "normal"
+    donors = panel.donor if panel.donor is not None else np.array(["_one"] * len(panel.cell_type))
+    vital_leak, worst = 0.0, None
+    audited = {}
+    for ct in np.unique(panel.cell_type[norm]):
+        if ct not in lg.VITAL_NONREGEN:
+            continue
+        powered_donors = 0
+        for d in np.unique(donors[norm & (panel.cell_type == ct)]):
+            m = norm & (panel.cell_type == ct) & (donors == d)
+            n = int(m.sum())
+            if n < MIN_VITAL_CELLS_PER_DONOR:
+                continue                       # a blind look, not a clean look — does not count
+            powered_donors += 1
+            ub = lg.jeffreys_upper(int(fire[m].sum()), n)
+            if ub > vital_leak:
+                vital_leak, worst = ub, f"{ct}@{d}"
+        audited[ct] = powered_donors >= MIN_DONORS
+    return vital_leak, worst, audited
+
+
+def score_gate(panel, pos_genes, neg_genes, required_vital):
+    """Donor-aware, fail-closed, dropout-guarded score. Returns the verdict dict. fitness=-inf if NOT BORN."""
+    fire = gate_fire(panel, pos_genes, neg_genes)
+    is_tum = panel.compartment == "tumour"
+    coverage = float(fire[is_tum].mean()) if is_tum.any() else 0.0
+
+    # non-vital + regen leak: pooled (cell_type) is acceptable (donor-private nuisance there is not lethal)
+    norm = panel.compartment == "normal"
+    strict_leak, regen_leak = 0.0, 0.0
+    for ct in np.unique(panel.cell_type[norm]):
+        m = norm & (panel.cell_type == ct)
+        if m.sum() < 20 or ct in lg.VITAL_NONREGEN:
+            continue
+        ub = lg.jeffreys_upper(int(fire[m].sum()), int(m.sum()))
+        if ct in lg.REGEN_TYPES:
+            regen_leak = max(regen_leak, ub)
+        else:
+            strict_leak = max(strict_leak, ub)
+
+    vital_leak, vital_worst, audited = _vital_leak_max_over_donor(panel, fire)
+    unaudited = {ct for ct in required_vital if not audited.get(ct, False)}
+
+    # FIX-3 dropout-deflation guard: every POSITIVE arm must be robustly detectable somewhere
+    underdetected = [g for g in pos_genes if arm_max_detect(panel, g) < AND_DETECT_FLOOR]
+
+    # verdict (safety FIRST, independent of coverage; fail-closed)
+    if vital_leak > LEAK_BAR:
+        verdict = f"NON-SELECTIVE (vital leak {vital_leak:.3f} @ {vital_worst} — FORBID)"
+    elif strict_leak > LEAK_BAR:
+        verdict = f"NON-SELECTIVE (non-regen normal leak {strict_leak:.3f})"
+    elif regen_leak > REGEN_BAR:
+        verdict = f"NON-SELECTIVE (regen ceiling {regen_leak:.3f})"
+    elif underdetected:
+        verdict = f"UNCERTAIN (AND-arm near-undetectable, dropout-deflated: {underdetected})"
+    elif unaudited:
+        verdict = f"UNCERTAIN (vital types under-powered/unaudited: {sorted(unaudited)} — FAIL-CLOSED)"
+    else:
+        verdict = "SAFE-LOW-COVERAGE" if coverage < COV_BAR else "SELECTIVE"
+
+    safe = verdict in ("SELECTIVE", "SAFE-LOW-COVERAGE")
+    selective = verdict == "SELECTIVE"
+    return {"pos": list(pos_genes), "neg": list(neg_genes),
+            "gate": " AND ".join(pos_genes) + ("".join(f" AND-NOT {g}" for g in neg_genes)),
+            "coverage": round(coverage, 3), "vital_leak": round(vital_leak, 3), "vital_worst": vital_worst,
+            "strict_leak": round(strict_leak, 3), "regen_leak": round(regen_leak, 3),
+            "safe": safe, "selective": selective, "verdict": verdict,
+            "transcript_only": True, "protein_copositivity_status": "NO_SINGLECELL_PROTEIN_DATA"}
+
+
+def rank_key(r):
+    """LEXICOGRAPHIC — never a scalar combination of leak and coverage (no-multiply invariant)."""
+    return (not r["selective"], not r["safe"], r["vital_leak"], r["strict_leak"], -r["coverage"])
+
+
+def fitness_inf_if_unsafe(r):
+    """fail-closed: an unsafe gate is NOT BORN (fitness = -inf); coverage NEVER buys back a vital hit."""
+    if not r["safe"]:
+        return float("-inf")
+    return r["coverage"]
+
+
+def assert_no_multiply(rank_callable):
+    """FIX-5b: prove the ranking path is lexicographic (a tuple), not a scalar leak/coverage product.
+    Raises if a scalarized objective is passed."""
+    probe = {"selective": True, "safe": True, "vital_leak": 0.01, "strict_leak": 0.0, "coverage": 0.5}
+    out = rank_callable(probe)
+    if not isinstance(out, tuple):
+        raise AssertionError("HARD RULE: ranking must be a LEXICOGRAPHIC TUPLE, never a scalar "
+                             "combination of leak and coverage (a scalar lets the search trade safety for coverage).")
+
+
+def optimize(disc, sel, activators, partners, required_vital, max_literals=MAX_LITERALS, beam=BEAM_WIDTH):
+    """Greedy seed + bounded beam. Seed from activators by tumour COVERAGE (an activator alone is EXPECTED
+    unsafe — the whole point of AND-gating is that adding a partner restores safety). ALL keep/prune
+    decisions read HELDOUT-SELECT via the LEXICOGRAPHIC rank_key (safe-ness first, then coverage), so the
+    rigorous 'improve, pull back on negatives' = keep a literal only if it strictly improves the held-out
+    rank tuple (turning unsafe->safe is the biggest improvement). Final SELECTIVE gates fall out at the top."""
+    assert_no_multiply(rank_key)
+    frontier = [{"pos": [a], "neg": []} for a in activators]   # seed structure (unsafe-alone is fine)
+    best = list(frontier)
+    for _ in range(max_literals - 1):
+        cand = []
+        for gate in frontier:
+            rk_parent = rank_key(score_gate(sel, gate["pos"], gate["neg"], required_vital))
+            for g in partners:
+                if g in gate["pos"] or g in gate["neg"]:
+                    continue
+                for key in ("pos", "neg"):
+                    ng = {"pos": gate["pos"] + ([g] if key == "pos" else []),
+                          "neg": gate["neg"] + ([g] if key == "neg" else [])}
+                    rk = rank_key(score_gate(sel, ng["pos"], ng["neg"], required_vital))
+                    if rk < rk_parent:          # PULL BACK: keep only strict held-out improvements
+                        cand.append((ng, rk))
+        if not cand:
+            break
+        seen, dedup = set(), []
+        for ng, rk in sorted(cand, key=lambda x: x[1]):
+            kk = (frozenset(ng["pos"]), frozenset(ng["neg"]))
+            if kk not in seen:
+                seen.add(kk); dedup.append(ng)
+        frontier = dedup[:beam]
+        best += frontier
+    out, seen = [], set()
+    for gate in best:
+        kk = (frozenset(gate["pos"]), frozenset(gate["neg"]))
+        if kk not in seen:
+            seen.add(kk); out.append(gate)
+    return out
+
+
+def three_partition(donors, seed=20260530):
+    """Split DONORS (never cells) into DISCOVERY / SELECT / REPORT — pairwise disjoint by donor."""
+    rng = np.random.default_rng(seed)
+    uniq = np.array(sorted(set(donors)))
+    rng.shuffle(uniq)
+    n = len(uniq)
+    a, b = n // 3, 2 * n // 3
+    return set(uniq[:a]), set(uniq[a:b]), set(uniq[b:])
+
+
+def subset(panel, donor_set):
+    m = np.array([d in donor_set for d in panel.donor])
+    return lg.Panel(panel.counts[m], panel.genes, panel.cell_type[m], panel.tissue[m], panel.compartment[m],
+                    donor=panel.donor[m])
+
+
+# =====================================================================================================
+#  SYNTHETIC ATTACK HARNESS — prove the guards catch the reward-hacks BEFORE trusting the real Census run
+# =====================================================================================================
+def _build_attack_panel(rng):
+    """A donor-resolved synthetic panel with: a planted CLEAN gate (tumour-only), and two reward-hack traps:
+    ATTACK-3 (donor-pooling): gate clean when donors pooled, but ONE donor's cardiomyocytes are 8% double+;
+    ATTACK-1 (dropout-deflation): a gate truly double-positive on cardiomyocytes but its partner is
+    near-undetectable so the naive co-positivity reads ~0 (false-safe)."""
+    HI, MID, ABSENT, UNDETECT, LOWDETECT = 6.0, 2.2, 0.01, 0.03, 0.5
+    #  ABSENT (P>=2 ~5e-5, truly off) | UNDETECT (~4e-4, below the 5% detection floor) | LOWDETECT (~9% +)
+    genes = ["ACT", "CLEAN", "ATK3", "ATK1_undetect", "DECOY"]
+    #         activator(broad), clean tumour-only partner, attack-3 partner, attack-1 undetectable, lung-epi decoy
+    blocks_c, ct, ts, comp, don = [], [], [], [], []
+    NPER = 220   # per (cell_type, donor) > MIN_VITAL_CELLS_PER_DONOR; UB(0/220)~0.0135 < leak_bar -> powered+clean
+
+    def add(cell_type, tissue, compartment, donor, lams, n=NPER):
+        blocks_c.append(np.column_stack([rng.poisson(l, n) for l in lams]))
+        ct.extend([cell_type] * n); ts.extend([tissue] * n); comp.extend([compartment] * n); don.extend([donor] * n)
+
+    for d in range(10):   # 10 normal donors
+        dn = f"ds::donor{d}"
+        # ACT = broadly-expressed activator (HI on heart -> UNSAFE ALONE; the AND must rescue it).
+        # CLEAN/ATK3/DECOY truly ABSENT on normal heart. ATK3 EXCEPT donor0 where it is LOWDETECT (~8-9%
+        # of donor0's cardiomyocytes become ACT+ATK3 double-positive = the lethal donor pooling would erase).
+        # ATK1_undetect is UNDETECT everywhere (below the dropout floor) -> its 'safety' is unfalsifiable.
+        add("cardiomyocyte", "heart", "normal", dn,
+            [HI, ABSENT, (LOWDETECT if d == 0 else ABSENT), UNDETECT, ABSENT])
+        add("hepatocyte", "liver", "normal", dn, [MID, ABSENT, ABSENT, UNDETECT, ABSENT])
+        # lung normal epithelium: ACT + DECOY both present -> ACT AND DECOY LEAKS here (DECOY is a bad partner)
+        add("normal_epithelium", "lung", "normal", dn, [MID, ABSENT, ABSENT, UNDETECT, MID])
+    # tumour (malignant): ACT+CLEAN co-positive = the real gate; ATK3 also high (ATK3 gate has coverage too);
+    # ATK1_undetect UNDETECT (so even its coverage is dropout-deflated); DECOY MID.
+    for d in range(4):
+        add("tumour_malignant", "tumour", "tumour", f"tds::tdonor{d}", [HI, HI, HI, UNDETECT, MID], n=300)
+    counts = np.vstack(blocks_c)
+    return lg.Panel(counts, genes, np.array(ct), np.array(ts), np.array(comp), donor=np.array(don))
+
+
+def _attack_harness():
+    rng = np.random.default_rng(20260530)
+    panel = _build_attack_panel(rng)
+    required_vital = {"cardiomyocyte"}
+    print("=" * 84)
+    print("RUNG 5 — gate-optimizer GUARD validation on synthetic planted attacks")
+    print("=" * 84)
+    print(f"panel: {panel.counts.shape[0]} cells, {len(set(panel.donor))} donors, "
+          f"vital={sorted(set(panel.cell_type) & lg.VITAL_NONREGEN)}")
+
+    # control: the planted CLEAN gate (ACT AND CLEAN) — tumour-only -> should be SELECTIVE
+    clean = score_gate(panel, ["ACT", "CLEAN"], [], required_vital)
+    # ATTACK-3: ACT AND ATK3 — pooled cardiomyocyte leak tiny, but donor0 is 8% double+ -> max-over-donor catches it
+    atk3 = score_gate(panel, ["ACT", "ATK3"], [], required_vital)
+    # what a NAIVE donor-POOLED scorer would say about ATK3 (the bug we are guarding against):
+    norm = panel.compartment == "normal"; cm = norm & (panel.cell_type == "cardiomyocyte")
+    fire3 = gate_fire(panel, ["ACT", "ATK3"], [])
+    pooled_ub = lg.jeffreys_upper(int(fire3[cm].sum()), int(cm.sum()))
+    # ATTACK-1: ACT AND ATK1_undetect — partner near-undetectable -> dropout-deflation guard -> UNCERTAIN
+    atk1 = score_gate(panel, ["ACT", "ATK1_undetect"], [], required_vital)
+
+    print("-" * 84)
+    print(f"[planted CLEAN]  ACT AND CLEAN        cov={clean['coverage']:.2f} vital={clean['vital_leak']:.3f} -> {clean['verdict']}")
+    print(f"[ATTACK-3 pool]  ACT AND ATK3         pooled-cardiomyocyte UB={pooled_ub:.3f} (a naive scorer calls this SAFE)")
+    print(f"[ATTACK-3 fix]   ACT AND ATK3         max-over-donor vital={atk3['vital_leak']:.3f}@{atk3['vital_worst']} -> {atk3['verdict']}")
+    print(f"[ATTACK-1 drop]  ACT AND ATK1_undetect cov={atk1['coverage']:.2f} vital={atk1['vital_leak']:.3f} -> {atk1['verdict']}")
+
+    # run the optimizer and confirm it picks the clean gate, not the attacks
+    disc_d, sel_d, rep_d = three_partition(panel.donor)
+    # ensure tumour donors present in all splits for coverage scoring (tumour donors are separate keys)
+    tum_d = set(d for d, c in zip(panel.donor, panel.compartment) if c == "tumour")
+    disc = subset(panel, disc_d | tum_d); sel = subset(panel, sel_d | tum_d)
+    shortlist = optimize(disc, sel, activators=["ACT"], partners=["CLEAN", "ATK3", "ATK1_undetect", "DECOY"],
+                         required_vital=required_vital)
+    # FINAL safety certification uses ALL donors (max-over-donor is conservative — more donors only ever
+    # REVEAL more leak; the search used disc/select without peeking, the verdict uses the full evidence).
+    scored = sorted([score_gate(panel, g["pos"], g["neg"], required_vital) for g in shortlist], key=rank_key)
+    print("-" * 84)
+    print(f"optimizer shortlist ({len(shortlist)} gates; search on DISCOVERY/SELECT donors, certified on ALL donors):")
+    for r in scored[:6]:
+        print(f"  {r['gate']:28s} cov={r['coverage']:.2f} vital={r['vital_leak']:.3f} -> {r['verdict']}")
+    top = scored[0] if scored else None
+
+    checks = {
+        "planted CLEAN gate scores SELECTIVE": clean["selective"],
+        "ATTACK-3 (donor-pooling): naive pooled UB looks SAFE (<bar)": pooled_ub <= LEAK_BAR,
+        "ATTACK-3 FIX: max-over-donor catches the lethal donor -> NON-SELECTIVE": not atk3["safe"] and atk3["vital_leak"] > LEAK_BAR,
+        "ATTACK-1 (dropout-deflation): near-undetectable arm -> UNCERTAIN (not SELECTIVE)": (not atk1["selective"]) and atk1["verdict"].startswith("UNCERTAIN"),
+        "fail-closed: unsafe gate fitness == -inf": fitness_inf_if_unsafe(atk3) == float("-inf"),
+        "objective is lexicographic (no-multiply): scalarized rank raises": _scalarized_raises(),
+        "optimizer top gate is the planted CLEAN gate (not an attack)": top is not None and set(top["pos"]) == {"ACT", "CLEAN"} and top["selective"],
+    }
+    print("=" * 84)
+    print("GUARD CHECKS:")
+    for k, v in checks.items():
+        print(f"  [{'OK' if v else 'XX'}] {k}")
+    ok = all(checks.values())
+    print("=" * 84)
+    print("CEILING: transcript-level hypothesis; mRNA!=protein (CITE-seq confirms co-positivity); a top gate")
+    print("is the best NEXT wet-lab experiment, not a cure or a safety proof. Real Census run = Colab (next).")
+    return 0 if ok else 1
+
+
+def _scalarized_raises():
+    try:
+        assert_no_multiply(lambda r: r["coverage"] - 5.0 * r["vital_leak"])   # a forbidden scalar objective
+        return False
+    except AssertionError:
+        return True
+
+
+if __name__ == "__main__":
+    sys.exit(_attack_harness())
