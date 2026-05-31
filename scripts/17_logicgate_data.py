@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -53,10 +54,15 @@ DATA_DIR = PROJECT_ROOT / "data" / "logicgate"
 CENSUS_VERSION = "2024-07-01"            # pinned to match scripts/03
 MIN_VITAL_CELLS = 200                    # below this a vital type is UNAUDITED
 K = 2                                    # per-cell POSITIVE threshold (UMI >= K)
-MAX_PER_TYPE = 1500                      # STRATIFIED cap: <=N cells per cell_type per tissue. Bounds the
-#                                          transfer (the reason an uncapped pull took >20 min) AND preserves
-#                                          rare vital types (per-cell-type co-positivity needs ~hundreds, not millions).
+MAX_PER_TYPE = 1500                      # cap for ABUNDANT non-vital cell types
+VITAL_CAP = 50000                        # cap for VITAL parenchyma: large enough to detect a co-positive
+#   subpopulation down to ~0.01% (and the Jeffreys UPPER bound honestly reports the residual uncertainty
+#   below that), but bounded so the panel stays light + cacheable (keeping all 7.2M neurons bloated it to
+#   8.4M cells). 30x+ more sensitive than the non-vital cap; reading is unchanged (cap applied after read).
 SEED = 20260530
+# Panel cache: set env LOGICGATE_CACHE to a GOOGLE DRIVE path so the ~50-min Census fetch happens ONCE and
+# SURVIVES a disconnect/laptop-sleep (free Colab wipes /content on reconnect). Re-runs then resume instantly.
+CACHE_PATH = Path(os.environ.get("LOGICGATE_CACHE", "")) if os.environ.get("LOGICGATE_CACHE") else None
 
 lg_spec = importlib.util.spec_from_file_location("lg", PROJECT_ROOT / "scripts" / "18_logicgate_search.py")
 lg = importlib.util.module_from_spec(lg_spec); lg_spec.loader.exec_module(lg)
@@ -75,11 +81,15 @@ ALL_GENES = sorted(set(ACTIVATORS + PARTNERS))
 # NOTE: if a real Census label doesn't match here, that vital type stays UNAUDITED and the gate
 # FAILS CLOSED (UNCERTAIN) — imperfect mapping is now conservative-safe, never lethally false-safe.
 VITAL_AUDIT = {"cardiac muscle": "cardiomyocyte", "cardiomyocyte": "cardiomyocyte",
-               "neuron": "neuron", "glial": "neuron",
-               "kidney epithel": "kidney_tubule", "renal": "kidney_tubule", "podocyte": "kidney_podocyte",
+               "neuron": "neuron", "glial": "neuron", "glia": "neuron",
+               "kidney epithel": "kidney_tubule", "renal": "kidney_tubule", "nephron": "kidney_tubule",
+               "podocyte": "kidney_podocyte",
                "pancreatic": "pancreatic_islet", "islet": "pancreatic_islet", "beta cell": "pancreatic_islet",
-               "adrenal": "adrenal_cortical",
-               "skeletal muscle": "skeletal_myocyte", "skeletal": "skeletal_myocyte"}
+               "type b pancreatic": "pancreatic_islet",
+               "adreno": "adrenal_cortical", "adrenal cort": "adrenal_cortical", "cortical cell of adrenal": "adrenal_cortical",
+               "chromaffin": "adrenal_cortical",
+               "skeletal muscle": "skeletal_myocyte", "skeletal": "skeletal_myocyte", "myofiber": "skeletal_myocyte",
+               "fast muscle": "skeletal_myocyte", "slow muscle": "skeletal_myocyte", "muscle cell": "skeletal_myocyte"}
 
 
 def _q(items):
@@ -101,14 +111,22 @@ def _stream_pull(census, value_filter, label, tissue_index=0):
         column_names={"obs": ["cell_type", "tissue_general"]})
     if ad.n_obs == 0:
         log(f"{label}: 0 cells matched — check disease/tissue labels"); return None
-    mapped = np.array(_map_celltype(ad.obs["cell_type"].astype(str).to_numpy()))   # MAP BEFORE CAP
-    log(f"{label}: {ad.n_obs:,} cells read; asymmetric cap (vital kept in FULL, non-vital <= {MAX_PER_TYPE}) ...")
+    raw = ad.obs["cell_type"].astype(str).to_numpy()
+    mapped = np.array(_map_celltype(raw))   # MAP BEFORE CAP
+    # DIAGNOSTIC: surface the actual Census cell-type vocabulary so mapping gaps (e.g. adrenal/muscle) are
+    # visible, not blind. Logs the most common raw labels that did NOT map to any canonical vital type.
+    import collections
+    unmapped = collections.Counter(r for r, m in zip(raw, mapped) if m == r)
+    if unmapped:
+        top = ", ".join(f"{c}({n})" for c, n in unmapped.most_common(6))
+        log(f"{label}: top unmapped raw cell types -> {top}")
+    log(f"{label}: {ad.n_obs:,} cells read; asymmetric cap (vital <= {VITAL_CAP}, non-vital <= {MAX_PER_TYPE}) ...")
     rng = np.random.default_rng([SEED, tissue_index])   # independent draws per tissue
     keep = []
     for lab in np.unique(mapped):
         idx = np.where(mapped == lab)[0]
-        cap = None if lab in lg.VITAL_NONREGEN else MAX_PER_TYPE   # keep ALL vital-parenchyma cells
-        keep.append(idx if (cap is None or len(idx) <= cap) else rng.choice(idx, cap, replace=False))
+        cap = VITAL_CAP if lab in lg.VITAL_NONREGEN else MAX_PER_TYPE   # keep vital up to a large bound
+        keep.append(idx if len(idx) <= cap else rng.choice(idx, cap, replace=False))
     keep = np.sort(np.concatenate(keep))
     ad = ad[keep]; mapped = mapped[keep]
     vital_kept = sorted(set(mapped.tolist()) & lg.VITAL_NONREGEN)
@@ -194,6 +212,20 @@ def candidate_gates():
     return gates
 
 
+def save_panel(panel, path):
+    """Cache the assembled panel so a re-run (after a disconnect/laptop-sleep) skips the ~50-min fetch."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(path, counts=panel.counts, genes=np.array(panel.genes, dtype=object),
+                        cell_type=panel.cell_type, tissue=panel.tissue, compartment=panel.compartment)
+    log(f"cached panel -> {path}  ({panel.counts.shape[0]:,} cells). Re-runs resume from here.")
+
+
+def load_panel(path):
+    d = np.load(path, allow_pickle=True)
+    log(f"RESUMING from cached panel {path} (skipping the Census fetch) ...")
+    return lg.Panel(d["counts"], list(d["genes"]), d["cell_type"], d["tissue"], d["compartment"])
+
+
 def main() -> int:
     lg.assert_no_multiply()
     if importlib.util.find_spec("cellxgene_census") is None:
@@ -203,7 +235,14 @@ def main() -> int:
         return 0
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     log("=== RUNG 4 real discovery — CELLxGENE single-cell logic-gate search ===")
-    panel = fetch_panel()
+    # RESUME from cache if present (set env LOGICGATE_CACHE to a Drive path to survive disconnects),
+    # else fetch from Census and cache. Scoring is fast, so a disconnect after fetch costs nothing on re-run.
+    if CACHE_PATH and CACHE_PATH.exists():
+        panel = load_panel(CACHE_PATH)
+    else:
+        panel = fetch_panel()
+        if CACHE_PATH:
+            save_panel(panel, CACHE_PATH)
 
     cov = vital_coverage_census(panel)
     log("VITAL-COVERAGE CENSUS (heart/brain/kidney must be AUDITED to certify vital-safe):")
