@@ -1,5 +1,5 @@
 {
-  "frozen_git_sha": "d6915c6",
+  "frozen_git_sha": "6a534aa",
   "gates": [
     {
       "gate": "ERBB2 (single)",
@@ -28,6 +28,7 @@
       "leak_is_upper_bound": true,
       "verdict": "NON-SELECTIVE (vital parenchyma co-expression \u2014 non-regenerating tissue FORBID)",
       "selective": false,
+      "safe": false,
       "class": "bad",
       "desc": "HER2 alone \u2014 on cardiomyocytes (Step-3 / Morgan 2010 death)"
     },
@@ -58,6 +59,7 @@
       "leak_is_upper_bound": true,
       "verdict": "NON-SELECTIVE (vital parenchyma co-expression \u2014 non-regenerating tissue FORBID)",
       "selective": false,
+      "safe": false,
       "class": "bad",
       "desc": "Trop2 alone \u2014 broad on normal epithelium"
     },
@@ -88,6 +90,7 @@
       "leak_is_upper_bound": true,
       "verdict": "NON-SELECTIVE (vital parenchyma co-expression \u2014 non-regenerating tissue FORBID)",
       "selective": false,
+      "safe": false,
       "class": "bad",
       "desc": "co-positivity TRUE-POSITIVE: both on the SAME cardiomyocyte"
     },
@@ -118,6 +121,7 @@
       "leak_is_upper_bound": true,
       "verdict": "SELECTIVE",
       "selective": true,
+      "safe": true,
       "class": "good",
       "desc": "Trop2 AND tumour-restricted partner"
     },
@@ -148,6 +152,7 @@
       "leak_is_upper_bound": true,
       "verdict": "SELECTIVE",
       "selective": true,
+      "safe": true,
       "class": "good",
       "desc": "HER2 AND-NOT HLA-A*02-LOH (Tmod model)"
     },
@@ -178,6 +183,7 @@
       "leak_is_upper_bound": true,
       "verdict": "SELECTIVE (regen leak tolerated)",
       "selective": true,
+      "safe": true,
       "class": "good",
       "desc": "bulk-trap pair: on DIFFERENT liver cells (single-cell safe)"
     },
@@ -208,6 +214,7 @@
       "leak_is_upper_bound": true,
       "verdict": "NON-SELECTIVE (vital parenchyma co-expression \u2014 non-regenerating tissue FORBID)",
       "selective": false,
+      "safe": false,
       "class": "control",
       "desc": "NOT on an undetectable blocker (must be UNCERTAIN)"
     }

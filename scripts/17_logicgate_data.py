@@ -60,9 +60,19 @@ VITAL_CAP = 50000                        # cap for VITAL parenchyma: large enoug
 #   below that), but bounded so the panel stays light + cacheable (keeping all 7.2M neurons bloated it to
 #   8.4M cells). 30x+ more sensitive than the non-vital cap; reading is unchanged (cap applied after read).
 SEED = 20260530
-# Panel cache: set env LOGICGATE_CACHE to a GOOGLE DRIVE path so the ~50-min Census fetch happens ONCE and
-# SURVIVES a disconnect/laptop-sleep (free Colab wipes /content on reconnect). Re-runs then resume instantly.
+# Panel cache: set env LOGICGATE_CACHE to a GOOGLE DRIVE path so the ~45-min NORMAL fetch happens ONCE and
+# SURVIVES a disconnect (free Colab wipes /content on reconnect). Cached SEPARATELY (normal vs tumour) so a
+# tumour-only change re-fetches only the ~7-min tumour pull; normal migrates from an old combined cache.
 CACHE_PATH = Path(os.environ.get("LOGICGATE_CACHE", "")) if os.environ.get("LOGICGATE_CACHE") else None
+NORMAL_CACHE = CACHE_PATH.with_suffix(".normal.npz") if CACHE_PATH else None
+TUMOUR_CACHE = CACHE_PATH.with_suffix(".tumour.npz") if CACHE_PATH else None
+TUMOUR_CAP = 50000          # cap malignant tumour cells (coverage denominator)
+COV_BAR = 0.15              # coverage bar for a TWO-antigen single-cell AND: even a perfect gate reads
+#   ~0.25-0.5 co-positive among malignant cells after scRNA dropout (each antigen detected ~half the time),
+#   so 0.30 was near the dropout ceiling. 0.15 is dropout-realistic; coverage is a SEPARATE axis from safety.
+# Cells counted as the tumour (coverage) denominator = MALIGNANT/epithelial only (NOT immune+stroma, which
+# diluted coverage in the first real run). Keyword match on Census cell_type.
+MALIGNANT_KEYWORDS = ("malignant", "neoplastic", "tumor", "tumour", "carcinoma", "epithelial")
 
 lg_spec = importlib.util.spec_from_file_location("lg", PROJECT_ROOT / "scripts" / "18_logicgate_search.py")
 lg = importlib.util.module_from_spec(lg_spec); lg_spec.loader.exec_module(lg)
@@ -134,39 +144,62 @@ def _stream_pull(census, value_filter, label, tissue_index=0):
     return _dense_over(ad, ALL_GENES), list(mapped), list(ad.obs["tissue_general"].astype(str))
 
 
-def fetch_panel():
-    """Per-cell Panel over ALL_GENES, streamed PER TISSUE (contiguous reads), fully logged."""
+def _open_census():
     import cellxgene_census
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    counts_blocks, ct, ts, comp = [], [], [], []
     log(f"opening CELLxGENE Census version {CENSUS_VERSION} ...")
-    census = cellxgene_census.open_soma(census_version=CENSUS_VERSION)
+    c = cellxgene_census.open_soma(census_version=CENSUS_VERSION)
     log("census open ✓")
-    try:
-        for ti, tissue in enumerate(NORMAL_TISSUES):   # one streaming read per tissue (bounds RAM)
-            res = _stream_pull(census,
-                               f"is_primary_data == True and disease == 'normal' and tissue_general == '{tissue}'",
-                               f"NORMAL {tissue}", tissue_index=ti)
-            if res is not None:
-                c, cts, tss = res   # cts already mapped to canonical labels inside _stream_pull
-                counts_blocks.append(c); ct += list(cts); ts += tss; comp += ["normal"] * len(cts)
+    return c
+
+
+def fetch_normal(census):
+    """NORMAL panel — one streaming read per tissue (the ~45-min part; cached separately)."""
+    cb, ct, ts = [], [], []
+    for ti, tissue in enumerate(NORMAL_TISSUES):
         res = _stream_pull(census,
-                           f"is_primary_data == True and disease in {_q(TUMOUR_DISEASES)}",
-                           "TUMOUR (all diseases)", tissue_index=99)
+                           f"is_primary_data == True and disease == 'normal' and tissue_general == '{tissue}'",
+                           f"NORMAL {tissue}", tissue_index=ti)
         if res is not None:
             c, cts, tss = res
-            counts_blocks.append(c); ct += ["tumour_epithelium"] * len(cts)
-            ts += ["tumour"] * len(cts); comp += ["tumour"] * len(cts)
-    finally:
-        census.close(); log("census closed")
-    if not counts_blocks:
-        raise RuntimeError("no cells fetched — check Census version / tissue & disease labels / network")
-    panel = lg.Panel(np.vstack(counts_blocks), ALL_GENES, np.array(ct), np.array(ts), np.array(comp))
-    n_norm = int((panel.compartment == "normal").sum()); n_tum = int((panel.compartment == "tumour").sum())
-    log(f"panel assembled: {panel.counts.shape[0]:,} cells ({n_norm:,} normal, {n_tum:,} tumour) x {len(ALL_GENES)} antigens")
-    for tis in sorted(set(panel.tissue)):
-        log(f"  tissue {tis:14s}: {int((panel.tissue == tis).sum()):,} cells")
-    return panel
+            cb.append(c); ct += list(cts); ts += tss
+    if not cb:
+        raise RuntimeError("no normal cells fetched — check Census version / tissue labels / network")
+    return lg.Panel(np.vstack(cb), ALL_GENES, np.array(ct), np.array(ts), np.array(["normal"] * len(ct)))
+
+
+def fetch_tumour(census):
+    """TUMOUR panel — MALIGNANT/epithelial cells ONLY (the coverage denominator). The first real run counted
+    coverage over the whole tumour microenvironment (immune+stroma), crushing it; this fixes that."""
+    import cellxgene_census
+    log("TUMOUR (malignant/epithelial only): streaming get_anndata ...")
+    ad = cellxgene_census.get_anndata(
+        census, organism="Homo sapiens",
+        obs_value_filter=f"is_primary_data == True and disease in {_q(TUMOUR_DISEASES)}",
+        var_value_filter=f"feature_name in {ALL_GENES}",
+        column_names={"obs": ["cell_type", "tissue_general"]})
+    raw = ad.obs["cell_type"].astype(str).to_numpy()
+    mal = np.array([any(k in c.lower() for k in MALIGNANT_KEYWORDS) for c in raw])
+    log(f"TUMOUR: {ad.n_obs:,} cells read; {int(mal.sum()):,} malignant/epithelial (coverage denominator)")
+    if mal.sum() < 100:   # annotation didn't match -> show vocabulary, fall back to all (flagged)
+        import collections
+        top = ", ".join(f"{c}({n})" for c, n in collections.Counter(raw).most_common(8))
+        log(f"TUMOUR: <100 malignant matched — top raw types: {top}; FALLING BACK to all tumour cells (coverage diluted, flagged)")
+        mal = np.ones(ad.n_obs, bool)
+    ad = ad[mal]
+    if ad.n_obs > TUMOUR_CAP:
+        idx = np.sort(np.random.default_rng([SEED, 99]).choice(ad.n_obs, TUMOUR_CAP, replace=False))
+        ad = ad[idx]
+    log(f"TUMOUR: kept {ad.n_obs:,} malignant cells")
+    n = ad.n_obs
+    return lg.Panel(_dense_over(ad, ALL_GENES), ALL_GENES,
+                    np.array(["tumour_malignant"] * n), np.array(["tumour"] * n), np.array(["tumour"] * n))
+
+
+def _concat_panels(a, b):
+    return lg.Panel(np.vstack([a.counts, b.counts]), ALL_GENES,
+                    np.concatenate([a.cell_type, b.cell_type]),
+                    np.concatenate([a.tissue, b.tissue]),
+                    np.concatenate([a.compartment, b.compartment]))
 
 
 def _dense_over(ad, genes):
@@ -235,14 +268,35 @@ def main() -> int:
         return 0
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     log("=== RUNG 4 real discovery — CELLxGENE single-cell logic-gate search ===")
-    # RESUME from cache if present (set env LOGICGATE_CACHE to a Drive path to survive disconnects),
-    # else fetch from Census and cache. Scoring is fast, so a disconnect after fetch costs nothing on re-run.
-    if CACHE_PATH and CACHE_PATH.exists():
-        panel = load_panel(CACHE_PATH)
+    # NORMAL: from its own cache, else MIGRATE the normal cells out of an old combined cache (no 45-min
+    # re-fetch), else fetch. TUMOUR (malignant): from cache, else fetch (~7 min). Split so a tumour-only
+    # change never re-fetches the expensive normal atlases.
+    census = None
+    if NORMAL_CACHE and NORMAL_CACHE.exists():
+        normal = load_panel(NORMAL_CACHE)
+    elif CACHE_PATH and CACHE_PATH.exists():
+        log("migrating NORMAL cells from the existing combined cache (skips the ~45-min normal re-fetch) ...")
+        comb = load_panel(CACHE_PATH); m = comb.compartment == "normal"
+        normal = lg.Panel(comb.counts[m], comb.genes, comb.cell_type[m], comb.tissue[m], comb.compartment[m])
+        if NORMAL_CACHE:
+            save_panel(normal, NORMAL_CACHE)
     else:
-        panel = fetch_panel()
-        if CACHE_PATH:
-            save_panel(panel, CACHE_PATH)
+        census = _open_census(); normal = fetch_normal(census)
+        if NORMAL_CACHE:
+            save_panel(normal, NORMAL_CACHE)
+    if TUMOUR_CACHE and TUMOUR_CACHE.exists():
+        tumour = load_panel(TUMOUR_CACHE)
+    else:
+        census = census or _open_census(); tumour = fetch_tumour(census)
+        if TUMOUR_CACHE:
+            save_panel(tumour, TUMOUR_CACHE)
+    if census is not None:
+        census.close(); log("census closed")
+    panel = _concat_panels(normal, tumour)
+    n_norm = int((panel.compartment == "normal").sum()); n_tum = int((panel.compartment == "tumour").sum())
+    log(f"panel assembled: {panel.counts.shape[0]:,} cells ({n_norm:,} normal, {n_tum:,} tumour-malignant) x {len(ALL_GENES)} antigens")
+    for tis in sorted(set(panel.tissue)):
+        log(f"  tissue {tis:14s}: {int((panel.tissue == tis).sum()):,} cells")
 
     cov = vital_coverage_census(panel)
     log("VITAL-COVERAGE CENSUS (heart/brain/kidney must be AUDITED to certify vital-safe):")
@@ -264,12 +318,13 @@ def main() -> int:
     # FAIL-CLOSED: require every non-regen vital type to be adequately captured; a gate where heart/brain/
     # kidney/pancreas/adrenal/muscle was NOT captured is UNCERTAIN, never silently SELECTIVE. Leaks are
     # Jeffreys UPPER bounds, vital cells kept in full (asymmetric cap) — so a false zero cannot pass.
-    rows = lg.score_gates_batch(panel, specs, k=K, required_vital=lg.VITAL_NONREGEN, progress=_prog)
+    rows = lg.score_gates_batch(panel, specs, k=K, cov_bar=COV_BAR, required_vital=lg.VITAL_NONREGEN, progress=_prog)
     for r in rows:
         r["protein_copositivity_status"] = "NO_SINGLECELL_PROTEIN_DATA"  # transcript-only until CITE-seq
         r["transcript_only"] = True
         r["multiple_testing_control"] = "held-out-donor replication DEFERRED (next pass) — treat selective as DISCOVERY shortlist"
-    rows.sort(key=lambda r: (not r["selective"], r["worst_normal_leak"], -r["tumour_coverage"]))
+    # rank: selective first, then SAFE-but-low-coverage (the interesting ones), then by leak
+    rows.sort(key=lambda r: (not r["selective"], not r.get("safe"), r["worst_normal_leak"], -r["tumour_coverage"]))
 
     import csv
     with open(DATA_DIR / "gate_selectivity.csv", "w", newline="") as f:
@@ -281,16 +336,22 @@ def main() -> int:
 
     log(f"wrote data/logicgate/gate_selectivity.csv ({len(rows)} gates) + vital_coverage_census.csv")
     selective = [r for r in rows if r["selective"]]
-    log(f"scored {len(rows)} AND gates; {len(selective)} predicted SELECTIVE (transcript-only).")
-    for r in selective[:10]:
-        log(f"  SELECTIVE: {r['gate']:26s} cov={r['tumour_coverage']:.2f} leak={r['worst_normal_leak']:.2f}")
-    if not selective:
-        log("NO clean gate found in this pool — a FIRST-CLASS, valid outcome (no forced winner).")
+    safe = [r for r in rows if r.get("safe")]
+    safe_lowcov = [r for r in safe if not r["selective"]]
+    log(f"scored {len(rows)} AND gates -> {len(safe)} SAFE on all audited vital/normal axes; "
+        f"of those {len(selective)} also clear coverage>={COV_BAR} (SELECTIVE), {len(safe_lowcov)} are SAFE-but-low-coverage.")
+    for r in (selective or safe_lowcov)[:12]:
+        log(f"  {r['verdict'][:24]:24s} {r['gate']:24s} cov={r['tumour_coverage']:.2f} leak={r['worst_normal_leak']:.3f}@{r['worst_group']}")
+    if not safe:
+        log("NO gate is even SAFE in this pool (all leak into normal tissue) — a genuine, FIRST-CLASS negative.")
+    elif not selective:
+        log(f"{len(safe)} SAFE gates exist but none clear coverage — coverage axis, not safety, is the limiter (transcript dropout / pool).")
     (OUT_DIR / "rung4_results.json").write_text(json.dumps({
         "census_version": CENSUS_VERSION, "n_cells": int(panel.counts.shape[0]),
         "vital_coverage": cov, "unaudited_vital_types": unaudited,
-        "n_gates": len(rows), "n_selective": len(selective),
-        "top_gates": rows[:15], "no_clean_gate": len(selective) == 0,
+        "n_gates": len(rows), "n_selective": len(selective), "n_safe": len(safe),
+        "n_safe_low_coverage": len(safe_lowcov), "cov_bar": COV_BAR,
+        "top_gates": rows[:15], "no_clean_gate": len(selective) == 0, "no_safe_gate": len(safe) == 0,
         "CEILING": "transcript-level hypothesis; mRNA!=surface protein (CITE-seq needed to confirm "
                    "co-positivity); HLA-LOH is an NGS genotype gate not modelled here; recognition is a "
                    "separate axis never multiplied with RUNG-1/2/3; the durability cost is in scripts/21.",

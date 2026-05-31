@@ -102,9 +102,11 @@ def _decide(tumour_coverage, vital_leak, strict_leak, regen_leak, not_ok, logic,
     they CANNOT diverge. Strict near-zero bar on non-regenerating tissue (FORBID); a finite ceiling on
     regenerating tissue. FAIL-CLOSED: if a required vital type was never adequately captured, the gate is
     NOT certifiable vital-safe — 'we never looked at the heart' must NOT read as 'the heart is clean'.
-    Leak inputs are UPPER confidence bounds, so a false zero from dropout/undersampling cannot pass."""
-    if tumour_coverage < cov_bar:
-        return "NON-SELECTIVE (insufficient tumour coverage)"
+    Leak inputs are UPPER confidence bounds, so a false zero from dropout/undersampling cannot pass.
+    SAFETY and COVERAGE are SEPARATE axes: safety is decided FIRST and independently, so a genuinely safe
+    gate is reported as SAFE even when low tumour coverage (e.g. from scRNA dropout on a 2-antigen AND, or a
+    diluted tumour denominator) would otherwise mask it. Coverage only decides SELECTIVE vs SAFE-LOW-COVERAGE."""
+    # --- SAFETY axis (independent of coverage) ---
     if vital_leak > leak_bar:
         return "NON-SELECTIVE (vital parenchyma co-expression — non-regenerating tissue FORBID)"
     if strict_leak > leak_bar:
@@ -115,6 +117,9 @@ def _decide(tumour_coverage, vital_leak, strict_leak, regen_leak, not_ok, logic,
         return "UNCERTAIN (NOT-arm dropout-unfalsifiable: blocker not robustly detectable)"
     if unaudited_vital:
         return f"UNCERTAIN (cannot certify vital-safe: {sorted(unaudited_vital)} not adequately captured — FAIL-CLOSED)"
+    # --- safe on all audited axes; COVERAGE axis decides usefulness (never masks safety) ---
+    if tumour_coverage < cov_bar:
+        return f"SAFE-LOW-COVERAGE (safe, but tumour coverage {tumour_coverage:.2f} < {cov_bar})"
     return "SELECTIVE" + (" (regen leak tolerated)" if regen_leak > leak_bar else "")
 
 
@@ -180,6 +185,7 @@ def score_gate(panel: Panel, A, B=None, logic="SINGLE", k=2, leak_bar=0.02, rege
         "audited_vital": sorted(audited_vital), "unaudited_vital": sorted(unaudited_vital),
         "leak_is_upper_bound": True,
         "verdict": verdict, "selective": verdict.startswith("SELECTIVE"),
+        "safe": verdict.startswith(("SELECTIVE", "SAFE-LOW-COVERAGE")),
     }
 
 
@@ -274,7 +280,8 @@ def score_gates_batch(panel: Panel, specs, k=2, leak_bar=0.02, regen_bar=0.15, c
              "not_arm_falsifiable": not_ok, "not_arm_detect": not_detect,
              "audited_vital": sorted(audited_vital), "unaudited_vital": sorted(unaudited_vital),
              "leak_is_upper_bound": True,
-             "verdict": verdict, "selective": verdict.startswith("SELECTIVE")}
+             "verdict": verdict, "selective": verdict.startswith("SELECTIVE"),
+             "safe": verdict.startswith(("SELECTIVE", "SAFE-LOW-COVERAGE"))}
         out.append(r)
         if progress:
             progress(i + 1, len(specs), r)
