@@ -1,0 +1,133 @@
+# =============================================================================
+# RUNG 5 — PRE-REGISTRATION  (freeze this BEFORE the real surfaceome run; record git SHA below)
+#
+#   "A worst-case-safety RE-AUDIT of surface logic-gate recognition, and the per-patient
+#    ADDRESSABILITY GAP it leaves — NOT a discovery of a new tumour-exclusive antigen."
+#
+# Honest contribution (after the 2026-06-01 highest-value-move review): we are NOT first at
+# combinatorial gate search (Dannenfelser 2020, Kwon 2023, MadHitter, LogiCAR 2025) and NOT first to
+# build a multi-modal target atlas (ImmunoVerse 2025, TCGA_DEPMAP 2024). Our ONE defensible delta:
+# every existing atlas certifies safety on POOLED / AVERAGED normal tissue ("max of median TPM",
+# "average read count"); we certify it WORST-DONOR / WORST-CELL / WORST-HLA-ALLELE, fail-closed on
+# vital organs, dropout-guarded, with held-out-donor FDR + winner's-curse shrinkage, ancestry-
+# stratified — and we report the fraction of patients for whom NO gate of size <=k clears a worst-case
+# vital-safe bar at meaningful coverage. The default, fully-acceptable output is that gap (a negative).
+# =============================================================================
+
+title: RUNG5 worst-case-safety surface logic-gate re-audit + per-patient addressability gap
+frozen_git_sha: TO_BE_STAMPED_AT_COMMIT      # scripts/17 stamps the actual SHA into the results JSON
+seeds: {search: 20260530, validation: 20260601}
+engine: scripts/18_logicgate_search.py       # primitives; scripts/22 optimizer; scripts/23 FDR/shrinkage
+
+# ----- DATA (frozen before the run) -----
+data:
+  normal_atlas:
+    source: CELLxGENE Census (cellxgene_census, streaming get_anndata(obs_value_filter=...))
+    tissues: [heart, brain, kidney, liver, lung, bone_marrow, pancreas, adrenal_gland, skeletal_muscle]
+    donor_key: "dataset_id::donor_id"        # per-DONOR resolution is mandatory (no donor pooling)
+    asymmetric_cap: {VITAL_CAP: 50000, MAX_PER_TYPE: 1500}   # keep vital cells; cap nuisance abundance
+  tumour_compartment:
+    denominator: malignant cells ONLY (MALIGNANT_KEYWORDS); NOT whole-tumour microenvironment
+    cancer_types_frozen: >
+      epithelial carcinoma malignant cells from the fetched Census tumour datasets, stratified and
+      RECORDED by dataset_id + cancer_type. The type list is whatever the pre-listed datasets provide;
+      NO post-hoc addition/removal of a cancer type after seeing selectivity results (anti-cherry-pick).
+  surfaceome:
+    set: SURFY high-confidence surface genes (~2886)   # data/logicgate/surfaceome_genes.txt
+    declaration: TRANSCRIPT level. mRNA != surface protein; co-positivity needs CITE-seq (wet-lab).
+
+# ----- FROZEN BARS (identical to scripts/22; any change re-stamps the prereg) -----
+bars:
+  K: 2                       # UMI count >= K counts as antigen-positive in a cell
+  LEAK_BAR: 0.02             # non-regen normal + vital leak ceiling (Jeffreys UPPER bound)
+  REGEN_BAR: 0.15            # regenerating-tissue leak ceiling (asymmetric: recoverable tissue)
+  COV_BAR: 0.15              # minimum malignant coverage to call SELECTIVE (else SAFE-LOW-COVERAGE)
+  AND_DETECT_FLOOR: 0.05     # an AND arm below this max-detection cannot certify vital-safe (dropout guard)
+  MIN_DONORS: 3              # >= this many POWERED held-out donors per vital type, else UNCERTAIN
+  MIN_VITAL_CELLS_PER_DONOR: 185   # per-donor power floor (Jeffreys UB at 0 co-pos <= LEAK_BAR)
+  MAX_LITERALS: 3            # gate size cap (k <= 3)
+  BEAM_WIDTH: 8
+
+# ----- SAFETY MODEL (fail-closed; SAFETY decided FIRST, independent of coverage) -----
+safety:
+  vital_nonregen: [cardiomyocyte, neuron, kidney_tubule, kidney_podocyte, pancreatic_islet,
+                   adrenal_cortical, skeletal_myocyte]
+  vital_leak_estimator: MAX over (vital cell type, donor) of the Jeffreys 95% UPPER bound  # NEVER pooled
+  unaudited_vital_is: UNCERTAIN              # "we never looked at the heart" != "the heart is clean"
+  dropout_deflation_guard: any positive arm with max-detection < AND_DETECT_FLOOR -> UNCERTAIN
+  verdict_order: [vital_leak, strict_leak, regen_leak, underdetected_dropout, unaudited_vital, coverage]
+
+# ----- DONOR SPLITS (a validation set used for early-stopping is NOT a test set) -----
+donor_partition:
+  scheme: three-way pairwise-disjoint by DONOR (never by cell)
+  DISCOVERY: builds/seeds the search
+  SELECT:    drives early-stop / literal pruning ("pull back on negatives" reads HELD-OUT here)
+  REPORT:    never touched until final certification
+  final_certification: scored on ALL donors (max-over-donor is conservative — more donors only reveal leak)
+
+# ----- HELD-OUT VALIDATION (scripts/23; VALIDATED ON SYNTHETIC GROUND TRUTH FIRST) -----
+heldout_validation:
+  family_max_fdr:
+    alpha: 0.05
+    decoy: permute tumour-vs-(non-vital-normal) labels; HOLD the per-cell vital audit fixed
+    decoy_family_size: == true family size N (asserted)
+    discovery_rule: best true safe gate coverage > (1-alpha) quantile of the DECOY FAMILY-MAX coverage
+    look_elsewhere: family-max coverage-null p95 must exceed a typical single-gate p95 (correction needed)
+  donor_permutation_null:
+    test: shuffle donor labels within normal vital cells; recompute max-over-donor vital leak
+    flag: a gate whose low leak is special to the REAL donor partition (lethal-patient concentration)
+  winners_curse_shrinkage:
+    method: cluster-bootstrap over DONORS; re-select winner in-bag; measure on OUT-OF-BAG donors
+    rule: COVERAGE corrected DOWN, LEAK corrected UP; the value we TRUST is the corrected (pessimistic) one
+    honest_note: >
+      the vital-leak estimator is already a max-over-donor Jeffreys UPPER bound, intrinsically
+      winner's-curse-resistant; the curse bites the MAXIMISED coverage and the pooled non-vital leak,
+      which is where the bootstrap correction does its work.
+
+# ----- ANCESTRY (an unstratified coverage number is an ancestry reward-hack) -----
+ancestry:
+  requirement: stratify EVERY population-coverage number (and any future HLA-allele / LOH fraction) by
+    ancestry using the Allele Frequency Net Database; report non-European EXPLICITLY, never a single
+    pooled coverage figure.
+
+# ----- HARD RULES -----
+hard_rules:
+  - NO-MULTIPLY: ranking is a LEXICOGRAPHIC TUPLE (not selective, not safe, vital_leak, strict_leak,
+    -coverage). Safety and coverage are NEVER combined into a scalar; coverage NEVER buys back a vital
+    hit (fitness = -inf if unsafe). Asserted by scripts/22 assert_no_multiply().
+  - Recognition-selectivity is a SEPARATE axis; never multiplied with RUNG-1 kinetics, RUNG-2/3, or
+    escape-durability. Separate ceilings, no measured map between them.
+  - The pMHC / intracellular and DepMap genetic-NOT-gate arms (if ever added) are a DIFFERENT MODALITY
+    and a DIFFERENT ENDPOINT (presentation / viability-dropout, NOT surface co-positivity / apoptosis);
+    their coverage does NOT add to the surface frontier and they may emit a coverage axis ONLY, with
+    safety = UNCERTAIN (cross-reactivity / bystander invisible in-silico). Stated in every figure caption.
+  - HLA-LOH double-bind: LOH is scored as BUYING safety AND is itself an immune-escape lesion; a tumour
+    that is easy to NOT-gate may already be evading immunity. Category caveat, not a free win.
+  - The phrases "cure", "self-apoptosis as spontaneous self-recognition", and "tumour-exclusive antigen
+    found" do NOT appear as credited verdicts. An exogenous circuit is delivered; delivery to every
+    tumour cell is an unsolved wet-lab constraint.
+
+# ----- decisive gates for emitting a SELECTIVE call (else the default negative) -----
+selective_call_emitted_iff:
+  - RUN-TRUST (scripts/20) and the scripts/23 held-out-validation harness both PASS on the frozen code
+  - the gate clears the worst-DONOR vital bar, the strict/regen bars, and the dropout floor
+  - the gate's coverage SURVIVES family-max FDR AND winner's-curse shrinkage on held-out donors
+  - the donor-permutation null does NOT show the safety rests on a single lucky donor partition
+default_output: addressability_gap_report
+
+addressability_gap_report: >
+  The expected, fully-acceptable result: across the SURFY surfaceome and all AND / AND-NOT gates up to
+  k<=3, no gate clears the worst-case vital-safe bar at coverage >= COV_BAR for a large fraction of
+  patients; clean gates, if any, are narrow (loss / NOT-gate style) and cover a small, ancestry-skewed
+  subpopulation. We report that fraction-with-no-safe-window per cancer type as a STRUCTURAL
+  impossibility surface — the honest, quantified reason the field resorts to HLA-LOH NOT-gates — not a
+  missing-molecule problem. This is a first-class negative; it is the deliverable.
+
+# ----- verbatim ceiling (copied into the results JSON + every figure caption) -----
+verbatim_ceiling: >
+  CEILING: this is a TRANSCRIPT-level, single-cell-atlas re-audit. mRNA != surface protein (co-positivity
+  needs CITE-seq); co-localisation != a working circuit (agonism / TCR cross-reactivity / bystander
+  competence are wet-lab). We are NOT first at combinatorial gate search; the contribution is the
+  worst-case-safety honesty harness (worst-donor, dropout-fail-closed, fail-closed-vital, no-multiply,
+  held-out-donor FDR + winner's-curse shrinkage) and the per-patient addressability gap, ancestry-
+  stratified. A surviving gate is the best NEXT wet-lab experiment, never a cure or a safety proof.
