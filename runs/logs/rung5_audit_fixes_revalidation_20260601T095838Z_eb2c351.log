@@ -1,0 +1,182 @@
+# cancer-recon-apoptosis — run log
+# step          : rung5_audit_fixes_revalidation
+# utc           : 20260601T095838Z
+# commit_short  : eb2c351  (+uncommitted changes)
+# commit_full   : eb2c351f9e52294e95b5da7037de3b507886a962
+# branch        : main
+# python        : 3.12.6
+# platform      : macOS-26.3-arm64-arm-64bit
+#================================================================
+
+$ scripts/20 RUN-TRUST
+======================================================================================
+RUNG 4 — logic-gate selectivity engine, RUN-TRUST calibration on biological ground truth
+======================================================================================
+panel: 2560 cells x 10 antigens, 8 cell-types (heart/brain/kidney vital; liver/marrow/epithelium regenerating; tumour)
+--------------------------------------------------------------------------------------
+gate                           cov  vital strict  regen  pbulk  verdict
+ERBB2 (single)                0.97   0.99   0.99   0.69   0.00  NON-SELECTIVE (vital parenchyma co-expression — non-regenerating tissue FORBID)
+TACSTD2 (single)              0.98   0.03   0.03   1.00   0.00  NON-SELECTIVE (vital parenchyma co-expression — non-regenerating tissue FORBID)
+SCV_A AND SCV_B               0.98   0.98   0.98   0.01   0.97  NON-SELECTIVE (vital parenchyma co-expression — non-regenerating tissue FORBID)
+TACSTD2 AND CLEANPART         0.96   0.01   0.01   0.01   0.01  SELECTIVE
+ERBB2 AND_NOT HLA_A02         0.97   0.01   0.01   0.01   0.00  SELECTIVE
+DCELL_A AND DCELL_B           0.97   0.01   0.01   0.02   0.49  SELECTIVE (regen leak tolerated)
+ERBB2 AND_NOT BLOCK_UNDETECT  0.97   0.98   0.98   0.68   0.97  NON-SELECTIVE (vital parenchyma co-expression — non-regenerating tissue FORBID)
+[batch-scorer] fast vectorised scorer identical to per-gate scorer: True
+[fail-closed] clean gate with HEART REMOVED -> UNCERTAIN (cannot certify vital-safe: ['cardiomyocyte'] not adequately  (fail_closed_ok=True)
+--------------------------------------------------------------------------------------
+RUN-TRUST controls:
+  [OK] HER2-alone NON-SELECTIVE on cardiomyocyte (re-derives Step-3)
+  [OK] every known-GOOD gate scores SELECTIVE
+  [OK] every known-BAD gate scores NON-SELECTIVE
+  [OK] co-positivity TRUE-POSITIVE (same-cell pair) NON-SELECTIVE on vital
+  [OK] BULK TRAP exposed (pseudobulk would condemn, single-cell clears)
+  [OK] NOT-arm dropout-falsifiability computed (Tmod blocker falsifiable; undetectable blocker flagged)
+  [OK] FAIL-CLOSED on missing vital tissue (heart removed -> clean gate becomes UNCERTAIN, not SAFE)
+calibration: sensitivity(good->selective)=1.00  specificity(bad->non-selective)=1.00  RUN-TRUST PASS
+--------------------------------------------------------------------------------------
+[ESCAPE-DURABILITY — separate axis] AND-gate coverage half-life 18 divisions vs single 35 (delta 17). AND-gating BUYS selectivity but PAYS durability; for a contact death-wave an antigen-negative escaper is UNREACHABLE -> strictly worse than a CAR. Reported beside selectivity, never multiplied.
+--------------------------------------------------------------------------------------
+[BULK TRAP] DCELL_A AND DCELL_B: a pseudobulk method sees 49% 'co-expression' in liver and would CONDEMN the gate; single-cell shows 2% (A and B are on DIFFERENT liver cells). Gap=0.47 -> bulk data would discard a safe gate (or hide a lethal one).
+--------------------------------------------------------------------------------------
+METHODOLOGY-INTEGRITY CHECKS:
+  [OK] RUN-TRUST passed (engine implements the safety logic correctly)
+  [OK] selectivity computed at single-cell resolution (per-cell co-positivity)
+  [OK] tiered safety rule encoded (heart/brain/kidney strict; regen ceiling)
+  [OK] bulk trap exposed (pseudobulk vs single-cell gap reported)
+  [OK] NOT-arm dropout-falsifiability enforced
+  [OK] escape-durability reported as a SEPARATE axis (not multiplied)
+  [OK] no-multiply HARD RULE asserted
+  [OK] fast batch scorer IDENTICAL to per-gate scorer (used on real data)
+  [OK] method validated, NOT a discovered gate (real run = Colab atlases)
+results -> runs/rung4_logicgate/calibration_results.json
+figure -> runs/rung4_logicgate/rung4_calibration.png
+======================================================================================
+CEILING: this VALIDATES THE ENGINE on known-answer controls. The real antigen-pair discovery runs
+on CELLxGENE single-cell atlases via scripts/17 (Colab). mRNA!=protein; co-localisation!=a working
+circuit (wet-lab). Recognition is a separate axis — never multiplied with RUNG-1/2/3.
+[exit 0]
+
+$ scripts/22 attack harness (8 guards)
+====================================================================================
+RUNG 5 — gate-optimizer GUARD validation on synthetic planted attacks
+====================================================================================
+panel: 7800 cells, 14 donors, vital=[np.str_('cardiomyocyte')]
+------------------------------------------------------------------------------------
+[planted CLEAN]  ACT AND CLEAN        cov=0.97 vital=0.009 -> SELECTIVE
+[ATTACK-3 pool]  ACT AND ATK3         pooled-cardiomyocyte UB=0.009 (a naive scorer calls this SAFE)
+[ATTACK-3 fix]   ACT AND ATK3         max-over-donor vital=0.090@cardiomyocyte@ds::donor0 -> NON-SELECTIVE (vital leak 0.090 @ cardiomyocyte@ds::donor0 — FORBID)
+[ATTACK-1 drop]  ACT AND ATK1_undetect cov=0.00 vital=0.018 -> UNCERTAIN (AND-arm near-undetectable, dropout-deflated: ['ATK1_undetect'])
+[ATTACK-4 NOT ]  CLEAN AND-NOT ATK1_undetect (undetectable blocker) -> UNCERTAIN (AND-NOT blocker not detectable in normal tissue, unfalsifiable: ['ATK1_undetect'])
+------------------------------------------------------------------------------------
+optimizer shortlist (11 gates; search on DISCOVERY/SELECT donors, certified on ALL donors):
+  ACT AND CLEAN                cov=0.97 vital=0.009 -> SELECTIVE
+  ACT AND ATK3 AND CLEAN       cov=0.95 vital=0.009 -> SELECTIVE
+  ACT AND DECOY AND CLEAN      cov=0.60 vital=0.009 -> SELECTIVE
+  ACT AND DECOY AND ATK3       cov=0.59 vital=0.009 -> SELECTIVE
+  ACT AND ATK1_undetect AND CLEAN cov=0.00 vital=0.009 -> UNCERTAIN (AND-arm near-undetectable, dropout-deflated: ['ATK1_undetect'])
+  ACT AND ATK1_undetect AND ATK3 cov=0.00 vital=0.009 -> UNCERTAIN (AND-arm near-undetectable, dropout-deflated: ['ATK1_undetect'])
+====================================================================================
+GUARD CHECKS:
+  [OK] planted CLEAN gate scores SELECTIVE
+  [OK] ATTACK-3 (donor-pooling): naive pooled UB looks SAFE (<bar)
+  [OK] ATTACK-3 FIX: max-over-donor catches the lethal donor -> NON-SELECTIVE
+  [OK] ATTACK-1 (dropout-deflation): near-undetectable arm -> UNCERTAIN (not SELECTIVE)
+  [OK] ATTACK-4 (AND-NOT falsifiability): undetectable blocker -> UNCERTAIN (not SELECTIVE)
+  [OK] fail-closed: unsafe gate fitness == -inf
+  [OK] objective is lexicographic (no-multiply): scalarized rank raises
+  [OK] optimizer top gate is the planted CLEAN gate (not an attack)
+====================================================================================
+CEILING: transcript-level hypothesis; mRNA!=protein (CITE-seq confirms co-positivity); a top gate
+is the best NEXT wet-lab experiment, not a cure or a safety proof. Real Census run = Colab (next).
+[exit 0]
+
+$ scripts/23 FDR+shrinkage (9 checks)
+============================================================================================
+RUNG 5 — HELD-OUT VALIDATION (family-max FDR + donor-permutation null + winner's-curse shrinkage)
+       validated on synthetic ground truth BEFORE any real surfaceome run
+============================================================================================
+
+[SIGNAL]  11280 cells, 14 donors, family=36 AND-pairs (planted clean gate = POS1 AND POS2)
+  family-max threshold cov=0.22 (p95 of decoy family-max); best true safe cov=0.96
+  discoveries (beat family-max): ['POS1 AND POS2', 'POS1 AND BROAD', 'POS2 AND BROAD']
+
+[NULL]    11280 cells, 14 donors, family=36 AND-pairs (NO truly exclusive gate exists)
+  family-max threshold cov=0.00; best true safe cov=0.00
+  discoveries (beat family-max): NONE
+  look-elsewhere: family-max cov p95=0.48 vs typical per-gate p95=0.01  -> inflation +0.46 (CONFIRMED; family-max correction is needed)
+
+[GUARD B] clean gate : obs vital_leak=0.0060, null mean=0.0060, p=1.00 -> donor-dependent=False
+[GUARD B] ATK3 gate  : obs vital_leak=0.0896, null mean=0.0333, p=0.00 -> donor-dependent=True (lethal donor concentration)
+
+[GUARD C] winner's-curse panel: 7600 cells, 16 donors, family=78 AND-pairs (each partner covers ONE tumour donor ~1/6~0.16, clean on normal)
+  naive winner   : DRV AND P2               cov=0.16 vital=0.006 selective=True (coverage lives in ONE donor)
+  optimism (in-bag - OOB): cov=+0.290  (that donor falls out-of-bag -> held-out coverage collapses)
+  corrected cov  : 0.00  (COV_BAR=0.15) -> still_selective=False
+
+============================================================================================
+VALIDATION CHECKS:
+  [OK] SIGNAL: planted clean gate (POS1 AND POS2) SURVIVES family-max FDR
+  [OK] SIGNAL: decoy null is NON-DEGENERATE (family-max threshold > 0.05, not the old vacuous 0)
+  [OK] SIGNAL: family-max FDR REJECTS sub-threshold safe gates (discoveries < safe; noise pairs excluded)
+  [OK] NULL: NO gate survives family-max (no false discovery)
+  [OK] family-max NECESSARY: family-max cov-null p95 > per-gate p95 (look-elsewhere)
+  [OK] decoy family size == true family size N
+  [OK] GUARD B: clean gate NOT flagged AND donor-concentrated lethal gate IS flagged
+  [OK] GUARD C: coverage optimism (in-bag - OOB) > 0 (winner's curse exists)
+  [OK] GUARD C: shrinkage DEMOTES an over-claimed winner (selective -> not)
+============================================================================================
+results -> runs/rung5_logicgate/heldout_validation.json
+figure -> runs/rung5_logicgate/rung5_heldout_validation.png
+============================================================================================
+CEILING: this is the look-elsewhere / winner's-curse rigor LAYER, proven on known answers. It does
+NOT find a gate; it makes the eventual real-data verdict honest. mRNA!=protein; recognition is a
+separate axis, never multiplied with RUNG-1/2/3.
+[exit 0]
+
+$ scripts/25 selftest (6 checks)
+[+    0.0s] [rung5] === RUNG 5 data-layer SELF-TEST (synthetic donor panel; validates the full downstream) ===
+[+    0.0s] [rung5] [selftest] panel: 8,040 cells (6,240 normal / 1,800 malignant), 14 donors, 7 genes
+[+    0.0s] [rung5] family: 7 genes >= COV_FLOOR 0.05; activators=top 7 by coverage
+[+    0.0s] [rung5] family size N = 21 gates (AND + AND-NOT). FDR/shrinkage operate on exactly this set.
+[+    0.0s] [rung5] [selftest] donor split: DISCOVERY 4 / SELECT 5 / REPORT 5
+[+    0.0s] [rung5] [selftest] scoring family of 21 gates on ALL donors (worst-over-donor; this is the heavy step) ...
+[+    0.6s] [rung5]   [1/21] BROAD AND CLEANA                   cov=0.32 vital=0.007 -> SEL
+[+    0.6s] [rung5]   [2/21] BROAD AND CLEANB                   cov=0.32 vital=0.007 -> SEL
+[+    0.6s] [rung5]   [3/21] BROAD AND N0                       cov=0.07 vital=0.121 -> NON-SELECTIVE 
+[+    0.6s] [rung5]   [4/21] BROAD AND N1                       cov=0.07 vital=0.134 -> NON-SELECTIVE 
+[+    0.6s] [rung5]   [5/21] BROAD AND N2                       cov=0.07 vital=0.138 -> NON-SELECTIVE 
+[+    0.6s] [rung5]   [6/21] BROAD AND N3                       cov=0.08 vital=0.103 -> NON-SELECTIVE 
+[+    0.6s] [rung5]   [7/21] CLEANA AND CLEANB                  cov=0.48 vital=0.007 -> SEL
+[+    0.6s] [rung5]   [8/21] CLEANB AND N0                      cov=0.04 vital=0.007 -> SAFE-LOW-COVER
+[+    0.6s] [rung5]   [9/21] CLEANB AND N1                      cov=0.04 vital=0.007 -> SAFE-LOW-COVER
+[+    0.6s] [rung5]   [10/21] CLEANB AND N2                      cov=0.04 vital=0.007 -> SAFE-LOW-COVER
+[+    0.6s] [rung5]   [11/21] CLEANB AND N3                      cov=0.05 vital=0.007 -> SAFE-LOW-COVER
+[+    0.6s] [rung5]   [12/21] CLEANA AND N0                      cov=0.04 vital=0.007 -> SAFE-LOW-COVER
+[+    0.7s] [rung5]   [13/21] CLEANA AND N1                      cov=0.04 vital=0.007 -> SAFE-LOW-COVER
+[+    0.7s] [rung5]   [14/21] CLEANA AND N2                      cov=0.04 vital=0.007 -> SAFE-LOW-COVER
+[+    0.7s] [rung5]   [15/21] CLEANA AND N3                      cov=0.05 vital=0.007 -> SAFE-LOW-COVER
+[+    0.7s] [rung5]   [16/21] N0 AND N3                          cov=0.01 vital=0.037 -> NON-SELECTIVE 
+[+    0.7s] [rung5]   [17/21] N1 AND N3                          cov=0.01 vital=0.037 -> NON-SELECTIVE 
+[+    0.7s] [rung5]   [18/21] N2 AND N3                          cov=0.01 vital=0.021 -> NON-SELECTIVE 
+[+    0.7s] [rung5]   [19/21] N0 AND N2                          cov=0.00 vital=0.032 -> NON-SELECTIVE 
+[+    0.7s] [rung5]   [20/21] N1 AND N2                          cov=0.01 vital=0.037 -> NON-SELECTIVE 
+[+    0.7s] [rung5]   [21/21] N0 AND N1                          cov=0.01 vital=0.032 -> NON-SELECTIVE 
+[+    0.7s] [rung5] [selftest] 11 SAFE on all audited axes; 3 also clear coverage (pre-FDR).
+[+    0.7s] [rung5] [selftest] family-max decoy FDR (N_PERM=100) + winner's-curse shrinkage (N_BOOT=100) ...
+[+   12.0s] [rung5] [selftest] family-max threshold cov=0.154; 3 gates pass FDR + shrinkage (pre-GUARD-B).
+[+   12.2s] [rung5] [selftest] 3 gates SURVIVE FDR + shrinkage + GUARD B (donor-permutation null).
+[+   12.2s] [rung5] [selftest] ADDRESSABILITY GAP: 50% of 6 patients have NO safe gate at coverage >= 0.15.  by type: {'breast carcinoma': 1.0, 'lung adenocarcinoma': 0.0}
+[+   12.7s] [rung5] figure -> runs/rung5_logicgate/rung5_selftest.png
+[+   12.7s] [rung5] results -> runs/rung5_logicgate/rung5_selftest.json
+============================================================================================
+SELF-TEST CHECKS:
+  [OK] downstream ran end-to-end (family -> score -> FDR -> shrinkage -> gap)
+  [OK] a safe gate exists (planted CLEANA AND CLEANB)
+  [OK] at least one gate SURVIVES FDR + shrinkage
+  [OK] the planted clean gate is among survivors
+  [OK] addressability gap is computed per cancer type
+  [OK] BRCA gap > LUAD gap (planted: clean gate misses BRCA patients)
+============================================================================================
+[+   12.7s] [rung5] self-test PASSED — downstream integration validated; real run is the Colab fetch
+[exit 0]

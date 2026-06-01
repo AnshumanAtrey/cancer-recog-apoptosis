@@ -1,5 +1,5 @@
 {
-  "frozen_git_sha": "577d0d5",
+  "frozen_git_sha": "eb2c351",
   "seed": 20260601,
   "alpha": 0.05,
   "n_perm": 120,
@@ -7,35 +7,23 @@
   "signal_fdr": {
     "n_family": 36,
     "n_true_safe": 15,
-    "familymax_threshold_cov": 0.0,
-    "n_discoveries": 15,
+    "familymax_threshold_cov": 0.217,
+    "n_discoveries": 3,
     "discoveries": [
       "POS1 AND POS2",
-      "POS1 AND NOISE0",
-      "POS1 AND NOISE1",
-      "POS1 AND NOISE2",
-      "POS1 AND NOISE3",
-      "POS1 AND NOISE4",
-      "POS1 AND NOISE5",
       "POS1 AND BROAD",
-      "POS2 AND NOISE0",
-      "POS2 AND NOISE1",
-      "POS2 AND NOISE2",
-      "POS2 AND NOISE3",
-      "POS2 AND NOISE4",
-      "POS2 AND NOISE5",
       "POS2 AND BROAD"
     ],
     "best_true_safe_cov": 0.964,
-    "decoy_max_safe_cov_mean": 0.0,
+    "decoy_max_safe_cov_mean": 0.2,
     "pergate_cov_p95": 0.026,
     "familymax_cov_p95": 0.217,
     "lookelsewhere_inflation": 0.191,
     "fdr_curve": {
-      "0.05": 0.0,
-      "0.1": 0.0,
-      "0.15": 0.0,
-      "0.2": 0.0,
+      "0.05": 0.2,
+      "0.1": 0.231,
+      "0.15": 0.333,
+      "0.2": 0.161,
       "0.25": 0.0,
       "0.3": 0.0,
       "0.35": 0.0,
@@ -106,28 +94,29 @@
       "coverage": 0.162,
       "vital_leak": 0.006,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": 0.006,
       "safe": true,
       "selective": true
     },
     "optimism": {
       "coverage": 0.29,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": -0.0,
       "vital_leak": -0.0
     },
     "corrected": {
       "coverage": 0.0,
       "vital_leak": 0.006,
       "strict_leak": 0.0,
-      "regen_leak": 0.002
+      "regen_leak": 0.006
     },
     "still_safe_after_shrinkage": true,
     "still_selective_after_shrinkage": false
   },
   "checks": {
     "SIGNAL: planted clean gate (POS1 AND POS2) SURVIVES family-max FDR": true,
-    "SIGNAL: per-gate FDR at COV_BAR is controlled (<= alpha)": true,
+    "SIGNAL: decoy null is NON-DEGENERATE (family-max threshold > 0.05, not the old vacuous 0)": true,
+    "SIGNAL: family-max FDR REJECTS sub-threshold safe gates (discoveries < safe; noise pairs excluded)": true,
     "NULL: NO gate survives family-max (no false discovery)": true,
     "family-max NECESSARY: family-max cov-null p95 > per-gate p95 (look-elsewhere)": true,
     "decoy family size == true family size N": true,

@@ -31,9 +31,17 @@ from __future__ import annotations
 import numpy as np
 
 # Non-regenerating vital parenchyma — co-expression here FORBIDS a gate. These tissues do not regenerate,
-# so a single double-positive cell is potentially lethal (heart/brain/kidney/pancreas-islet/adrenal/muscle).
+# so a single double-positive cell is potentially lethal. EXPANDED 2026-06-01 (audit guards/F1): the worst-
+# donor (not pooled) safety treatment + fail-closed audit apply to EVERY type in this set, so it must cover
+# all lethal-if-destroyed non-regen tissues, not just the original heart/brain/kidney/islet/adrenal/muscle.
+# Added: lung pneumocytes/alveolar (no gas exchange = death), vascular endothelium (systemic), cardiac
+# conduction/Purkinje (arrhythmia), cholangiocytes (biliary), parathyroid (Ca homeostasis), glia (handled
+# via the 'neuron' map). Any lethal type NOT here falls back to the POOLED estimate (honestly flagged by
+# score_gate as pooled_fallback) — so worst-donor protection is exactly this enumerated set, stated in the prereg.
 VITAL_NONREGEN = {"cardiomyocyte", "neuron", "kidney_tubule", "kidney_podocyte",
-                  "pancreatic_islet", "adrenal_cortical", "skeletal_myocyte"}
+                  "pancreatic_islet", "adrenal_cortical", "skeletal_myocyte",
+                  "lung_pneumocyte", "vascular_endothelium", "cardiac_conduction",
+                  "cholangiocyte", "parathyroid"}
 # Regenerating tissue — single-cell co-expression TOLERATED up to a higher (but finite) ceiling: you can
 # survive transient loss of liver/gut/marrow/epithelium, but not wholesale denudation.
 REGEN_TYPES = {"hepatocyte", "marrow_hsc", "enterocyte", "keratinocyte", "liver_endothelial",
@@ -96,6 +104,20 @@ def jeffreys_upper(k, n, alpha=0.05):
         return float(beta.ppf(1 - alpha, k + 0.5, n - k + 0.5)) if k < n else 1.0
     except Exception:
         return min(1.0, (k + 1.96 ** 2 / 2) / (n + 1.96 ** 2) + 1.96 / (n + 4) * 0.5)  # crude fallback
+
+
+def jeffreys_lower(k, n, alpha=0.05):
+    """One-sided LOWER (1-alpha) confidence bound on a binomial rate k/n. The mirror of jeffreys_upper, for
+    the COVERAGE/addressability axis: a patient counts as 'addressed' only if the LOWER bound clears the
+    coverage bar, so a high point-estimate from a handful of cells (sampling noise) cannot falsely shrink
+    the addressability gap (audit datalayer/F1). Symmetric with how vital safety uses the UPPER bound."""
+    if n <= 0:
+        return 0.0   # no cells observed -> no credited coverage (conservative for the gap)
+    try:
+        from scipy.stats import beta
+        return float(beta.ppf(alpha, k + 0.5, n - k + 0.5)) if k > 0 else 0.0
+    except Exception:
+        return max(0.0, (k + 1.96 ** 2 / 2) / (n + 1.96 ** 2) - 1.96 / (n + 4) * 0.5)  # crude fallback
 
 
 def _decide(tumour_coverage, vital_leak, strict_leak, regen_leak, not_ok, logic, leak_bar, regen_bar, cov_bar,

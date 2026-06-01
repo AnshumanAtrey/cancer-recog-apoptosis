@@ -75,6 +75,20 @@ def arm_max_detect(panel, gene, k=K):
     return best
 
 
+def arm_max_detect_in(panel, gene, sub_mask, k=K):
+    """Max detection of `gene` over cell types WITHIN sub_mask (>=20 cells). Used for the AND-NOT blocker
+    falsifiability guard: a NOT-arm only protects NORMAL cells if the blocker is detectable IN NORMAL tissue
+    (detection only in tumour does not make the NOT credible) — audit guards/F2."""
+    best = 0.0
+    if not sub_mask.any():
+        return best
+    for ct in np.unique(panel.cell_type[sub_mask]):
+        m = sub_mask & (panel.cell_type == ct)
+        if m.sum() >= 20:
+            best = max(best, float(positive(panel, gene, k)[m].mean()))
+    return best
+
+
 def _vital_leak_max_over_donor(panel, fire):
     """FIX-1: vital leak = MAX over (vital cell type, donor) of the Jeffreys UPPER bound — never pooled.
     Returns (vital_leak, worst_label, audited_ok_per_type). A donor counts only if powered (>= per-donor
@@ -100,30 +114,71 @@ def _vital_leak_max_over_donor(panel, fire):
     return vital_leak, worst, audited
 
 
+def _normal_leaks(panel, fire, required_vital):
+    """WORST-DONOR (not pooled) Jeffreys UPPER-bound leak for EVERY normal cell type — audit guards/F1: the
+    anti-pooling guard must NOT be limited to the vital set. Per type: max over POWERED donors (>=
+    MIN_VITAL_CELLS_PER_DONOR cells) of the per-donor Jeffreys UB; if NO donor of the type is powered, fall
+    back to the POOLED UB and RECORD the type in pooled_fallback (honest: a donor-private leak there could be
+    averaged away — a known, REPORTED limitation, never silent). MALIGNANT cell types (those present in the
+    tumour compartment) are EXCLUDED from the normal-leak audit — audit stats/F1: a decoy label permutation
+    can relabel real tumour cells 'normal'; their high expression would otherwise pollute the strict-leak and
+    force every decoy unsafe (collapsing the FDR null). No-op on real data (no malignant cell is compartment
+    'normal'). Returns vital/strict/regen worst-donor leaks + per-vital-type audit flags + pooled_fallback."""
+    norm = panel.compartment == "normal"
+    donors = panel.donor if panel.donor is not None else np.array(["_one"] * len(panel.cell_type))
+    malignant_types = set(np.unique(panel.cell_type[panel.compartment == "tumour"]).tolist())
+    vital_leak, vital_worst, strict_leak, regen_leak = 0.0, None, 0.0, 0.0
+    audited, pooled_fallback = {}, []
+    for ct in np.unique(panel.cell_type[norm]):
+        if ct in malignant_types:
+            continue
+        ct_mask = norm & (panel.cell_type == ct)
+        best_ub, best_lab, powered = 0.0, None, 0
+        for d in np.unique(donors[ct_mask]):
+            m = ct_mask & (donors == d)
+            n = int(m.sum())
+            if n < MIN_VITAL_CELLS_PER_DONOR:
+                continue
+            powered += 1
+            ub = lg.jeffreys_upper(int(fire[m].sum()), n)
+            if ub > best_ub:
+                best_ub, best_lab = ub, f"{ct}@{d}"
+        if powered == 0:
+            tot = int(ct_mask.sum())
+            if tot < 20:
+                continue                       # too few cells to assess at all
+            best_ub, best_lab = lg.jeffreys_upper(int(fire[ct_mask].sum()), tot), f"{ct}(pooled)"
+            pooled_fallback.append(ct)         # could not do worst-donor (under-sampled per donor) -> flagged
+        if ct in lg.VITAL_NONREGEN:
+            audited[ct] = powered >= MIN_DONORS
+            if best_ub > vital_leak:
+                vital_leak, vital_worst = best_ub, best_lab
+        elif ct in lg.REGEN_TYPES:
+            regen_leak = max(regen_leak, best_ub)
+        else:
+            strict_leak = max(strict_leak, best_ub)
+    return {"vital_leak": vital_leak, "vital_worst": vital_worst, "strict_leak": strict_leak,
+            "regen_leak": regen_leak, "audited": audited, "pooled_fallback": pooled_fallback}
+
+
 def score_gate(panel, pos_genes, neg_genes, required_vital):
-    """Donor-aware, fail-closed, dropout-guarded score. Returns the verdict dict. fitness=-inf if NOT BORN."""
+    """Donor-aware, fail-closed, dropout-guarded score. Returns the verdict dict. fitness=-inf if NOT BORN.
+    WORST-DONOR (never pooled) leak for ALL normal types (guards/F1); malignant cells excluded from the
+    normal-leak audit (stats/F1); AND-NOT blocker falsifiability guard (guards/F2)."""
     fire = gate_fire(panel, pos_genes, neg_genes)
     is_tum = panel.compartment == "tumour"
     coverage = float(fire[is_tum].mean()) if is_tum.any() else 0.0
 
-    # non-vital + regen leak: pooled (cell_type) is acceptable (donor-private nuisance there is not lethal)
+    L = _normal_leaks(panel, fire, required_vital)
+    vital_leak, vital_worst = L["vital_leak"], L["vital_worst"]
+    strict_leak, regen_leak = L["strict_leak"], L["regen_leak"]
+    unaudited = {ct for ct in required_vital if not L["audited"].get(ct, False)}
+
+    # dropout guards: every POSITIVE arm robustly detectable somewhere; every AND-NOT blocker robustly
+    # detectable IN NORMAL tissue (else the NOT cannot protect normals — its '~positive' is dropout, not absence).
     norm = panel.compartment == "normal"
-    strict_leak, regen_leak = 0.0, 0.0
-    for ct in np.unique(panel.cell_type[norm]):
-        m = norm & (panel.cell_type == ct)
-        if m.sum() < 20 or ct in lg.VITAL_NONREGEN:
-            continue
-        ub = lg.jeffreys_upper(int(fire[m].sum()), int(m.sum()))
-        if ct in lg.REGEN_TYPES:
-            regen_leak = max(regen_leak, ub)
-        else:
-            strict_leak = max(strict_leak, ub)
-
-    vital_leak, vital_worst, audited = _vital_leak_max_over_donor(panel, fire)
-    unaudited = {ct for ct in required_vital if not audited.get(ct, False)}
-
-    # FIX-3 dropout-deflation guard: every POSITIVE arm must be robustly detectable somewhere
     underdetected = [g for g in pos_genes if arm_max_detect(panel, g) < AND_DETECT_FLOOR]
+    unfalsifiable_neg = [g for g in neg_genes if arm_max_detect_in(panel, g, norm) < AND_DETECT_FLOOR]
 
     # verdict (safety FIRST, independent of coverage; fail-closed)
     if vital_leak > LEAK_BAR:
@@ -134,6 +189,8 @@ def score_gate(panel, pos_genes, neg_genes, required_vital):
         verdict = f"NON-SELECTIVE (regen ceiling {regen_leak:.3f})"
     elif underdetected:
         verdict = f"UNCERTAIN (AND-arm near-undetectable, dropout-deflated: {underdetected})"
+    elif unfalsifiable_neg:
+        verdict = f"UNCERTAIN (AND-NOT blocker not detectable in normal tissue, unfalsifiable: {unfalsifiable_neg})"
     elif unaudited:
         verdict = f"UNCERTAIN (vital types under-powered/unaudited: {sorted(unaudited)} — FAIL-CLOSED)"
     else:
@@ -145,6 +202,7 @@ def score_gate(panel, pos_genes, neg_genes, required_vital):
             "gate": " AND ".join(pos_genes) + ("".join(f" AND-NOT {g}" for g in neg_genes)),
             "coverage": round(coverage, 3), "vital_leak": round(vital_leak, 3), "vital_worst": vital_worst,
             "strict_leak": round(strict_leak, 3), "regen_leak": round(regen_leak, 3),
+            "pooled_fallback": L["pooled_fallback"],
             "safe": safe, "selective": selective, "verdict": verdict,
             "transcript_only": True, "protein_copositivity_status": "NO_SINGLECELL_PROTEIN_DATA"}
 
@@ -284,12 +342,17 @@ def _attack_harness():
     pooled_ub = lg.jeffreys_upper(int(fire3[cm].sum()), int(cm.sum()))
     # ATTACK-1: ACT AND ATK1_undetect — partner near-undetectable -> dropout-deflation guard -> UNCERTAIN
     atk1 = score_gate(panel, ["ACT", "ATK1_undetect"], [], required_vital)
+    # ATTACK-4 (audit guards/F2): CLEAN AND-NOT ATK1_undetect — the POS arm (CLEAN) is tumour-only so this gate
+    # would read SELECTIVE, EXCEPT the blocker is undetectable in normal tissue, so the NOT cannot be shown to
+    # protect normals (its '~positive' is dropout, not proven absence) -> must be UNCERTAIN (isolates the guard).
+    atk4 = score_gate(panel, ["CLEAN"], ["ATK1_undetect"], required_vital)
 
     print("-" * 84)
     print(f"[planted CLEAN]  ACT AND CLEAN        cov={clean['coverage']:.2f} vital={clean['vital_leak']:.3f} -> {clean['verdict']}")
     print(f"[ATTACK-3 pool]  ACT AND ATK3         pooled-cardiomyocyte UB={pooled_ub:.3f} (a naive scorer calls this SAFE)")
     print(f"[ATTACK-3 fix]   ACT AND ATK3         max-over-donor vital={atk3['vital_leak']:.3f}@{atk3['vital_worst']} -> {atk3['verdict']}")
     print(f"[ATTACK-1 drop]  ACT AND ATK1_undetect cov={atk1['coverage']:.2f} vital={atk1['vital_leak']:.3f} -> {atk1['verdict']}")
+    print(f"[ATTACK-4 NOT ]  CLEAN AND-NOT ATK1_undetect (undetectable blocker) -> {atk4['verdict']}")
 
     # run the optimizer and confirm it picks the clean gate, not the attacks
     disc_d, sel_d, rep_d = three_partition(panel.donor)
@@ -312,6 +375,7 @@ def _attack_harness():
         "ATTACK-3 (donor-pooling): naive pooled UB looks SAFE (<bar)": pooled_ub <= LEAK_BAR,
         "ATTACK-3 FIX: max-over-donor catches the lethal donor -> NON-SELECTIVE": not atk3["safe"] and atk3["vital_leak"] > LEAK_BAR,
         "ATTACK-1 (dropout-deflation): near-undetectable arm -> UNCERTAIN (not SELECTIVE)": (not atk1["selective"]) and atk1["verdict"].startswith("UNCERTAIN"),
+        "ATTACK-4 (AND-NOT falsifiability): undetectable blocker -> UNCERTAIN (not SELECTIVE)": (not atk4["selective"]) and atk4["verdict"].startswith("UNCERTAIN"),
         "fail-closed: unsafe gate fitness == -inf": fitness_inf_if_unsafe(atk3) == float("-inf"),
         "objective is lexicographic (no-multiply): scalarized rank raises": _scalarized_raises(),
         "optimizer top gate is the planted CLEAN gate (not an attack)": top is not None and set(top["pos"]) == {"ACT", "CLEAN"} and top["selective"],

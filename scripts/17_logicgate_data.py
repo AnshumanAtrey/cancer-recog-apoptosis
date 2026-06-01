@@ -99,7 +99,14 @@ VITAL_AUDIT = {"cardiac muscle": "cardiomyocyte", "cardiomyocyte": "cardiomyocyt
                "adreno": "adrenal_cortical", "adrenal cort": "adrenal_cortical", "cortical cell of adrenal": "adrenal_cortical",
                "chromaffin": "adrenal_cortical",
                "skeletal muscle": "skeletal_myocyte", "skeletal": "skeletal_myocyte", "myofiber": "skeletal_myocyte",
-               "fast muscle": "skeletal_myocyte", "slow muscle": "skeletal_myocyte", "muscle cell": "skeletal_myocyte"}
+               "fast muscle": "skeletal_myocyte", "slow muscle": "skeletal_myocyte", "muscle cell": "skeletal_myocyte",
+               # audit guards/F1: lethal-if-destroyed NON-regen tissues now get worst-donor + fail-closed too.
+               "pneumocyte": "lung_pneumocyte", "alveolar epithel": "lung_pneumocyte", "alveolar type": "lung_pneumocyte",
+               "purkinje": "cardiac_conduction", "conduction": "cardiac_conduction", "pacemaker": "cardiac_conduction",
+               "sinoatrial": "cardiac_conduction", "nodal myocyte": "cardiac_conduction",
+               "endothelial": "vascular_endothelium", "endothelium": "vascular_endothelium",
+               "cholangiocyte": "cholangiocyte", "bile duct": "cholangiocyte", "biliary": "cholangiocyte",
+               "parathyroid": "parathyroid"}
 
 
 def _q(items):

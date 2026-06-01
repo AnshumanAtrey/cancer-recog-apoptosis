@@ -15,30 +15,22 @@
   "familymax_fdr": {
     "n_family": 21,
     "n_true_safe": 11,
-    "familymax_threshold_cov": 0.0,
-    "n_discoveries": 11,
+    "familymax_threshold_cov": 0.154,
+    "n_discoveries": 3,
     "discoveries": [
       "BROAD AND CLEANA",
       "BROAD AND CLEANB",
-      "CLEANA AND CLEANB",
-      "CLEANB AND N0",
-      "CLEANB AND N1",
-      "CLEANB AND N2",
-      "CLEANB AND N3",
-      "CLEANA AND N0",
-      "CLEANA AND N1",
-      "CLEANA AND N2",
-      "CLEANA AND N3"
+      "CLEANA AND CLEANB"
     ],
     "best_true_safe_cov": 0.478,
-    "decoy_max_safe_cov_mean": 0.0,
+    "decoy_max_safe_cov_mean": 0.143,
     "pergate_cov_p95": 0.017,
     "familymax_cov_p95": 0.154,
     "lookelsewhere_inflation": 0.137,
     "fdr_curve": {
-      "0.05": 0.0,
-      "0.1": 0.0,
-      "0.15": 0.0,
+      "0.05": 1.0,
+      "0.1": 0.547,
+      "0.15": 0.067,
       "0.2": 0.0,
       "0.25": 0.0,
       "0.3": 0.0,
@@ -63,45 +55,76 @@
       "coverage": 0.478,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": 0.007,
       "safe": true,
       "selective": true
     },
     "optimism": {
       "coverage": 0.026,
       "strict_leak": 0.0,
-      "regen_leak": 0.002,
+      "regen_leak": -0.0,
       "vital_leak": -0.0
     },
     "corrected": {
       "coverage": 0.452,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.003
+      "regen_leak": 0.007
     },
     "still_safe_after_shrinkage": true,
     "still_selective_after_shrinkage": true
   },
+  "guard_b_donor_permutation": [
+    {
+      "gate": "CLEANA AND CLEANB",
+      "obs_vital_leak": 0.0074,
+      "null_mean": 0.0074,
+      "null_p95": 0.0074,
+      "p_value": 1.0,
+      "donor_structure_dependent": false
+    },
+    {
+      "gate": "BROAD AND CLEANB",
+      "obs_vital_leak": 0.0074,
+      "null_mean": 0.0074,
+      "null_p95": 0.0074,
+      "p_value": 1.0,
+      "donor_structure_dependent": false
+    },
+    {
+      "gate": "BROAD AND CLEANA",
+      "obs_vital_leak": 0.0074,
+      "null_mean": 0.0074,
+      "null_p95": 0.0074,
+      "p_value": 1.0,
+      "donor_structure_dependent": false
+    }
+  ],
   "n_survivors": 3,
   "survivors": [
     "CLEANA AND CLEANB",
     "BROAD AND CLEANB",
     "BROAD AND CLEANA"
   ],
+  "pooled_fallback_types": [],
   "addressability": {
     "n_patients": 6,
+    "n_powered_patients": 6,
+    "n_underpowered_patients": 0,
+    "min_patient_cells": 30,
     "addressability_gap_overall": 0.5,
+    "addressability_gap_worstcase": 0.5,
     "addressability_gap_by_cancer_type": {
       "breast carcinoma": 1.0,
       "lung adenocarcinoma": 0.0
     },
-    "best_per_patient_coverage": {
+    "best_per_patient_coverage_lb": {
       "brca::0": 0.0,
       "brca::1": 0.0,
       "brca::2": 0.0,
-      "luad::0": 0.953,
-      "luad::1": 0.963,
-      "luad::2": 0.95
+      "luad::0": 0.93,
+      "luad::1": 0.942,
+      "luad::2": 0.926
     },
     "n_surviving_gates": 3
   },
@@ -111,7 +134,7 @@
       "coverage": 0.478,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": 0.007,
       "verdict": "SELECTIVE"
     },
     {
@@ -119,7 +142,7 @@
       "coverage": 0.321,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": 0.007,
       "verdict": "SELECTIVE"
     },
     {
@@ -127,7 +150,7 @@
       "coverage": 0.319,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.002,
+      "regen_leak": 0.015,
       "verdict": "SELECTIVE"
     },
     {
@@ -135,7 +158,7 @@
       "coverage": 0.047,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": 0.007,
       "verdict": "SAFE-LOW-COVERAGE"
     },
     {
@@ -143,7 +166,7 @@
       "coverage": 0.047,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": 0.007,
       "verdict": "SAFE-LOW-COVERAGE"
     },
     {
@@ -151,7 +174,7 @@
       "coverage": 0.044,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": 0.007,
       "verdict": "SAFE-LOW-COVERAGE"
     },
     {
@@ -159,7 +182,7 @@
       "coverage": 0.044,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": 0.007,
       "verdict": "SAFE-LOW-COVERAGE"
     },
     {
@@ -167,7 +190,7 @@
       "coverage": 0.043,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": 0.007,
       "verdict": "SAFE-LOW-COVERAGE"
     },
     {
@@ -175,7 +198,7 @@
       "coverage": 0.042,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": 0.007,
       "verdict": "SAFE-LOW-COVERAGE"
     },
     {
@@ -183,7 +206,7 @@
       "coverage": 0.039,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": 0.007,
       "verdict": "SAFE-LOW-COVERAGE"
     },
     {
@@ -191,7 +214,7 @@
       "coverage": 0.038,
       "vital_leak": 0.007,
       "strict_leak": 0.0,
-      "regen_leak": 0.001,
+      "regen_leak": 0.007,
       "verdict": "SAFE-LOW-COVERAGE"
     },
     {
@@ -199,7 +222,7 @@
       "coverage": 0.01,
       "vital_leak": 0.021,
       "strict_leak": 0.0,
-      "regen_leak": 0.011,
+      "regen_leak": 0.037,
       "verdict": "NON-SELECTIVE (vital leak 0.021 @ cardiomyocyte@n::0 \u2014 FORBID)"
     },
     {
@@ -207,7 +230,7 @@
       "coverage": 0.01,
       "vital_leak": 0.032,
       "strict_leak": 0.0,
-      "regen_leak": 0.013,
+      "regen_leak": 0.032,
       "verdict": "NON-SELECTIVE (vital leak 0.032 @ cardiomyocyte@n::0 \u2014 FORBID)"
     },
     {
@@ -215,7 +238,7 @@
       "coverage": 0.004,
       "vital_leak": 0.032,
       "strict_leak": 0.0,
-      "regen_leak": 0.011,
+      "regen_leak": 0.037,
       "verdict": "NON-SELECTIVE (vital leak 0.032 @ cardiomyocyte@n::4 \u2014 FORBID)"
     },
     {
@@ -223,7 +246,7 @@
       "coverage": 0.012,
       "vital_leak": 0.037,
       "strict_leak": 0.0,
-      "regen_leak": 0.015,
+      "regen_leak": 0.037,
       "verdict": "NON-SELECTIVE (vital leak 0.037 @ cardiomyocyte@n::1 \u2014 FORBID)"
     }
   ],

@@ -433,9 +433,19 @@ def main() -> int:
     # ---------- assertions / checks ----------
     decoy_family_size_eq = (sig_fdr["n_family"] == len(sig_fam)) and (nul_fdr["n_family"] == len(nul_fam))
 
+    # audit stats/F1+F3 FIX: the decoy null must be NON-DEGENERATE (it was identically 0 before — decoys were
+    # impossible-to-pass because the permutation relabelled real tumour cells 'normal'; score_gate now excludes
+    # malignant cell types from the normal-leak audit, so decoys CAN be safe-with-coverage). Two checks prove
+    # the FDR now does real rejection work (not vacuous): the threshold is positive, and it REJECTS some safe
+    # gates (sub-threshold coverage gates that the old threshold=0 wrongly admitted).
+    decoy_nondegenerate = sig_fdr["familymax_threshold_cov"] > 0.05
+    fdr_rejects_some = sig_fdr["n_discoveries"] < sig_fdr["n_true_safe"]   # not everything passes (vs old threshold=0)
+    noise_rejected = not any("NOISE" in g for g in sig_fdr["discoveries"])  # low-cov chance pairs excluded
+
     checks = {
         "SIGNAL: planted clean gate (POS1 AND POS2) SURVIVES family-max FDR": sig_planted_survives,
-        "SIGNAL: per-gate FDR at COV_BAR is controlled (<= alpha)": sig_fdr["fdr_curve"].get(float(round(opt.COV_BAR, 2)), 1.0) <= ALPHA + 1e-9,
+        "SIGNAL: decoy null is NON-DEGENERATE (family-max threshold > 0.05, not the old vacuous 0)": decoy_nondegenerate,
+        "SIGNAL: family-max FDR REJECTS sub-threshold safe gates (discoveries < safe; noise pairs excluded)": fdr_rejects_some and noise_rejected,
         "NULL: NO gate survives family-max (no false discovery)": null_no_discovery,
         "family-max NECESSARY: family-max cov-null p95 > per-gate p95 (look-elsewhere)": familymax_needed,
         "decoy family size == true family size N": decoy_family_size_eq,

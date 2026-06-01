@@ -49,13 +49,29 @@ bars:
   BEAM_WIDTH: 8
 
 # ----- SAFETY MODEL (fail-closed; SAFETY decided FIRST, independent of coverage) -----
+# audit 2026-06-01 (wf_8a810e2d) fixes folded in below; see audit_fixes block at end.
 safety:
   vital_nonregen: [cardiomyocyte, neuron, kidney_tubule, kidney_podocyte, pancreatic_islet,
-                   adrenal_cortical, skeletal_myocyte]
-  vital_leak_estimator: MAX over (vital cell type, donor) of the Jeffreys 95% UPPER bound  # NEVER pooled
+                   adrenal_cortical, skeletal_myocyte,
+                   lung_pneumocyte, vascular_endothelium, cardiac_conduction, cholangiocyte, parathyroid]
+                   # EXPANDED (audit guards/F1) to all lethal-if-destroyed non-regen tissues, so worst-donor
+                   # + fail-closed protection is not limited to the original 7.
+  leak_estimator: >
+    MAX over (cell type, donor) of the Jeffreys 95% UPPER bound for EVERY normal cell type — NEVER pooled.
+    Audit guards/F1 — pooling was the silent default for non-vital types; now worst-donor is the default for
+    ALL normal tissue when donor labels exist.
+  pooled_fallback: >
+    a type with NO donor >= MIN_VITAL_CELLS_PER_DONOR cannot be worst-donor-assessed, so it falls back to the
+    POOLED bound and is RECORDED in pooled_fallback_types (never silent).
   unaudited_vital_is: UNCERTAIN              # "we never looked at the heart" != "the heart is clean"
-  dropout_deflation_guard: any positive arm with max-detection < AND_DETECT_FLOOR -> UNCERTAIN
-  verdict_order: [vital_leak, strict_leak, regen_leak, underdetected_dropout, unaudited_vital, coverage]
+  dropout_deflation_guard: any POSITIVE arm with max-detection < AND_DETECT_FLOOR -> UNCERTAIN
+  andnot_falsifiability_guard: >
+    any AND-NOT BLOCKER not detectable in NORMAL tissue (< AND_DETECT_FLOOR) -> UNCERTAIN (audit guards/F2 —
+    the NOT cannot be shown to protect normals if it is invisible).
+  donor_aware_cap: >
+    vital cells are capped PER DONOR (PER_DONOR_VITAL_CAP), never donor-blind, so the cap cannot starve a
+    lethal-leaker donor below the power floor (audit INT-2).
+  verdict_order: [vital_leak, strict_leak, regen_leak, underdetected_pos, unfalsifiable_neg, unaudited_vital, coverage]
 
 # ----- DONOR SPLITS (a validation set used for early-stopping is NOT a test set) -----
 donor_partition:
@@ -73,6 +89,14 @@ heldout_validation:
     decoy_family_size: == true family size N (asserted)
     discovery_rule: best true safe gate coverage > (1-alpha) quantile of the DECOY FAMILY-MAX coverage
     look_elsewhere: family-max coverage-null p95 must exceed a typical single-gate p95 (correction needed)
+    validity_fix: >
+      score_gate EXCLUDES malignant cell types from the normal-leak audit, so a decoy that relabels real
+      tumour cells 'normal' cannot force every decoy unsafe (audit stats/F1 — this was collapsing the
+      threshold to 0, the FDR did NO work, noise gates were certified). A harness check now asserts the
+      decoy null is NON-DEGENERATE (threshold > 0) and rejects sub-threshold gates.
+  guard_b_enforced: >
+    the donor-permutation null now RUNS on every real survivor and DEMOTES any whose worst-donor vital leak
+    is special to one real donor (audit INT-1 — it was pre-registered but never executed).
   donor_permutation_null:
     test: shuffle donor labels within normal vital cells; recompute max-over-donor vital leak
     flag: a gate whose low leak is special to the REAL donor partition (lethal-patient concentration)
@@ -86,26 +110,31 @@ heldout_validation:
 
 # ----- ANCESTRY (an unstratified coverage number is an ancestry reward-hack) -----
 ancestry:
-  requirement: stratify EVERY population-coverage number (and any future HLA-allele / LOH fraction) by
-    ancestry using the Allele Frequency Net Database; report non-European EXPLICITLY, never a single
-    pooled coverage figure.
+  requirement: >
+    stratify EVERY population-coverage number (and any future HLA-allele / LOH fraction) by ancestry using
+    the Allele Frequency Net Database; report non-European EXPLICITLY, never a single pooled coverage figure.
 
 # ----- HARD RULES -----
 hard_rules:
-  - NO-MULTIPLY: ranking is a LEXICOGRAPHIC TUPLE (not selective, not safe, vital_leak, strict_leak,
-    -coverage). Safety and coverage are NEVER combined into a scalar; coverage NEVER buys back a vital
+  - >
+    NO-MULTIPLY — ranking is a LEXICOGRAPHIC TUPLE (not-selective, not-safe, vital_leak, strict_leak,
+    neg-coverage). Safety and coverage are NEVER combined into a scalar; coverage NEVER buys back a vital
     hit (fitness = -inf if unsafe). Asserted by scripts/22 assert_no_multiply().
-  - Recognition-selectivity is a SEPARATE axis; never multiplied with RUNG-1 kinetics, RUNG-2/3, or
+  - >
+    Recognition-selectivity is a SEPARATE axis; never multiplied with RUNG-1 kinetics, RUNG-2/3, or
     escape-durability. Separate ceilings, no measured map between them.
-  - The pMHC / intracellular and DepMap genetic-NOT-gate arms (if ever added) are a DIFFERENT MODALITY
-    and a DIFFERENT ENDPOINT (presentation / viability-dropout, NOT surface co-positivity / apoptosis);
-    their coverage does NOT add to the surface frontier and they may emit a coverage axis ONLY, with
-    safety = UNCERTAIN (cross-reactivity / bystander invisible in-silico). Stated in every figure caption.
-  - HLA-LOH double-bind: LOH is scored as BUYING safety AND is itself an immune-escape lesion; a tumour
+  - >
+    The pMHC / intracellular and DepMap genetic-NOT-gate arms (if ever added) are a DIFFERENT MODALITY and
+    a DIFFERENT ENDPOINT (presentation / viability-dropout, NOT surface co-positivity / apoptosis); their
+    coverage does NOT add to the surface frontier and they may emit a coverage axis ONLY, with safety
+    UNCERTAIN (cross-reactivity / bystander invisible in-silico). Stated in every figure caption.
+  - >
+    HLA-LOH double-bind — LOH is scored as BUYING safety AND is itself an immune-escape lesion; a tumour
     that is easy to NOT-gate may already be evading immunity. Category caveat, not a free win.
-  - The phrases "cure", "self-apoptosis as spontaneous self-recognition", and "tumour-exclusive antigen
-    found" do NOT appear as credited verdicts. An exogenous circuit is delivered; delivery to every
-    tumour cell is an unsolved wet-lab constraint.
+  - >
+    The phrases cure, self-apoptosis-as-spontaneous-self-recognition, and tumour-exclusive-antigen-found do
+    NOT appear as credited verdicts. An exogenous circuit is delivered; delivery to every tumour cell is an
+    unsolved wet-lab constraint.
 
 # ----- decisive gates for emitting a SELECTIVE call (else the default negative) -----
 selective_call_emitted_iff:
@@ -131,3 +160,22 @@ verbatim_ceiling: >
   worst-case-safety honesty harness (worst-donor, dropout-fail-closed, fail-closed-vital, no-multiply,
   held-out-donor FDR + winner's-curse shrinkage) and the per-patient addressability gap, ancestry-
   stratified. A surviving gate is the best NEXT wet-lab experiment, never a cure or a safety proof.
+
+# ----- AUDIT FIXES (adversarial code audit wf_8a810e2d, 2026-06-01; 6 confirmed findings, all FIXED + re-validated) -----
+audit_fixes:
+  stats_F1_CRITICAL: "decoy null was vacuous (relabelled real tumour cells 'normal' -> every decoy unsafe ->
+    threshold=0 -> FDR did no work, noise gates certified). FIX: score_gate excludes malignant cell types from
+    the normal-leak audit; harness asserts a non-degenerate null. Re-validated: threshold 0.00 -> 0.22, noise rejected."
+  guards_F1_HIGH: "worst-donor (not pooled) safety applied only to 7 vital types; other lethal tissues pooled.
+    FIX: worst-donor for ALL normal types; vital list expanded to lung/endothelium/cardiac-conduction/cholangiocyte/
+    parathyroid; pooled fallback (under-sampled types) RECORDED in pooled_fallback_types, never silent."
+  datalayer_F1_HIGH: "per-patient 'addressed' used a raw point estimate (low-cell patients addressed by noise ->
+    falsely LOW gap). FIX: Jeffreys LOWER bound must clear COV_BAR; < MIN_PATIENT_CELLS patients bucketed as
+    under-powered; gap reported as point AND worst-case (under-powered counted not-addressed)."
+  INT1_HIGH: "GUARD B (donor-permutation null) was pre-registered necessary but never run. FIX: now runs on every
+    survivor in run_pipeline and demotes donor-structure-dependent gates; result recorded in guard_b_donor_permutation."
+  INT2_HIGH: "donor-blind cell cap could starve the lethal donor below the power floor (fail-OPEN at donor level).
+    FIX: vital cells capped PER DONOR (PER_DONOR_VITAL_CAP), never donor-blind."
+  guards_F2_MED: "AND-NOT blocker had no dropout-falsifiability guard in scripts/22 (scripts/18 had it). FIX:
+    a blocker not detectable in NORMAL tissue -> UNCERTAIN; planted ATTACK-4 added to the harness."
+  re_validation: "scripts/20 RUN-TRUST PASS; scripts/22 8/8 guards; scripts/23 9/9 (FDR live); scripts/25 selftest 6/6."

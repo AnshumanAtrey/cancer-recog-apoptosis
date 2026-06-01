@@ -127,22 +127,33 @@ def _donor_key_obs(df):
     return np.array([f"{a}::{b}" for a, b in zip(ds, dn)])
 
 
+PER_DONOR_VITAL_CAP = 2500   # audit INT-2: cap vital cells PER DONOR (not donor-blind) so no lethal-leaker
+#   donor is silently subsampled below the per-donor power floor (185) and dropped from the worst-donor max.
+
+
 def _scout_capped_joinids(census, value_filter, tissue_index, label):
-    """OBS METADATA ONLY (soma_joinid + cell_type; ~hundreds of MB even for 10M-cell brain -> fits RAM).
-    Map cell types, cap per type (ALL vital, non-vital <= MAX_PER_TYPE). Returns (joinids int64, total)."""
+    """OBS METADATA ONLY (soma_joinid + cell_type + donor; ~hundreds of MB even for 10M-cell brain -> fits
+    RAM). Map cell types, then cap: for VITAL types DONOR-AWARE (per (type,donor) <= PER_DONOR_VITAL_CAP, so
+    every contributing donor stays powered — audit INT-2 fail-OPEN fix); for non-vital types donor-blind
+    <= MAX_PER_TYPE. Returns (joinids int64, total)."""
     exp = census["census_data"]["homo_sapiens"]
     obs = exp.obs.read(value_filter=value_filter,
-                       column_names=["soma_joinid", "cell_type"]).concat().to_pandas()
+                       column_names=["soma_joinid", "cell_type", "donor_id", "dataset_id"]).concat().to_pandas()
     if len(obs) == 0:
         log(f"{label}: 0 cells matched"); return None
     mapped = np.array(d4._map_celltype(obs["cell_type"].astype(str).to_numpy()))
     jid = obs["soma_joinid"].to_numpy()
+    donor = _donor_key_obs(obs)
     rng = np.random.default_rng([SEED, tissue_index])
     keep = []
     for lab in np.unique(mapped):
         idx = np.where(mapped == lab)[0]
-        cap = d4.VITAL_CAP if lab in lg.VITAL_NONREGEN else d4.MAX_PER_TYPE
-        keep.append(idx if len(idx) <= cap else rng.choice(idx, cap, replace=False))
+        if lab in lg.VITAL_NONREGEN:
+            for d in np.unique(donor[idx]):           # DONOR-AWARE: never starve a donor below the power floor
+                di = idx[donor[idx] == d]
+                keep.append(di if len(di) <= PER_DONOR_VITAL_CAP else rng.choice(di, PER_DONOR_VITAL_CAP, replace=False))
+        else:
+            keep.append(idx if len(idx) <= d4.MAX_PER_TYPE else rng.choice(idx, d4.MAX_PER_TYPE, replace=False))
     return jid[np.sort(np.concatenate(keep))].astype(np.int64), len(obs)
 
 
@@ -302,39 +313,58 @@ def build_family(panel, genes):
 # =====================================================================================================
 #  addressability gap  — the headline deliverable
 # =====================================================================================================
+MIN_PATIENT_CELLS = 30   # min malignant cells/patient to assess addressability (else gap-uncertain)
+
+
 def per_patient_coverage(panel, gate):
-    """coverage of `gate` on EACH tumour donor's malignant cells -> {patient: coverage}."""
+    """Per tumour patient: (LOWER-bound coverage, n malignant cells). audit datalayer/F1: 'addressed' uses
+    the Jeffreys LOWER bound (mirror of the safety UPPER bound) so a noisy high point-estimate from a handful
+    of cells cannot FALSELY shrink the addressability gap (the dangerous, over-optimistic direction)."""
     fire = opt.gate_fire(panel, gate["pos"], gate["neg"])
     is_tum = panel.compartment == "tumour"
     out = {}
     for p in np.unique(panel.donor[is_tum]):
         m = is_tum & (panel.donor == p)
-        out[str(p)] = float(fire[m].mean()) if m.any() else 0.0
+        n = int(m.sum()); k = int(fire[m].sum())
+        out[str(p)] = (lg.jeffreys_lower(k, n), n)
     return out
 
 
 def addressability_gap(panel, surviving_gates):
-    """For each tumour patient + cancer type: is there ANY surviving safe gate covering >= COV_BAR of THAT
-    patient's malignant cells? gap = fraction of patients addressed by NO surviving gate (the negative)."""
+    """Per tumour patient + cancer type: is there ANY surviving safe gate whose per-patient coverage LOWER
+    bound clears COV_BAR? gap = fraction of patients addressed by NO surviving gate (the negative). Patients
+    with < MIN_PATIENT_CELLS malignant cells are too under-powered to assess and are bucketed separately;
+    the headline gap is reported BOTH over powered patients AND worst-case (under-powered counted as
+    NOT-addressed) so the negative cannot be quietly shrunk by dropping low-yield patients (datalayer/F1)."""
     is_tum = panel.compartment == "tumour"
-    patients = sorted(set(panel.donor[is_tum].tolist()))
-    ptype = {str(p): str(panel.tissue[is_tum & (panel.donor == p)][0]) for p in patients}
-    addressed = {str(p): False for p in patients}
-    best = {str(p): 0.0 for p in patients}
+    patients = [str(p) for p in sorted(set(panel.donor[is_tum].tolist()))]
+    ptype = {p: str(panel.tissue[is_tum & (panel.donor == p)][0]) for p in patients}
+    pcells = {p: int((is_tum & (panel.donor == p)).sum()) for p in patients}
+    addressed = {p: False for p in patients}
+    best_lb = {p: 0.0 for p in patients}
     for g in surviving_gates:
-        pc = per_patient_coverage(panel, g)
-        for p, c in pc.items():
-            best[p] = max(best[p], c)
-            if c >= COV_BAR:
+        for p, (lb, n) in per_patient_coverage(panel, g).items():
+            best_lb[p] = max(best_lb[p], lb)
+            if lb >= COV_BAR:                       # LOWER bound clears the bar (conservative)
                 addressed[p] = True
-    by_type = {}
-    for p in addressed:
-        t = ptype[p]; by_type.setdefault(t, []).append(addressed[p])
-    gap_overall = 1.0 - (sum(addressed.values()) / max(1, len(addressed)))
-    gap_by_type = {t: round(1.0 - sum(v) / len(v), 3) for t, v in by_type.items()}
-    return {"n_patients": len(patients), "addressability_gap_overall": round(gap_overall, 3),
+    powered = [p for p in patients if pcells[p] >= MIN_PATIENT_CELLS]
+    underpowered = [p for p in patients if pcells[p] < MIN_PATIENT_CELLS]
+
+    def _gaps(plist):
+        by = {}
+        for p in plist:
+            by.setdefault(ptype[p], []).append(addressed[p])
+        overall = 1.0 - (sum(addressed[p] for p in plist) / max(1, len(plist)))
+        return round(overall, 3), {t: round(1.0 - sum(v) / len(v), 3) for t, v in by.items()}
+
+    gap_point, gap_by_type = _gaps(powered) if powered else (1.0, {})
+    gap_worstcase, _ = _gaps(patients)             # under-powered counted as not-addressed
+    return {"n_patients": len(patients), "n_powered_patients": len(powered),
+            "n_underpowered_patients": len(underpowered), "min_patient_cells": MIN_PATIENT_CELLS,
+            "addressability_gap_overall": gap_point,
+            "addressability_gap_worstcase": gap_worstcase,
             "addressability_gap_by_cancer_type": gap_by_type,
-            "best_per_patient_coverage": {p: round(c, 3) for p, c in best.items()},
+            "best_per_patient_coverage_lb": {p: round(c, 3) for p, c in best_lb.items()},
             "n_surviving_gates": len(surviving_gates)}
 
 
@@ -384,8 +414,23 @@ def run_pipeline(panel, genes, tag, required_vital=REQUIRED_VITAL):
         opt_cov = max(0.0, boot["optimism"]["coverage"])
         survivors = [r for r in survivors if r["coverage"] - opt_cov > COV_BAR]
         log(f"[{tag}] winner's-curse: coverage optimism {opt_cov:.3f} -> {len(survivors)} survive shrinkage")
+    log(f"[{tag}] family-max threshold cov={thr:.3f}; {len(survivors)} gates pass FDR + shrinkage (pre-GUARD-B).")
+
+    # GUARD B (audit INT-1): the pre-registered donor-permutation null must actually RUN on survivors —
+    # demote any whose worst-donor vital leak is concentrated in ONE real donor (a lethal patient a pooled
+    # view would erase). Previously declared in the manifest but never executed in the pipeline.
+    guard_b, kept = [], []
+    for r in survivors:
+        g = {"pos": r["pos"], "neg": r["neg"]}
+        dn = hv.donor_permutation_null(panel, g, required_vital, rng, n_perm=min(N_PERM, 60))
+        guard_b.append({"gate": r["gate"], **dn})
+        if dn["donor_structure_dependent"]:
+            log(f"[{tag}] GUARD B DEMOTES {r['gate']} — worst-donor vital leak special to one real donor (p={dn['p_value']})")
+        else:
+            kept.append(r)
+    survivors = kept
     surviving_gates = [{"pos": r["pos"], "neg": r["neg"]} for r in survivors]
-    log(f"[{tag}] family-max threshold cov={thr:.3f}; {len(survivors)} gates SURVIVE FDR + shrinkage.")
+    log(f"[{tag}] {len(survivors)} gates SURVIVE FDR + shrinkage + GUARD B (donor-permutation null).")
 
     gap = addressability_gap(panel, surviving_gates)
     log(f"[{tag}] ADDRESSABILITY GAP: {gap['addressability_gap_overall']:.0%} of {gap['n_patients']} patients "
@@ -397,8 +442,10 @@ def run_pipeline(panel, genes, tag, required_vital=REQUIRED_VITAL):
         "family_size": len(family), "n_activators": len(acts),
         "donor_split": {"discovery": len(disc_d), "select": len(sel_d), "report": len(rep_d)},
         "n_safe": len(safe), "n_selective_preFDR": len(selective),
-        "familymax_fdr": fdr, "winners_curse": boot, "n_survivors": len(survivors),
+        "familymax_fdr": fdr, "winners_curse": boot, "guard_b_donor_permutation": guard_b,
+        "n_survivors": len(survivors),
         "survivors": [r["gate"] for r in survivors][:25],
+        "pooled_fallback_types": sorted({ct for r in scored for ct in r.get("pooled_fallback", [])}),
         "addressability": gap,
         "top_gates": [{k: r[k] for k in ("gate", "coverage", "vital_leak", "strict_leak", "regen_leak", "verdict")}
                       for r in scored[:15]],
