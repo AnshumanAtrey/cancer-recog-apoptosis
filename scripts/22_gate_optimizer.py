@@ -219,6 +219,54 @@ def _beta_ppf_vec(k, n, alpha=0.05):
     return out
 
 
+def _compute_fires(panel, gates, ng, ginv, nv_idx, is_tum):
+    """Per gate -> (group fire-counts gk[ng] as numpy float, tumour coverage float). The HEAVY per-cell work
+    (boolean gate-firing over M cells + bincount into groups) runs on GPU via CuPy when a device is available
+    and R5_GPU != '0', else on NumPy. BIT-IDENTICAL either way (boolean AND is exact; bincount with float
+    weights is an exact integer sum). ANY GPU error -> clean NumPy fallback (the CPU path is the validated
+    one). This is the only GPU-accelerable hot loop — the Census fetch is network/disk-bound and cannot use it."""
+    import os
+    used = sorted({g for gate in gates for g in gate["pos"] + gate["neg"]})
+    idx = {g: panel.genes.index(g) for g in used}
+    ntum = int(is_tum.sum())
+    xp, gpu = np, False
+    if os.environ.get("R5_GPU", "auto") != "0":
+        try:
+            import cupy as cp
+            if cp.cuda.runtime.getDeviceCount() > 0:
+                xp, gpu = cp, True
+        except Exception:
+            xp, gpu = np, False
+    try:
+        Pnv = {g: xp.asarray(np.asarray(panel.counts[:, idx[g]])[nv_idx] >= K) for g in used}
+        Pt = {g: xp.asarray(np.asarray(panel.counts[:, idx[g]])[is_tum] >= K) for g in used} if ntum else {}
+        ginv_d = xp.asarray(ginv) if ng else None
+        res = []
+        for gate in gates:
+            pos, neg = gate["pos"], gate["neg"]
+            cov = 0.0
+            if ntum:
+                ft = xp.ones(ntum, bool)
+                for g in pos: ft &= Pt[g]
+                for g in neg: ft &= ~Pt[g]
+                cov = float(ft.mean())
+            fnv = xp.ones(nv_idx.size, bool)
+            for g in pos: fnv &= Pnv[g]
+            for g in neg: fnv &= ~Pnv[g]
+            if ng:
+                gk = xp.bincount(ginv_d, weights=fnv.astype(xp.float64), minlength=ng)
+                gk = np.asarray(gk.get()) if gpu else np.asarray(gk)
+            else:
+                gk = np.array([])
+            res.append((gk, cov))
+        return res
+    except Exception as e:
+        if gpu:                                   # GPU path failed -> disable + recompute on the validated CPU path
+            os.environ["R5_GPU"] = "0"
+            return _compute_fires(panel, gates, ng, ginv, nv_idx, is_tum)
+        raise
+
+
 def score_gates_vec(panel, gates, required_vital):
     """VECTORISED equivalent of [score_gate(panel, g['pos'], g['neg'], required_vital) for g in gates] —
     bit-equivalent on coverage/leaks/verdict (validated batch==per-gate), but tractable at real scale
@@ -245,24 +293,14 @@ def score_gates_vec(panel, gates, required_vital):
     gpowered = gtot >= MIN_VITAL_CELLS_PER_DONOR if ng else np.array([], bool)
     UB0 = _beta_ppf_vec(np.zeros(ng), gtot) if ng else np.array([])               # k=0 fast-path per group
     used = sorted({g for gate in gates for g in gate["pos"] + gate["neg"]})
-    P = {g: (panel.counts[:, panel.genes.index(g)] >= K) for g in used}
-    Pnv = {g: P[g][nv_idx] for g in used}
     det_all = {g: arm_max_detect(panel, g) for g in used}
     det_norm = {g: arm_max_detect_in(panel, g, norm) for g in used}
+    fired = _compute_fires(panel, gates, ng, ginv, nv_idx, is_tum)    # heavy ops on GPU (CuPy) if available, else CPU
 
     out = []
-    for gate in gates:
+    for gi, gate in enumerate(gates):
         pos, neg = list(gate["pos"]), list(gate["neg"])
-        fire_t = np.ones(ntum, bool) if ntum else np.zeros(0, bool)
-        if ntum:
-            tnz = np.where(is_tum)[0]
-            for g in pos: fire_t &= P[g][tnz]
-            for g in neg: fire_t &= ~P[g][tnz]
-        coverage = float(fire_t.mean()) if ntum else 0.0
-        firenv = np.ones(nv_idx.size, bool)
-        for g in pos: firenv &= Pnv[g]
-        for g in neg: firenv &= ~Pnv[g]
-        gk = np.bincount(ginv, weights=firenv, minlength=ng) if ng else np.array([])
+        gk, coverage = fired[gi]
         gub = UB0.copy() if ng else np.array([])
         nz = gk > 0 if ng else np.array([], bool)
         if ng and nz.any():
