@@ -132,41 +132,62 @@ PER_DONOR_VITAL_CAP = 600   # audit INT-2: cap vital cells PER DONOR (not donor-
 #   bounding the materialise/dense footprint (2500 ballooned heart to 203k cells -> downstream OOM).
 
 
+def _ram_gb():
+    """Resident memory in GB (so the run logs its memory trajectory; the brain step was a blind OOM before)."""
+    import resource
+    m = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    return m / 1e9 if m > 1e7 else m / 1e6   # ru_maxrss is bytes on macOS, KB on Linux/Colab
+
+
+def _codes(col):
+    """Arrow column -> (int codes, small unique-value list) WITHOUT materialising one Python string per cell.
+    cell_type/donor/dataset are categorical; dictionary-encoding keeps codes (int32) + a tiny dictionary, so
+    a 10.5M-cell column costs ~40MB of ints, not GBs of Python str objects (the to_pylist OOM, audit/real-run)."""
+    import pyarrow as pa
+    col = col.combine_chunks()
+    if not pa.types.is_dictionary(col.type):
+        col = col.dictionary_encode()
+    return col.indices.to_numpy(zero_copy_only=False), [str(x) for x in col.dictionary.to_pylist()]
+
+
 def _scout_capped_joinids(census, value_filter, tissue_index, label):
-    """STREAMING obs-metadata scout (OOM fix): the brain tissue is ~10.5M cells; reading its whole obs into
-    one DataFrame (with the donor columns INT-2 needs) OOM-killed free Colab (exit -9). Instead iterate the
-    obs read in pyarrow BATCHES (TableReadIter) and cap INCREMENTALLY, so the full row set is never
-    materialised. Per group keep up to the cap (VITAL -> per (type,donor) <= PER_DONOR_VITAL_CAP, donor-aware
-    so INT-2 holds; non-vital -> per type <= MAX_PER_TYPE), filling in stream order (a fair per-donor sample
-    for a leak RATE; not reservoir-random, noted). Memory is bounded by the cells KEPT, not the tissue size.
-    Returns (joinids int64, total) or None."""
+    """OBS-metadata scout via Arrow DICTIONARY CODES (OOM fix): brain is ~10.5M cells; the prior scout called
+    .to_pylist()/.to_pandas() which decoded ~10.5M*3 Python strings (several GB) -> SIGKILL on free Colab.
+    Here cell_type/donor/dataset are read as compact int CODES (the whole obs Arrow table is dictionary-
+    encoded ~150MB, not GBs), cell types are mapped on the SMALL unique set, and the per-(type,donor) cap is
+    applied with numpy over codes. Donor-aware (INT-2 preserved); first-N-per-group fill (a fair per-donor
+    leak-rate sample; not reservoir-random, noted). Returns (joinids int64, total) or None."""
     exp = census["census_data"]["homo_sapiens"]
     VITAL = set(lg.VITAL_NONREGEN)
-    keep_by_group, total = {}, 0
-    reader = exp.obs.read(value_filter=value_filter,
-                          column_names=["soma_joinid", "cell_type", "donor_id", "dataset_id"])
-    batches = reader.tables() if hasattr(reader, "tables") else reader   # TableReadIter is itself iterable
-    for tbl in batches:
-        jid = tbl.column("soma_joinid").to_numpy()
-        mapped = np.asarray(d4._map_celltype([str(x) for x in tbl.column("cell_type").to_pylist()]))
-        ds = [str(x) for x in tbl.column("dataset_id").to_pylist()]
-        dn = [str(x) for x in tbl.column("donor_id").to_pylist()]
-        total += len(jid)
-        is_vital = np.isin(mapped, list(VITAL))
-        donorkey = np.array([f"{a}::{b}" for a, b in zip(ds, dn)])
-        gkey = np.where(is_vital, np.char.add(np.char.add(mapped.astype(str), "|"), donorkey), mapped.astype(str))
-        caps = np.where(is_vital, PER_DONOR_VITAL_CAP, d4.MAX_PER_TYPE)
-        for k in np.unique(gkey):
-            m = gkey == k
-            cap = int(caps[m][0])
-            cur = keep_by_group.setdefault(k, [])
-            room = cap - len(cur)
-            if room > 0:
-                cur.extend(int(x) for x in jid[m][:room])
+    tbl = exp.obs.read(value_filter=value_filter,
+                       column_names=["soma_joinid", "cell_type", "donor_id", "dataset_id"]).concat()
+    total = tbl.num_rows
     if total == 0:
         log(f"{label}: 0 cells matched"); return None
-    keep = sorted(j for lst in keep_by_group.values() for j in lst)
-    return np.array(keep, dtype=np.int64), total
+    jid = tbl.column("soma_joinid").to_numpy()                       # int64, zero-copy
+    ct_codes, ct_vals = _codes(tbl.column("cell_type"))
+    mapped_vals = np.array(d4._map_celltype(ct_vals))                # map the SMALL unique set only
+    mapped = mapped_vals[ct_codes]                                   # per-cell canonical label (index, cheap)
+    ds_codes, _v = _codes(tbl.column("dataset_id"))
+    dn_codes, _w = _codes(tbl.column("donor_id"))
+    donor_gid = ds_codes.astype(np.int64) * (int(dn_codes.max()) + 1) + dn_codes if total else ds_codes
+    del tbl
+    is_vital = np.isin(mapped, list(VITAL))
+    keep = []
+    # VITAL: per (canonical type, donor) keep first PER_DONOR_VITAL_CAP (donor-aware -> no donor starved)
+    for lab in np.unique(mapped[is_vital]) if is_vital.any() else []:
+        lab_mask = is_vital & (mapped == lab)
+        for g in np.unique(donor_gid[lab_mask]):
+            idx = np.where(lab_mask & (donor_gid == g))[0][:PER_DONOR_VITAL_CAP]
+            keep.append(jid[idx])
+    # NON-VITAL: per canonical type keep first MAX_PER_TYPE
+    nonvit = ~is_vital
+    for lab in np.unique(mapped[nonvit]) if nonvit.any() else []:
+        idx = np.where(nonvit & (mapped == lab))[0][:d4.MAX_PER_TYPE]
+        keep.append(jid[idx])
+    out = np.sort(np.concatenate(keep)).astype(np.int64) if keep else np.array([], np.int64)
+    log(f"{label}: scout done (ram {_ram_gb():.1f}GB), {total:,} cells -> kept {len(out):,}")
+    return out, total
 
 
 def _materialise(census, joinids, genes, label):
@@ -189,9 +210,12 @@ def _pull_tissue(census, value_filter, label, genes, tissue_index):
     ad = _materialise(census, joinids, genes, label)
     mapped = np.array(d4._map_celltype(ad.obs["cell_type"].astype(str).to_numpy()))
     donors = _donor_key_obs(ad.obs)
+    tissues = list(ad.obs["tissue_general"].astype(str))
     vital = sorted(set(mapped.tolist()) & lg.VITAL_NONREGEN)
-    log(f"{label}: kept {ad.n_obs:,}; vital here: {vital or 'none'}")
-    return d4._dense_over(ad, genes), list(mapped), list(ad.obs["tissue_general"].astype(str)), list(donors)
+    counts = d4._dense_over(ad, genes)
+    del ad; import gc; gc.collect()                                  # free the AnnData before the next tissue
+    log(f"{label}: kept {len(mapped):,}; vital here: {vital or 'none'} (ram {_ram_gb():.1f}GB)")
+    return counts, list(mapped), tissues, list(donors)
 
 
 def fetch_normal(census, genes, tile_dir=None):
