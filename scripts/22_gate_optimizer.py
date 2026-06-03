@@ -219,6 +219,29 @@ def _beta_ppf_vec(k, n, alpha=0.05):
     return out
 
 
+def _batched_detect(panel, used, norm_mask, k=K):
+    """Fast per-gene max-detection over cell types (>=20 cells): det_all over ALL cells, det_norm over the
+    NORMAL compartment. Bit-identical to arm_max_detect / arm_max_detect_in but ONE bincount per gene instead
+    of a per-cell-type loop that recomputes positive() each time (the profiled hot spot at real scale)."""
+    ct_code = np.unique(panel.cell_type, return_inverse=True)[1]
+    nt = int(ct_code.max()) + 1 if ct_code.size else 0
+    tot_all = np.bincount(ct_code, minlength=nt).astype(float)
+    nm = np.asarray(norm_mask)
+    ct_code_n = ct_code[nm]
+    tot_norm = np.bincount(ct_code_n, minlength=nt).astype(float)
+    ok_all, ok_norm = tot_all >= 20, tot_norm >= 20
+    det_all, det_norm = {}, {}
+    for g in used:
+        pos = (panel.counts[:, panel.genes.index(g)] >= k).astype(float)
+        fa = np.divide(np.bincount(ct_code, weights=pos, minlength=nt), tot_all,
+                       out=np.zeros(nt), where=tot_all > 0)
+        det_all[g] = float(fa[ok_all].max()) if ok_all.any() else 0.0
+        fn = np.divide(np.bincount(ct_code_n, weights=pos[nm], minlength=nt), tot_norm,
+                       out=np.zeros(nt), where=tot_norm > 0)
+        det_norm[g] = float(fn[ok_norm].max()) if ok_norm.any() else 0.0
+    return det_all, det_norm
+
+
 def _compute_fires(panel, gates, ng, ginv, nv_idx, is_tum):
     """Per gate -> (group fire-counts gk[ng] as numpy float, tumour coverage float). The HEAVY per-cell work
     (boolean gate-firing over M cells + bincount into groups) runs on GPU via CuPy when a device is available
@@ -281,20 +304,26 @@ def score_gates_vec(panel, gates, required_vital):
     norm = comp == "normal"
     normv = norm & ~np.isin(ct, list(malignant)) if malignant else norm           # exclude malignant from leak
     nv_idx = np.where(normv)[0]
-    # groups over normal-valid cells = (cell_type, donor)
-    gkeys = np.array([f"{a}\x01{b}" for a, b in zip(ct[nv_idx], donors[nv_idx])]) if nv_idx.size else np.array([], object)
-    uniq, ginv = (np.unique(gkeys, return_inverse=True) if gkeys.size else (np.array([], object), np.array([], int)))
-    ng = len(uniq)
-    gtot = np.bincount(ginv, minlength=ng).astype(float) if ng else np.array([])
-    gtype = np.array([u.split("\x01")[0] for u in uniq]) if ng else np.array([], object)
-    utypes, tinv = (np.unique(gtype, return_inverse=True) if ng else (np.array([], object), np.array([], int)))
+    # groups over normal-valid cells = (cell_type, donor) — INTEGER-factorised (string np.unique on 1M+ keys
+    # was a profiled hot spot). utypes indexes cell types; tinv maps each group to its cell-type index.
+    base, dn_u, uniq_g = 1, np.array([], object), np.array([], np.int64)
+    if nv_idx.size:
+        utypes, ct_code = np.unique(ct[nv_idx], return_inverse=True)
+        dn_u, dn_code = np.unique(donors[nv_idx], return_inverse=True)
+        base = int(dn_code.max()) + 1
+        uniq_g, ginv = np.unique(ct_code.astype(np.int64) * base + dn_code, return_inverse=True)
+        ng = len(uniq_g)
+        gtot = np.bincount(ginv, minlength=ng).astype(float)
+        tinv = (uniq_g // base).astype(int)                          # group -> cell-type index (into utypes)
+    else:
+        utypes = np.array([], object); ng = 0; ginv = np.array([], int)
+        gtot = np.array([]); tinv = np.array([], int)
     is_vital_t = np.isin(utypes, list(lg.VITAL_NONREGEN)) if len(utypes) else np.array([], bool)
     is_regen_t = np.isin(utypes, list(lg.REGEN_TYPES)) if len(utypes) else np.array([], bool)
     gpowered = gtot >= MIN_VITAL_CELLS_PER_DONOR if ng else np.array([], bool)
     UB0 = _beta_ppf_vec(np.zeros(ng), gtot) if ng else np.array([])               # k=0 fast-path per group
     used = sorted({g for gate in gates for g in gate["pos"] + gate["neg"]})
-    det_all = {g: arm_max_detect(panel, g) for g in used}
-    det_norm = {g: arm_max_detect_in(panel, g, norm) for g in used}
+    det_all, det_norm = _batched_detect(panel, used, norm)           # fast (bincount per gene), bit-identical
     fired = _compute_fires(panel, gates, ng, ginv, nv_idx, is_tum)    # heavy ops on GPU (CuPy) if available, else CPU
 
     out = []
@@ -329,7 +358,8 @@ def score_gates_vec(panel, gates, required_vital):
         vgrp = (is_vital_t[tinv] & gpowered) if ng else np.array([], bool)
         if ng and vgrp.any():
             wi = np.where(vgrp)[0][int(np.argmax(gub[vgrp]))]
-            vital_worst = str(uniq[wi]).replace("\x01", "@")
+            code = int(uniq_g[wi])                                    # decode group -> "cell_type@donor"
+            vital_worst = f"{utypes[code // base]}@{dn_u[code % base]}"
         else:
             vital_worst = str(utypes[vmask][int(np.argmax(type_leak[vmask]))]) if vmask.any() else None
         audited = {str(utypes[i]): bool(type_pw[i] >= MIN_DONORS) for i in range(len(utypes)) if is_vital_t[i]}
