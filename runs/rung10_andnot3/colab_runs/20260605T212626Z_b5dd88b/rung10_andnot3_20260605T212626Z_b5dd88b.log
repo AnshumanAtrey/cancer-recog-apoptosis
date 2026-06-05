@@ -1,0 +1,63 @@
+# cancer-recon-apoptosis — run log
+# step          : rung10_andnot3
+# utc           : 20260605T212626Z
+# commit_short  : b5dd88b
+# commit_full   : b5dd88b5d24ba97347adc0f4207db103ace1ecb1
+# branch        : main
+# python        : 3.12.13
+# platform      : Linux-6.6.122+-x86_64-with-glibc2.35
+#================================================================
+
+$ /usr/bin/python3 -u scripts/31_andnot3_surface_sweep.py selftest
+[+    0.1s] [rung10] family: 3 positives (top tumour-cov) x C(.,2) x 2 broadly-normal NOT markers
+[+    0.1s] [rung10] 3-input AND-NOT family size N = 6 gates
+  [PASS] family built with 3-input AND-NOT gates
+  [PASS] positives are tumour-expressed genes
+  [PASS] NEGBROAD selected as a broadly-normal NOT marker
+  [PASS] scorer returns one verdict per gate
+  [PASS] every result has safe/verdict/vital_leak
+  [PASS] AND of two non-co-expressed activators has low vital leak
+[+    4.0s] [rung10] scoring gates 0-6 of 6 (batch 1/1) ...
+[+    4.0s] [rung10]   batch done: 6/6 scored, 0 safe, best vital_leak so far=0.01 (ckpt saved)
+  [PASS] sweep scores the whole family
+  [PASS] checkpoint file written
+[+    4.0s] [rung10] RESUMING sweep from checkpoint: 6/6 scored, 0 safe so far
+  [PASS] resume is idempotent (no re-scoring past completion)
+
+selftest: 9/9 checks passed
+[exit 0]
+
+$ pip install cellxgene-census
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 91.2/91.2 kB 8.8 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 55.6/55.6 kB 5.1 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 203.4/203.4 kB 15.0 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 22.3/22.3 MB 28.1 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 175.3/175.3 kB 17.2 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 89.5/89.5 kB 9.2 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 60.1/60.1 kB 5.9 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 101.4 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 127.5 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 319.6/319.6 kB 28.0 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 15.0/15.0 MB 108.7 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 127.5 MB/s eta 0:00:00
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+google-colab 1.0.0 requires pandas==2.2.2, but you have pandas 2.3.3 which is incompatible.
+gcsfs 2025.3.0 requires fsspec==2025.3.0, but you have fsspec 2026.4.0 which is incompatible.
+datasets 4.0.0 requires fsspec[http]<=2025.3.0,>=2023.1.0, but you have fsspec 2026.4.0 which is incompatible.
+[exit 0]
+
+$ /usr/bin/python3 -u scripts/31_andnot3_surface_sweep.py run
+[+    7.2s] [rung5] surfaceome from cache surfaceome_genes.txt: 5007 genes
+[+   10.0s] [rung5] RESUMING from /content/drive/MyDrive/cancer-recon/rung5_cache.r5.tumour.npz
+Traceback (most recent call last):
+  File "/content/cancer-recon-apoptosis/scripts/31_andnot3_surface_sweep.py", line 379, in <module>
+    sys.exit(selftest() if args.mode == "selftest" else main_run())
+                                                        ^^^^^^^^^^
+  File "/content/cancer-recon-apoptosis/scripts/31_andnot3_surface_sweep.py", line 229, in main_run
+    panel, src, n_full, n_short = load_or_build_panel(d5)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/content/cancer-recon-apoptosis/scripts/31_andnot3_surface_sweep.py", line 118, in load_or_build_panel
+    shortlist = sorted([g for g in tumour.genes if cov[g] >= d5.GENE_FLOOR], key=lambda g: -cov[g])
+                                                             ^^^^^^^^^^^^^
+AttributeError: module 'd5' has no attribute 'GENE_FLOOR'
+[exit 1]
