@@ -13,16 +13,18 @@
   "per_cancer": {
     "NSCLC": {
       "n_patients": 587,
+      "hla_loh_availability_ceiling_frac": 0.2794,
       "ceiling_addressable_frac": 0.2794,
       "ceiling_addressable_ci": [
         0.2498,
         0.3106
       ],
+      "single_a0201_allotype_frac": 0.046,
       "single_a0201_frac": 0.046,
       "panel_size_for_10pct": 2,
       "panel_size_for_20pct": 7,
       "panel_size_for_ceiling": 25,
-      "blocker_groups_in_full_panel": 23,
+      "blocker_groups_in_full_panel": 22,
       "addressability_curve_frac": [
         0.0,
         0.0562,
@@ -36,20 +38,20 @@
         0.2215,
         0.2283,
         0.2351,
-        0.2419,
-        0.247,
-        0.2504,
-        0.2538,
-        0.2572,
+        0.2402,
+        0.2453,
+        0.2487,
+        0.2521,
+        0.2555,
+        0.2589,
         0.2606,
+        0.2624,
         0.2641,
         0.2658,
         0.2675,
         0.2692,
         0.2709,
-        0.2726,
-        0.2743,
-        0.276
+        0.2726
       ],
       "top_blockers": [
         {
@@ -93,12 +95,12 @@
           "marginal_frac": 0.0102
         },
         {
-          "allele": "B*14:01",
+          "allele": "B*07:02",
           "marginal_new_patients": 4,
           "marginal_frac": 0.0068
         },
         {
-          "allele": "C*05:01",
+          "allele": "B*14:01",
           "marginal_new_patients": 4,
           "marginal_frac": 0.0068
         },
@@ -108,25 +110,27 @@
           "marginal_frac": 0.0068
         },
         {
-          "allele": "C*07:02",
-          "marginal_new_patients": 4,
-          "marginal_frac": 0.0068
+          "allele": "B*40:01",
+          "marginal_new_patients": 3,
+          "marginal_frac": 0.0051
         }
       ],
       "label": "lung (NSCLC-pooled; RUNG-5 was LUAD)"
     },
     "BRCA": {
       "n_patients": 938,
+      "hla_loh_availability_ceiling_frac": 0.1354,
       "ceiling_addressable_frac": 0.1354,
       "ceiling_addressable_ci": [
         0.1179,
         0.1546
       ],
+      "single_a0201_allotype_frac": 0.0309,
       "single_a0201_frac": 0.0309,
       "panel_size_for_10pct": 9,
       "panel_size_for_20pct": null,
       "panel_size_for_ceiling": 22,
-      "blocker_groups_in_full_panel": 20,
+      "blocker_groups_in_full_panel": 21,
       "addressability_curve_frac": [
         0.0,
         0.0309,
@@ -189,27 +193,27 @@
           "marginal_frac": 0.0064
         },
         {
-          "allele": "C*07:01",
-          "marginal_new_patients": 5,
-          "marginal_frac": 0.0053
-        },
-        {
           "allele": "C*05:01",
           "marginal_new_patients": 5,
           "marginal_frac": 0.0053
         },
         {
+          "allele": "C*07:01",
+          "marginal_new_patients": 5,
+          "marginal_frac": 0.0053
+        },
+        {
+          "allele": "A*30:01",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.0043
+        },
+        {
+          "allele": "B*07:02",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.0043
+        },
+        {
           "allele": "C*03:04",
-          "marginal_new_patients": 4,
-          "marginal_frac": 0.0043
-        },
-        {
-          "allele": "C*02:02",
-          "marginal_new_patients": 4,
-          "marginal_frac": 0.0043
-        },
-        {
-          "allele": "C*12:03",
           "marginal_new_patients": 4,
           "marginal_frac": 0.0043
         }
@@ -218,11 +222,13 @@
     },
     "COREAD": {
       "n_patients": 662,
+      "hla_loh_availability_ceiling_frac": 0.1994,
       "ceiling_addressable_frac": 0.1994,
       "ceiling_addressable_ci": [
         0.1748,
         0.2259
       ],
+      "single_a0201_allotype_frac": 0.0468,
       "single_a0201_frac": 0.0468,
       "panel_size_for_10pct": 4,
       "panel_size_for_20pct": null,
@@ -287,6 +293,11 @@
           "marginal_frac": 0.0091
         },
         {
+          "allele": "B*07:02",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.006
+        },
+        {
           "allele": "B*27:05",
           "marginal_new_patients": 4,
           "marginal_frac": 0.006
@@ -302,17 +313,12 @@
           "marginal_frac": 0.006
         },
         {
-          "allele": "C*07:02",
-          "marginal_new_patients": 4,
-          "marginal_frac": 0.006
-        },
-        {
-          "allele": "C*03:04",
+          "allele": "A*25:01",
           "marginal_new_patients": 3,
           "marginal_frac": 0.0045
         },
         {
-          "allele": "B*14:02",
+          "allele": "A*68:02",
           "marginal_new_patients": 3,
           "marginal_frac": 0.0045
         }
@@ -320,46 +326,47 @@
       "label": "colorectal cancer"
     }
   },
-  "a0201_crosscheck_vs_scripts24": {
+  "a02_crosscheck_vs_scripts24": {
     "NSCLC": {
-      "scripts26_A0201": 0.046,
-      "scripts24_A02group": 0.049,
-      "consistent_within_1pct": true
+      "scripts26_A0201_allotype_floor": 0.046,
+      "scripts24_A02clade": 0.049,
+      "allotype_floor_at_or_below_clade": true
     },
     "BRCA": {
-      "scripts26_A0201": 0.0309,
-      "scripts24_A02group": 0.031,
-      "consistent_within_1pct": true
+      "scripts26_A0201_allotype_floor": 0.0309,
+      "scripts24_A02clade": 0.031,
+      "allotype_floor_at_or_below_clade": true
     },
     "COREAD": {
-      "scripts26_A0201": 0.0468,
-      "scripts24_A02group": 0.057,
-      "consistent_within_1pct": true
+      "scripts26_A0201_allotype_floor": 0.0468,
+      "scripts24_A02clade": 0.057,
+      "allotype_floor_at_or_below_clade": true
     }
   },
+  "quantity_measured": "NOT-arm (HLA-LOH) AVAILABILITY ceiling \u2014 a PATIENT-LEVEL UPPER BOUND. This is NOT true addressability: true address = this x P(broad activator at usable density). Panel allele ORDER under coverage ties is arbitrary; only the coverage CURVE and the fractions are load-bearing (greedy tie-break is deterministic by allele name for reproducibility).",
   "HEADLINE": {
     "NSCLC": {
-      "single_A0201": 0.046,
+      "single_A0201_allotype_floor": 0.046,
       "panel_for_10pct": 2,
       "panel_for_20pct": 7,
-      "ceiling": 0.2794,
+      "hla_loh_availability_ceiling_UPPERBOUND": 0.2794,
       "blockers_to_ceiling": 25
     },
     "BRCA": {
-      "single_A0201": 0.0309,
+      "single_A0201_allotype_floor": 0.0309,
       "panel_for_10pct": 9,
       "panel_for_20pct": null,
-      "ceiling": 0.1354,
+      "hla_loh_availability_ceiling_UPPERBOUND": 0.1354,
       "blockers_to_ceiling": 22
     },
     "COREAD": {
-      "single_A0201": 0.0468,
+      "single_A0201_allotype_floor": 0.0468,
       "panel_for_10pct": 4,
       "panel_for_20pct": null,
-      "ceiling": 0.1994,
+      "hla_loh_availability_ceiling_UPPERBOUND": 0.1994,
       "blockers_to_ceiling": 24
     }
   },
-  "CEILING": "Synthesis (scRNA-gap + WGS-LOH, different patients, same cancer types). PATIENT-LEVEL not clonal (subclonal LOH => lower; see scripts/27). NSCLC-pooled not LUAD. 4-digit blocker unit is conservative. Assumes a broad activator exists (Tmod premise); the positive arm is NOT proven free here.",
-  "INTERPRETATION": "Single-allele A*02 addresses ~3-6%. A small greedy PANEL of the most common lost alleles recovers most of the 14-28% ceiling. The deliverable is the panel-size-vs-addressability curve + the priority allele list per cancer \u2014 i.e. the concrete reagent panel a programme would build. Specificity is ACHIEVABLE but FREQUENCY-BOUNDED by HLA-LOH; the bound, per cancer, is the design target."
+  "CEILING": "Synthesis (scRNA-gap + WGS-LOH, different patients, same cancer types). Reported numbers are NOT-arm HLA-LOH AVAILABILITY, PATIENT-LEVEL UPPER BOUNDS \u2014 not clonal (TRACERx ~76% of LUAD LOH subclonal => clonal-only several-fold lower; see scripts/24 clonal_sensitivity), and not multiplied by activator availability (see scripts/27 activator tier). NSCLC-pooled not LUAD. 4-digit allotype = conservative floor; the deployed blocker is A*02-clade cross-reactive so the GROUP number is the better central estimate.",
+  "INTERPRETATION": "Single-allele A*02 NOT-arm availability is ~3-6%; a small greedy PANEL of the most common lost alleles recovers most of the 14-28% per-cancer LOH-availability ceiling. The deliverable is the panel-size-vs-availability CURVE + priority allele list. Specificity is ACHIEVABLE but FREQUENCY-BOUNDED by HLA-LOH. To become a true target list, cross each cancer's number with activator availability (scripts/27 tier) and the clonal haircut (scripts/24)."
 }

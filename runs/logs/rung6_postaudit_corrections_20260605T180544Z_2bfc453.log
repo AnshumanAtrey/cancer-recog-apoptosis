@@ -1,0 +1,116 @@
+# cancer-recon-apoptosis — run log
+# step          : rung6_postaudit_corrections
+# utc           : 20260605T180544Z
+# commit_short  : 2bfc453  (+uncommitted changes)
+# commit_full   : 2bfc4531be0ea433b472a66f55a293ce67d13cf5
+# branch        : main
+# python        : 3.12.6
+# platform      : macOS-26.3-arm64-arm-64bit
+#================================================================
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/24_hla_loh_addressability.py selftest
+  [PASS] per-row A*02-LOH addressability matches hand calc
+  [PASS] carries_a02 counts A*02 in either slot
+  [PASS] het_a02 excludes homozygous A*02/A*02
+  [PASS] invariant a02_addr <= het <= carries
+  [PASS] any_hla_loh >= a02_addressable (count)
+  [PASS] looser lost-CN threshold is monotone (>=)
+  [PASS] jeffreys_upper(0,50) > 0 (no false zero)
+  [PASS] jeffreys_lower(50,50) < 1 (no false one)
+
+selftest: 8/8 checks passed
+[exit 0]
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/24_hla_loh_addressability.py run
+[rung6] loaded 6,319 samples from mjimenez2023_MOESM6.xlsx sheet 'GIE per sample'
+[rung6] wrote /Users/atrey/Desktop/code/side-claude-income/research-papers/cancer-treatment/runs/rung6_logicgate/rung6_hla_loh_addressability.json
+
+  cancer   n     anyHLA-LOH     A*02-Tmod      gap(A*02)   over-state
+  NSCLC    587  27.8% [24.8%-30.9%]  4.9% [3.6%-6.6%]  95.1%      5.62x
+  BRCA     938  13.5% [11.8%-15.5%]  3.1% [2.3%-4.1%]  96.9%      4.38x
+  COREAD   662  20.4% [17.9%-23.1%]  5.7% [4.4%-7.4%]  94.3%      3.55x
+[rung6] wrote /Users/atrey/Desktop/code/side-claude-income/research-papers/cancer-treatment/runs/rung6_logicgate/rung6_hla_loh.png
+[exit 0]
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/26_blocker_panel_addressability.py selftest
+  [PASS] patient0 usable == {A*02:01}
+  [PASS] patient1 usable == {A*01:01, B*08:01}
+  [PASS] patient2 (all homozygous/retained) usable == {}
+  [PASS] curve starts at 0
+  [PASS] curve is monotone non-decreasing
+  [PASS] ceiling (full panel) addresses the 2 addressable patients
+  [PASS] greedy panel only contains usable alleles
+  [PASS] analyse ceiling frac == 2/3
+  [PASS] single A*02:01 allotype frac == 1/3
+  [PASS] panel_for_ceiling <= n_distinct_alleles
+  [PASS] greedy panel deterministic across runs
+  [PASS] greedy tie-break is alphabetical (A*01:01 before A*99:01)
+
+selftest: 12/12 checks passed
+[exit 0]
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/26_blocker_panel_addressability.py run
+[rung6/panel] loaded 6,319 samples
+[rung6/panel] wrote /Users/atrey/Desktop/code/side-claude-income/research-papers/cancer-treatment/runs/rung6_logicgate/rung6_blocker_panel.json
+
+  cancer   n   A*02:01floor  panel->10% panel->20%  LOH-avail-ceiling  groups
+  NSCLC   587      4.6%            2          7    27.9%             22
+  BRCA    938      3.1%            9       None    13.5%             21
+  COREAD  662      4.7%            4       None    19.9%             21
+  (ceiling = NOT-arm HLA-LOH availability, patient-level UPPER BOUND; x activator-availability for true reach)
+
+  A*02:01 allotype FLOOR vs scripts/24 A*02-clade (floor should be <= clade):
+    NSCLC: allotype-floor=4.6%  clade(scripts24)=4.9%  OK
+    BRCA: allotype-floor=3.1%  clade(scripts24)=3.1%  OK
+    COREAD: allotype-floor=4.7%  clade(scripts24)=5.7%  OK
+[rung6/panel] wrote /Users/atrey/Desktop/code/side-claude-income/research-papers/cancer-treatment/runs/rung6_logicgate/rung6_blocker_panel.png
+[exit 0]
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/27_pancancer_loh_addressability.py selftest
+  [PASS] cancer X ceiling = 1/2
+  [PASS] cancer Y ceiling = 1/1
+  [PASS] reach under {A*02:01} on X == 0.5
+  [PASS] reach under {A*02:01} on Y == 0.0
+  [PASS] reach under {A*02:01,B*08:01} on Y == 1.0
+  [PASS] reach is monotone in panel (superset >= subset)
+
+selftest: 6/6 checks passed
+[exit 0]
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/27_pancancer_loh_addressability.py run
+[rung6/pan] loaded 6,319 samples, 58 cancer types
+[rung6/pan] universal greedy allele order (top 12): ['A*02:01', 'A*03:01', 'A*01:01', 'A*24:02', 'A*11:01', 'C*06:02', 'A*68:01', 'A*31:01', 'A*32:01', 'C*05:01', 'A*26:01', 'B*07:02']
+[rung6/pan] wrote /Users/atrey/Desktop/code/side-claude-income/research-papers/cancer-treatment/runs/rung6_logicgate/rung6_pancancer_addressability.json
+
+  overall LOH-availability ceiling (any usable blocker) = 17.2%; universal (6, 12) reach = top6=11.1%, top12=14.1%
+  (ALL numbers are NOT-arm HLA-LOH availability, patient-level UPPER BOUNDS; x activator x clonal for true reach)
+
+  Highest LOH-availability (NOT a target list — note activator tier):
+   cancer    n    A*02:01  LOH-ceil       uTop6   activator
+   KICH      42   16.7%  73.8% [62%-84%]  42.9%  none
+   PANET    114   10.5%  54.4% [47%-62%]  37.7%  none
+   CESC      57   17.5%  40.4% [30%-51%]  28.1%  validated-moderate
+   ESCA     224    4.9%  31.2% [26%-36%]  22.8%  validated-moderate
+   CHOL      76    6.6%  30.3% [22%-39%]  17.1%  unknown
+   NSCLC    587    4.6%  27.9% [25%-31%]  18.6%  validated-moderate
+   HNSC      84    3.6%  27.4% [20%-36%]  16.7%  validated-moderate
+   PAAD     306    4.9%  26.8% [23%-31%]  15.4%  validated-moderate
+   LMS       61    9.8%  26.2% [18%-36%]  22.9%  unknown
+   DLBCL    114    3.5%  21.9% [16%-29%]  13.2%  unknown
+
+  HONEST target list (high LOH AND validated broad activator):
+   CESC      57  LOH-ceil=40.4%  activator=cervical (A2 program)
+   ESCA     224  LOH-ceil=31.2%  activator=CEA/HER2 gastro-esophageal
+   NSCLC    587  LOH-ceil=27.9%  activator=CEA ~70-74%; EVEREST-2 NSCLC CR
+   HNSC      84  LOH-ceil=27.4%  activator=EGFR HNSCC
+   PAAD     306  LOH-ceil=26.8%  activator=MSLN ~75-85% (A2B694/A2B543)
+   OV       214  LOH-ceil=20.6%  activator=MSLN ~97% serous (A2B694)
+
+  Lowest LOH-availability (bottom 5):
+   GBM       97    1.0%   3.1%
+   LIHC     147    0.0%   2.0%
+   MBL      107    0.0%   1.9%
+   CLL       60    0.0%   0.0%
+   PIA       43    0.0%   0.0%
+[rung6/pan] wrote /Users/atrey/Desktop/code/side-claude-income/research-papers/cancer-treatment/runs/rung6_logicgate/rung6_pancancer.png
+[exit 0]

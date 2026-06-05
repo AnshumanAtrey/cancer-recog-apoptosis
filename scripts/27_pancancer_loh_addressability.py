@@ -46,6 +46,31 @@ FIGURE_PNG = OUT_DIR / "rung6_pancancer.png"
 MIN_N = 30                     # min patients for a cancer type to be reported (statistical meaning)
 UNIVERSAL_K = (6, 12)          # universal-panel sizes to evaluate
 
+# CRITICAL: the LOH-availability ceiling is only ONE arm. TRUE addressability = LOH-avail x activator-avail.
+# This tier map (from A2 Bio's actual indications + CEA/MSLN/EGFR expression literature) prevents the ranking
+# from being misread as a target list — several TOP-LOH cancers (KICH, PANET) have NO validated broad activator.
+ACTIVATOR_TIER = {
+    "COREAD": ("validated-high", "CEA ~90-99% (A2B530, FDA Orphan Drug in CRC)"),
+    "OV":     ("validated-high", "MSLN ~97% serous (A2B694)"),
+    "NSCLC":  ("validated-moderate", "CEA ~70-74%; EVEREST-2 NSCLC CR"),
+    "PAAD":   ("validated-moderate", "MSLN ~75-85% (A2B694/A2B543)"),
+    "MESO":   ("validated-moderate", "MSLN ~66-69%"),
+    "ESCA":   ("validated-moderate", "CEA/HER2 gastro-esophageal"),
+    "STAD":   ("validated-moderate", "CEA gastric"),
+    "HNSC":   ("validated-moderate", "EGFR HNSCC"),
+    "KIRC":   ("validated-moderate", "clear-cell RCC (A2 program)"),
+    "CESC":   ("validated-moderate", "cervical (A2 program)"),
+    "BRCA":   ("partial", "MSLN/HER2 in TNBC/HER2+ subsets only"),
+    "KICH":   ("none", "chromophobe RCC — NO validated broad surface activator (ceiling is HOLLOW)"),
+    "PANET":  ("none", "pNEN — EGFR+ only ~21% (ceiling largely hollow)"),
+    "GBM":    ("none", "EGFRvIII niche only, no broad activator"),
+    "MBL":    ("none", "CNS — no broad activator"),
+    "PIA":    ("none", "CNS — no broad activator"),
+    "CLL":    ("none", "heme — not a Tmod solid-tumour target"),
+    "LIHC":   ("none", "HCC — no broad CEA/MSLN/EGFR activator"),
+}
+_VALIDATED = {"validated-high", "validated-moderate"}
+
 # import scripts/26 by path (module name starts with a digit -> importlib)
 _spec = importlib.util.spec_from_file_location("rung6_panel", PROJECT_ROOT / "scripts" / "26_blocker_panel_addressability.py")
 _panel = importlib.util.module_from_spec(_spec)
@@ -96,17 +121,24 @@ def main_run() -> int:
                 if f >= t:
                     return k
             return None
+        tier, note = ACTIVATOR_TIER.get(code, ("unknown", "activator availability not assessed"))
         per_cancer[code] = {
             "n": n,
-            "single_a0201": round(a02_k / n, 4),
-            "ceiling": round(ceil_k / n, 4),
+            "single_a0201_allotype": round(a02_k / n, 4),
+            # 'ceiling' = NOT-arm (HLA-LOH) AVAILABILITY upper bound — NOT true addressability (see activator_tier)
+            "loh_availability_ceiling": round(ceil_k / n, 4),
+            "ceiling": round(ceil_k / n, 4),                    # back-compat alias
             "ceiling_ci": [round(jeffreys_lower(ceil_k, n), 4), round(jeffreys_upper(ceil_k, n), 4)],
+            "activator_tier": tier,
+            "activator_note": note,
             "panel_for_10pct": size_for(0.10),
             "blockers_to_ceiling": len(panel),
             **{f"universal_top{k}_reach": round(reach_under_panel(usable, universal[k]), 4) for k in UNIVERSAL_K},
         }
 
     ranked = sorted(per_cancer.items(), key=lambda kv: kv[1]["ceiling"], reverse=True)
+    # the HONEST target list: high LOH availability AND a validated broad activator
+    ranked_with_activator = [(c, v) for c, v in ranked if v["activator_tier"] in _VALIDATED]
 
     # pan-cohort headline numbers for the universal panels
     universal_global = {f"top{k}": round(reach_under_panel(all_usable, universal[k]), 4) for k in UNIVERSAL_K}
@@ -123,32 +155,47 @@ def main_run() -> int:
         "overall": {"n": len(all_usable), "ceiling_any_blocker": overall_ceiling,
                     "universal_reach": universal_global},
         "n_types_reported": len(per_cancer),
-        "ranked_by_ceiling": [{"cancer": c, **v} for c, v in ranked],
-        "most_addressable_top5": [c for c, _ in ranked[:5]],
-        "least_addressable_bottom5": [c for c, _ in ranked[-5:]],
-        "CEILING": "Patient-level NOT clonal (subclonal LOH => true reach LOWER; needs controlled-access "
-                   "TRACERx multi-region WES, absent from public supplements). WGS cohort joined to RUNG-5's "
-                   "scRNA surface conclusion by cancer TYPE, not same individuals. 4-digit blocker unit. "
-                   "Assumes a broad activator exists per type (Tmod premise; the positive arm is not proven "
-                   "free here). Some rare types have small n -> wide CIs (reported).",
-        "INTERPRETATION": "Genetic-NOT-gate addressability is FREQUENCY-BOUNDED and varies widely by cancer "
-                          "(set by each type's HLA-LOH rate). A single universal ~6-12 allele blocker panel "
-                          "captures most of the reachable population in the high-LOH cancers. The ranked list "
-                          "is a concrete indication-prioritisation + reagent-panel spec for a programme.",
+        "ranked_by_loh_availability": [{"cancer": c, **v} for c, v in ranked],
+        "highest_loh_availability_top5": [c for c, _ in ranked[:5]],
+        "WARNING_top_loh_lack_activator": "KICH (73.8%) & PANET (54.4%) top the LOH list but have NO validated "
+            "broad activator -> these high numbers are HOLLOW. Do NOT read this ranking as a target list.",
+        "honest_targets_loh_AND_validated_activator": [
+            {"cancer": c, "loh_availability_ceiling": v["loh_availability_ceiling"],
+             "single_a0201": v["single_a0201_allotype"], "activator": v["activator_note"]}
+            for c, v in ranked_with_activator[:8]],
+        "lowest_loh_availability_bottom5": [c for c, _ in ranked[-5:]],
+        "CEILING": "Reported numbers are NOT-arm (HLA-LOH) AVAILABILITY, PATIENT-LEVEL UPPER BOUNDS. TRUE "
+                   "addressability = this x activator-availability (see activator_tier per cancer; several "
+                   "top-LOH types have tier 'none' -> hollow) x clonal fraction (subclonal LOH lowers it; "
+                   "TRACERx ~76% of LUAD LOH subclonal; quantifying per-cancer needs controlled-access "
+                   "multi-region WES, absent from public supplements). The per-cancer ceiling reproduces the "
+                   "supplement's own validated LILAC loh_lilac call to rounding (a STRENGTH: ranking inherits "
+                   "Martinez-Jimenez 2023's LOH determination, not a new estimator). WGS cohort joined to "
+                   "RUNG-5 by cancer TYPE not individuals; NSCLC-pooled not LUAD; small-n types have wide CIs.",
+        "INTERPRETATION": "NOT-arm (HLA-LOH) availability is FREQUENCY-BOUNDED and varies widely by cancer. A "
+                          "universal ~6-12 allotype panel captures most of the reachable LOH population. This "
+                          "is a NOT-ARM availability ranking, NOT a target list: the honest target list "
+                          "(honest_targets_loh_AND_validated_activator) intersects high LOH with a validated "
+                          "broad activator (CRC/NSCLC/PDAC/ovarian/meso) and is then haircut by the clonal "
+                          "fraction. Specificity is achievable but doubly frequency-bounded (LOH x activator).",
     }
     RESULT_JSON.write_text(json.dumps(result, indent=2))
     print(f"[rung6/pan] wrote {RESULT_JSON}")
 
-    print(f"\n  overall ceiling (any usable blocker) = {overall_ceiling:.1%}; "
+    print(f"\n  overall LOH-availability ceiling (any usable blocker) = {overall_ceiling:.1%}; "
           f"universal {UNIVERSAL_K} reach = " + ", ".join(f"top{k}={universal_global[f'top{k}']:.1%}" for k in UNIVERSAL_K))
-    print("\n  MOST addressable cancers (by HLA-LOH ceiling):")
-    print("   cancer    n    A*02:01  ceiling        uTop6   uTop12")
+    print("  (ALL numbers are NOT-arm HLA-LOH availability, patient-level UPPER BOUNDS; x activator x clonal for true reach)")
+    print("\n  Highest LOH-availability (NOT a target list — note activator tier):")
+    print("   cancer    n    A*02:01  LOH-ceil       uTop6   activator")
     for c, v in ranked[:10]:
-        print(f"   {c:8}{v['n']:4}  {v['single_a0201']:6.1%}  {v['ceiling']:5.1%} "
-              f"[{v['ceiling_ci'][0]:.0%}-{v['ceiling_ci'][1]:.0%}]  {v[f'universal_top6_reach']:5.1%}  {v['universal_top12_reach']:5.1%}")
-    print("  LEAST addressable (bottom 5):")
+        print(f"   {c:8}{v['n']:4}  {v['single_a0201_allotype']:6.1%}  {v['loh_availability_ceiling']:5.1%} "
+              f"[{v['ceiling_ci'][0]:.0%}-{v['ceiling_ci'][1]:.0%}]  {v['universal_top6_reach']:5.1%}  {v['activator_tier']}")
+    print("\n  HONEST target list (high LOH AND validated broad activator):")
+    for c, v in ranked_with_activator[:6]:
+        print(f"   {c:8}{v['n']:4}  LOH-ceil={v['loh_availability_ceiling']:5.1%}  activator={v['activator_note']}")
+    print("\n  Lowest LOH-availability (bottom 5):")
     for c, v in ranked[-5:]:
-        print(f"   {c:8}{v['n']:4}  {v['single_a0201']:6.1%}  {v['ceiling']:5.1%}")
+        print(f"   {c:8}{v['n']:4}  {v['single_a0201_allotype']:6.1%}  {v['loh_availability_ceiling']:5.1%}")
 
     _make_figure(ranked, universal_global)
     return 0
@@ -163,19 +210,21 @@ def _make_figure(ranked, universal_global) -> None:
         print(f"[rung6/pan] matplotlib unavailable ({e}); skipped figure")
         return
     top = ranked[:20]
-    names = [f"{c} (n={v['n']})" for c, v in top][::-1]
-    ceil = [v["ceiling"] * 100 for _, v in top][::-1]
-    a02 = [v["single_a0201"] * 100 for _, v in top][::-1]
+    # mark types with NO validated broad activator (their LOH ceiling is hollow) with a trailing '*'
+    names = [f"{c} (n={v['n']}){'*' if v['activator_tier'] not in _VALIDATED else ''}" for c, v in top][::-1]
+    ceil = [v["loh_availability_ceiling"] * 100 for _, v in top][::-1]
+    a02 = [v["single_a0201_allotype"] * 100 for _, v in top][::-1]
     u6 = [v["universal_top6_reach"] * 100 for _, v in top][::-1]
     y = np.arange(len(names))
     fig, ax = plt.subplots(figsize=(11, 8))
-    ax.barh(y, ceil, color="#4C9F70", label="ceiling (any blocker)")
+    ax.barh(y, ceil, color="#4C9F70", label="LOH-availability ceiling (UPPER BOUND)")
     ax.barh(y, u6, color="#2B6CB0", height=0.55, label="universal top-6 panel")
-    ax.plot(a02, y, "x", color="#C1432B", ms=8, label="deployed single A*02 gate")
+    ax.plot(a02, y, "x", color="#C1432B", ms=8, label="single A*02:01 allotype (floor)")
     ax.set_yticks(y); ax.set_yticklabels(names, fontsize=8)
-    ax.set_xlabel("% patients addressable by a genetic HLA-LOH NOT-gate (worst case, patient-level)")
-    ax.set_title("RUNG-6: pan-cancer genetic recognition-addressability\n"
-                 "(top-20 by HLA-LOH ceiling; single-allele gate vs universal 6-blocker panel vs ceiling)",
+    ax.set_xlabel("% patients with NOT-arm (HLA-LOH) availability — UPPER BOUND, not true reach\n"
+                  "(true reach = this × activator-availability × clonal fraction)")
+    ax.set_title("RUNG-6: pan-cancer NOT-arm (HLA-LOH) availability\n"
+                 "(top-20 by LOH availability; * = NO validated broad activator -> ceiling is hollow)",
                  fontsize=11)
     ax.legend(fontsize=9, loc="lower right"); ax.grid(axis="x", alpha=0.3)
     fig.tight_layout()

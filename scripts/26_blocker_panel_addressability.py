@@ -24,12 +24,17 @@ WHAT THIS IS, HONESTLY
 ----------------------
 Same data + same caveats as scripts/24 (Martinez-Jimenez 2023 'GIE per sample', 6,319 WGS tumours):
   - SYNTHESIS not wet discovery; integrates with RUNG-5's surface-gap conclusion.
-  - PATIENT-LEVEL not clonal (subclonal LOH => true addressable LOWER; see scripts/27).
+  - The reported addressability is the NOT-ARM (HLA-LOH) AVAILABILITY only. TRUE address = this x
+    P(broad activator antigen at usable density). For the cancers A2 Bio actually targets (CRC/NSCLC/PDAC/
+    ovarian/meso) the activator multiplier is ~0.7-0.97 so the story survives; for high-LOH cancers with NO
+    validated activator (KICH, pNEN) the number is HOLLOW. See scripts/27 for the per-cancer activator tier.
+  - PATIENT-LEVEL UPPER BOUND, not clonal (subclonal LOH => true reach LOWER; TRACERx ~76% of LUAD HLA-LOH
+    is subclonal -> a clonal-only gate is several-fold smaller; see scripts/24 clonal_sensitivity).
   - lung = NSCLC-pooled, not LUAD.
-  - blocker unit = the 4-digit allotype as typed (e.g. A*02:01) — CONSERVATIVE (a real scFv is allotype-
-    specific). Group-level (2-digit) blockers would need FEWER reagents; we also report the 2-digit count.
-  - ASSUMPTION: a broad activator antigen exists for the positive arm (the Tmod premise). We quantify the
-    NOT-arm availability only; we do NOT claim the activator is free (flagged in the result).
+  - blocker unit = the 4-digit allotype (e.g. A*02:01) -> a CONSERVATIVE FLOOR on panel reach. The DEPLOYED
+    A2 Bio blocker is A*02-CLADE cross-reactive (functions on A*02:02/:03/:05/:06/:07, cross-reacts A*69;
+    Mol Ther Oncolytics 2022, PMC9619369), so a real reagent covers MORE than one allotype; the 2-digit
+    GROUP count (also reported) is the better central estimate of reagents needed.
 
 CROSS-CHECK: a panel of exactly {A*02:01} must reproduce scripts/24's A*02 number (asserted at run time).
 
@@ -121,9 +126,10 @@ def greedy_panel_curve(usable_sets: list[frozenset], max_panel: int = 25):
     panel = []
     for _ in range(min(max_panel, len(cand))):
         best_a, best_gain, best_vec = None, -1, None
-        for a, vec in member.items():
+        for a in sorted(member):                       # DETERMINISTIC: ties broken by allele name (stable)
+            vec = member[a]
             gain = int((vec & ~covered).sum())
-            if gain > best_gain:
+            if gain > best_gain:                       # strict > + sorted iteration => first (alphabetical) tie wins
                 best_a, best_gain, best_vec = a, gain, vec
         if best_a is None or best_gain == 0:
             break
@@ -148,7 +154,9 @@ def analyse(df: pd.DataFrame, lost_cn: float = LOST_CN) -> dict:
                 return k
         return None
 
-    # single-allele A*02:01 cross-check (must match scripts/24)
+    # single-allele A*02:01 ALLOTYPE gate = the conservative FLOOR. The deployed A2 Bio blocker is
+    # A*02-clade cross-reactive (broader); scripts/24 computes that clade number with the 'no A*02 retained'
+    # semantics. We report the allotype floor here and cross-check floor <= scripts/24's clade number.
     a02_k = sum(1 for s in usable if "A*02:01" in s)
 
     # 2-digit group count to reach ceiling (how many distinct allele GROUPS the full panel spans)
@@ -157,10 +165,13 @@ def analyse(df: pd.DataFrame, lost_cn: float = LOST_CN) -> dict:
 
     return {
         "n_patients": n,
-        "ceiling_addressable_frac": round(ceiling_k / n, 4) if n else 0.0,
+        # NB: this 'ceiling' is NOT-arm (HLA-LOH) AVAILABILITY, an UPPER BOUND, not true addressability.
+        "hla_loh_availability_ceiling_frac": round(ceiling_k / n, 4) if n else 0.0,
+        "ceiling_addressable_frac": round(ceiling_k / n, 4) if n else 0.0,  # kept for back-compat
         "ceiling_addressable_ci": [round(jeffreys_lower(ceiling_k, n), 4),
                                    round(jeffreys_upper(ceiling_k, n), 4)],
-        "single_a0201_frac": round(a02_k / n, 4) if n else 0.0,
+        "single_a0201_allotype_frac": round(a02_k / n, 4) if n else 0.0,
+        "single_a0201_frac": round(a02_k / n, 4) if n else 0.0,  # kept for back-compat
         "panel_size_for_10pct": size_for(0.10),
         "panel_size_for_20pct": size_for(0.20),
         "panel_size_for_ceiling": len(panel),
@@ -193,13 +204,15 @@ def main_run() -> int:
         res["label"] = label
         per_cancer[code] = res
 
-    # cross-check vs scripts/24's committed A*02 numbers
-    ref24 = {"NSCLC": 0.049, "BRCA": 0.031, "COREAD": 0.057}
+    # cross-check vs scripts/24 (the A*02-CLADE 'no A*02 retained' gate). scripts/26's A*02:01 allotype is
+    # the conservative FLOOR and should sit at or below scripts/24's clade number (modulo rare compound
+    # A*02:01/A*02:0x heterozygotes). We report both; no single number is forced to 'match'.
+    ref24_clade = {"NSCLC": 0.049, "BRCA": 0.031, "COREAD": 0.057}
     xcheck = {}
     for c in CANCERS:
-        got = per_cancer[c]["single_a0201_frac"]
-        xcheck[c] = {"scripts26_A0201": got, "scripts24_A02group": ref24[c],
-                     "consistent_within_1pct": abs(got - ref24[c]) <= 0.012}
+        allot = per_cancer[c]["single_a0201_allotype_frac"]
+        xcheck[c] = {"scripts26_A0201_allotype_floor": allot, "scripts24_A02clade": ref24_clade[c],
+                     "allotype_floor_at_or_below_clade": allot <= ref24_clade[c] + 1e-9}
 
     result = {
         "tag": "rung6_blocker_panel_addressability",
@@ -212,39 +225,44 @@ def main_run() -> int:
         "data_source": "Martinez-Jimenez 2023 Nat Genet, MOESM6 'GIE per sample' (6,319 WGS tumours).",
         "lost_cn_threshold": LOST_CN, "loci": list(LOCI), "blocker_unit": "4-digit allotype (conservative)",
         "per_cancer": per_cancer,
-        "a0201_crosscheck_vs_scripts24": xcheck,
-        "HEADLINE": {c: {"single_A0201": per_cancer[c]["single_a0201_frac"],
+        "a02_crosscheck_vs_scripts24": xcheck,
+        "quantity_measured": "NOT-arm (HLA-LOH) AVAILABILITY ceiling — a PATIENT-LEVEL UPPER BOUND. This is "
+                             "NOT true addressability: true address = this x P(broad activator at usable "
+                             "density). Panel allele ORDER under coverage ties is arbitrary; only the "
+                             "coverage CURVE and the fractions are load-bearing (greedy tie-break is "
+                             "deterministic by allele name for reproducibility).",
+        "HEADLINE": {c: {"single_A0201_allotype_floor": per_cancer[c]["single_a0201_allotype_frac"],
                          "panel_for_10pct": per_cancer[c]["panel_size_for_10pct"],
                          "panel_for_20pct": per_cancer[c]["panel_size_for_20pct"],
-                         "ceiling": per_cancer[c]["ceiling_addressable_frac"],
+                         "hla_loh_availability_ceiling_UPPERBOUND": per_cancer[c]["hla_loh_availability_ceiling_frac"],
                          "blockers_to_ceiling": per_cancer[c]["panel_size_for_ceiling"]}
                      for c in CANCERS},
-        "CEILING": "Synthesis (scRNA-gap + WGS-LOH, different patients, same cancer types). PATIENT-LEVEL "
-                   "not clonal (subclonal LOH => lower; see scripts/27). NSCLC-pooled not LUAD. 4-digit "
-                   "blocker unit is conservative. Assumes a broad activator exists (Tmod premise); the "
-                   "positive arm is NOT proven free here.",
-        "INTERPRETATION": "Single-allele A*02 addresses ~3-6%. A small greedy PANEL of the most common "
-                          "lost alleles recovers most of the 14-28% ceiling. The deliverable is the "
-                          "panel-size-vs-addressability curve + the priority allele list per cancer — i.e. "
-                          "the concrete reagent panel a programme would build. Specificity is ACHIEVABLE but "
-                          "FREQUENCY-BOUNDED by HLA-LOH; the bound, per cancer, is the design target.",
+        "CEILING": "Synthesis (scRNA-gap + WGS-LOH, different patients, same cancer types). Reported numbers "
+                   "are NOT-arm HLA-LOH AVAILABILITY, PATIENT-LEVEL UPPER BOUNDS — not clonal (TRACERx ~76% "
+                   "of LUAD LOH subclonal => clonal-only several-fold lower; see scripts/24 clonal_sensitivity), "
+                   "and not multiplied by activator availability (see scripts/27 activator tier). NSCLC-pooled "
+                   "not LUAD. 4-digit allotype = conservative floor; the deployed blocker is A*02-clade "
+                   "cross-reactive so the GROUP number is the better central estimate.",
+        "INTERPRETATION": "Single-allele A*02 NOT-arm availability is ~3-6%; a small greedy PANEL of the most "
+                          "common lost alleles recovers most of the 14-28% per-cancer LOH-availability ceiling. "
+                          "The deliverable is the panel-size-vs-availability CURVE + priority allele list. "
+                          "Specificity is ACHIEVABLE but FREQUENCY-BOUNDED by HLA-LOH. To become a true target "
+                          "list, cross each cancer's number with activator availability (scripts/27 tier) and "
+                          "the clonal haircut (scripts/24).",
     }
     RESULT_JSON.write_text(json.dumps(result, indent=2))
     print(f"[rung6/panel] wrote {RESULT_JSON}")
 
-    print("\n  cancer   n    A*02:01   panel->10%  panel->20%  ceiling   blockers->ceiling  groups")
+    print("\n  cancer   n   A*02:01floor  panel->10% panel->20%  LOH-avail-ceiling  groups")
     for c, r in per_cancer.items():
-        print(f"  {c:7}{r['n_patients']:4}  {r['single_a0201_frac']:6.1%}   "
-              f"{str(r['panel_size_for_10pct']):>8}    {str(r['panel_size_for_20pct']):>8}   "
-              f"{r['ceiling_addressable_frac']:6.1%}        {r['panel_size_for_ceiling']:>4}           "
-              f"{r['blocker_groups_in_full_panel']:>3}")
-    print("\n  A*02:01 cross-check vs scripts/24:")
+        print(f"  {c:7}{r['n_patients']:4}    {r['single_a0201_allotype_frac']:6.1%}     "
+              f"{str(r['panel_size_for_10pct']):>8}   {str(r['panel_size_for_20pct']):>8}   "
+              f"{r['hla_loh_availability_ceiling_frac']:6.1%}            {r['blocker_groups_in_full_panel']:>3}")
+    print("  (ceiling = NOT-arm HLA-LOH availability, patient-level UPPER BOUND; x activator-availability for true reach)")
+    print("\n  A*02:01 allotype FLOOR vs scripts/24 A*02-clade (floor should be <= clade):")
     for c, x in xcheck.items():
-        print(f"    {c}: scripts/26={x['scripts26_A0201']:.1%}  scripts/24={x['scripts24_A02group']:.1%}  "
-              f"{'OK' if x['consistent_within_1pct'] else 'MISMATCH'}")
-    if not all(x["consistent_within_1pct"] for x in xcheck.values()):
-        print("  [warn] A*02 cross-check off — note scripts/24 matches the A*02 GROUP (A*02:xx), "
-              "scripts/26 the A*02:01 allotype; small differences expected.")
+        print(f"    {c}: allotype-floor={x['scripts26_A0201_allotype_floor']:.1%}  clade(scripts24)={x['scripts24_A02clade']:.1%}  "
+              f"{'OK' if x['allotype_floor_at_or_below_clade'] else 'VIOLATED'}")
 
     _make_figure(per_cancer)
     return 0
@@ -325,9 +343,16 @@ def selftest() -> int:
 
     a = analyse(df)
     # results are reported rounded to 4 dp, so compare with a rounding-aware tolerance (not 1e-9)
-    check("analyse ceiling frac == 2/3", abs(a["ceiling_addressable_frac"] - 2 / 3) < 1e-3)
-    check("single A*02:01 frac == 1/3", abs(a["single_a0201_frac"] - 1 / 3) < 1e-3)
+    check("analyse ceiling frac == 2/3", abs(a["hla_loh_availability_ceiling_frac"] - 2 / 3) < 1e-3)
+    check("single A*02:01 allotype frac == 1/3", abs(a["single_a0201_allotype_frac"] - 1 / 3) < 1e-3)
     check("panel_for_ceiling <= n_distinct_alleles", a["panel_size_for_ceiling"] <= 3)
+
+    # determinism: a deliberate marginal tie must resolve identically + alphabetically across runs
+    tied = [frozenset({"A*99:01"}), frozenset({"A*01:01"})]   # two alleles, one patient each -> gain ties at 1
+    p1 = greedy_panel_curve(tied)[1]
+    p2 = greedy_panel_curve(tied)[1]
+    check("greedy panel deterministic across runs", p1 == p2)
+    check("greedy tie-break is alphabetical (A*01:01 before A*99:01)", p1[0][0] == "A*01:01")
 
     total = len(checks)
     print(f"\nselftest: {ok}/{total} checks passed")

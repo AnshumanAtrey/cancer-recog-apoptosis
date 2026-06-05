@@ -200,19 +200,37 @@ def main_run() -> int:
         "a02_match": A02_PREFIX,
         "per_cancer": per_cancer,
         "a02_addressable_sensitivity_to_lostCN": sens,
-        "HEADLINE": {c: {"any_loh_gate_addressable": per_cancer[c]["any_hla_loh"]["fraction"],
-                         "a02_tmod_addressable": per_cancer[c]["a02_tmod_addressable"]["fraction"],
-                         "gap_after_a02_tmod": per_cancer[c]["gap_after_a02_tmod_gate"]}
+        "values_are": "PATIENT-LEVEL UPPER BOUNDS on NOT-arm (HLA-LOH) availability. NOT clonal, NOT x activator.",
+        # CLONAL haircut: the cited '~76% of LUAD HLA-LOH is subclonal' (TRACERx/McGranahan 2017) actually
+        # multiplied through, for NSCLC, as an order-of-magnitude illustration. A clonal-only gate (the SAFE
+        # gate — a subclonal NOT-gate spares the allele-retaining tumour subclones) is several-fold smaller.
+        "clonal_sensitivity_NSCLC_illustrative": {
+            "source": "TRACERx/McGranahan 2017: ~76% of LUAD HLA-LOH tumours subclonal => clonal frac ~0.24 of LOH+",
+            "clonal_fraction_of_loh": 0.24,
+            "any_hla_loh_patient_level": per_cancer["NSCLC"]["any_hla_loh"]["fraction"],
+            "any_hla_loh_clonal_est": round(per_cancer["NSCLC"]["any_hla_loh"]["fraction"] * 0.24, 4),
+            "a02_tmod_patient_level": per_cancer["NSCLC"]["a02_tmod_addressable"]["fraction"],
+            "a02_tmod_clonal_est": round(per_cancer["NSCLC"]["a02_tmod_addressable"]["fraction"] * 0.24, 4),
+            "note": "lung-derived multiplier applied illustratively; per-cancer clonal fractions need "
+                    "controlled-access multi-region WES (absent from public supplements).",
+        },
+        "HEADLINE": {c: {"any_loh_gate_addressable_UPPERBOUND": per_cancer[c]["any_hla_loh"]["fraction"],
+                         "a02_tmod_addressable_UPPERBOUND": per_cancer[c]["a02_tmod_addressable"]["fraction"],
+                         "gap_after_a02_tmod_UPPERBOUND": per_cancer[c]["gap_after_a02_tmod_gate"]}
                      for c in CANCERS},
         "CEILING": "Synthesis of OUR surface gap (scRNA atlas) + FIELD's published HLA-LOH calls (WGS) — "
-                   "different modalities, different patients, same cancer types. Patient-level not clonal "
-                   "(subclonal LOH => true addressable is LOWER; TRACERx ~76% of LUAD LOH subclonal). Lung "
-                   "is NSCLC-pooled, not LUAD. A*02 group match (A2 Bio is A*02:01). NOT a wet result.",
-        "INTERPRETATION": "any-HLA-LOH (some allele-specific gate in principle) gives a generous ceiling; "
-                          "the ACTUAL single-allele A*02 Tmod gate addresses ~3-6% of patients (5-9x smaller) "
-                          "because it needs loss of the SPECIFIC sensed allele. The 100% gap barely moves for "
-                          "a single-allele gate. Implication: a PANEL of allele-specific blockers (A*02 + B*07 "
-                          "+ ...) is needed to recover the any-HLA-LOH ceiling. This is the next design step.",
+                   "different modalities, different patients, same cancer types. PATIENT-LEVEL UPPER BOUNDS: "
+                   "(1) NOT clonal (subclonal LOH => lower; see clonal_sensitivity_NSCLC_illustrative — a "
+                   "clonal-only NSCLC A*02 gate is ~1.1%, not 4.9%); (2) NOT multiplied by activator "
+                   "availability (true address = this x P(broad activator); for CRC/NSCLC the activator is "
+                   "~0.7-0.9, so the story survives there). Lung is NSCLC-pooled, not LUAD. A*02 here = the "
+                   "A*02 GROUP/clade (the deployed A2 Bio blocker is clade-cross-reactive). NOT a wet result.",
+        "INTERPRETATION": "any-HLA-LOH (some allele-specific gate in principle) gives a generous ceiling; the "
+                          "ACTUAL single-allele A*02 Tmod gate addresses ~3-6% of patients (3.6-5.6x smaller) "
+                          "because it needs loss of the SPECIFIC sensed allele. The 100% surface gap barely "
+                          "moves for a single-allele gate. Implication: a PANEL of allele-specific blockers is "
+                          "needed (scripts/26 quantifies it). All numbers are upper bounds before the clonal "
+                          "and activator haircuts.",
     }
     RESULT_JSON.write_text(json.dumps(result, indent=2))
     print(f"[rung6] wrote {RESULT_JSON}")
