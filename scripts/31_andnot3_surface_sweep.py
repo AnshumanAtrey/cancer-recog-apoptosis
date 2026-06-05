@@ -57,6 +57,7 @@ TOP_POS = int(os.environ.get("R10_TOP_POS", "120"))     # # positive (tumour-exp
 N_NEG = int(os.environ.get("R10_N_NEG", "40"))          # # broadly-normal NOT-slot markers
 BATCH = int(os.environ.get("R10_BATCH", "20000"))       # gates per scoring batch (checkpoint granularity)
 NORM_BROAD = float(os.environ.get("R10_NORM_BROAD", "0.5"))   # a NOT marker must be positive in > this frac of normal
+GENE_FLOOR = float(os.environ.get("R5_GENE_FLOOR", "0.02"))   # tumour-expression floor (matches RUNG-5 main_real)
 
 
 def log(msg):
@@ -115,11 +116,11 @@ def load_or_build_panel(d5):
         if d5.TUMOUR_CACHE:
             d5._save(tumour, d5.TUMOUR_CACHE)
     cov = d5.malignant_coverage_per_gene(tumour, list(tumour.genes))
-    shortlist = sorted([g for g in tumour.genes if cov[g] >= d5.GENE_FLOOR], key=lambda g: -cov[g])
+    shortlist = sorted([g for g in tumour.genes if cov[g] >= GENE_FLOOR], key=lambda g: -cov[g])
     if not shortlist:
         shortlist = sorted(tumour.genes, key=lambda g: -cov[g])[:50]
     tumour = d5.subset_genes(tumour, shortlist)
-    log(f"two-pass: {len(shortlist)}/{len(genes_full)} surface genes tumour-expressed (>= {d5.GENE_FLOOR})")
+    log(f"two-pass: {len(shortlist)}/{len(genes_full)} surface genes tumour-expressed (>= {GENE_FLOOR})")
 
     normal = None
     if d5.NORMAL_CACHE and d5.NORMAL_CACHE.exists():
