@@ -25,10 +25,22 @@ gene (the deployed blocker senses HLA-A\*02). The measured worst value is plugge
 - **GPU not used, by design** — only 3 genes; the bottleneck is the Census fetch (network/disk) and the
   aggregation is a trivial numpy groupby. Stated honestly rather than bolting on idle GPU code.
 
+## v2 fix (after the first real run, 2026-06)
+The first run (`colab_runs/20260605T191641Z_ae26e7e/`) had a **methodological bug**: CELLxGENE returns `0`
+for both "measured & truly zero" **and** "this dataset never measured the gene" — so datasets lacking HLA-A
+were scored as 100% HLA-low (adrenal showed an impossible 0% detection; every type hit worst-donor 100% off a
+single artifact donor; the coupled FPR of 29% was fake). **v2 counts only datasets that actually measured HLA**
+(≥1 cell with HLA>0 anywhere), reports the **pooled** fraction among measuring datasets as the headline (robust),
+and keeps per-type median/p90/worst-donor for context. **Re-running is free** (re-aggregates from the cached
+Drive tiles — no refetch). The gold-standard fix (Census `feature_dataset_presence_matrix`) is noted as a
+future refetch option.
+
 ## Honest ceiling
 mRNA HLA ≠ surface MHC-I protein; scRNA **dropout inflates** the HLA-low fraction (headline is an **upper
 bound** → conservatively over-estimates toxicity, the safe direction); HLA-I is **IFN-γ inducible** (resting
-atlas may understate induced levels); scRNA resolves the **HLA-A gene**, not the **A\*02 allele**.
+atlas may understate induced levels); scRNA resolves the **HLA-A gene**, not the **A\*02 allele**. After the v2
+filter, residual zeros from *measuring* datasets are the best mRNA estimate; protein-level confirmation is the
+wet-lab residual.
 
 ## Provenance
 `scripts/29_hla_heterogeneity.py` (selftest 10/10, validated locally on M2). Census version pinned to

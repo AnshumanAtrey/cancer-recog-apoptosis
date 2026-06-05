@@ -195,37 +195,51 @@ def pull_vital_hla(census, d4, tissue, ti, n_tissue):
 
 
 # ---------------------------------------------------------------------------
-#  aggregation: per (vital type, donor) HLA-low fractions -> worst-donor per type
+#  aggregation: per vital type HLA-low among DATASETS THAT ACTUALLY MEASURED HLA
 # ---------------------------------------------------------------------------
+#  CRITICAL (v2 fix): CELLxGENE returns 0 for BOTH "measured & truly zero" AND "this dataset never measured
+#  the gene". Counting the second as "HLA-low" inflated every number (adrenal showed 0% detection = its
+#  datasets simply lack HLA-A; every type hit worst-donor 100% off a single artifact donor). We now treat a
+#  dataset as HLA-MEASURING iff it has >=1 cell with HLA>0 ANYWHERE, drop cells from non-measuring datasets,
+#  and report a robust per-donor DISTRIBUTION (median/p90/worst) instead of the brittle single worst donor.
+#  Residual ceiling: a dataset that measured HLA but where a cell type is genuinely ~0 is correctly kept
+#  (real biology, e.g. immune-privileged neurons); mRNA dropout still inflates low (upper bound). The
+#  gold-standard fix (Census feature_dataset_presence_matrix) needs a refetch and is noted, not silently done.
 def aggregate(counts, label, donor, gene_idx=0):
-    """gene_idx 0=HLA-A (the sensed allele's gene). Returns per-type worst-donor + pooled HLA-low fractions."""
+    """Returns (per_type, coverage_meta). gene_idx 0 = HLA-A (the sensed gene)."""
+    a = counts[:, gene_idx].astype(np.int64)
+    dataset = np.array([str(d).split("::")[0] for d in donor], dtype=object)
+    all_ds = set(dataset.tolist())
+    measuring = {d for d in all_ds if a[dataset == d].max(initial=0) > 0}    # dataset detects HLA somewhere
+    is_meas = np.array([d in measuring for d in dataset], dtype=bool)
+    meta = {"n_datasets_total": len(all_ds),
+            "n_datasets_excluded_unmeasured": len(all_ds) - len(measuring),
+            "n_cells_excluded_unmeasured": int((~is_meas).sum())}
+
     out = {}
-    types = sorted(set(x for x in label if x))
-    for t in types:
-        m = label == t
-        c = counts[m, gene_idx]
-        dn = donor[m]
-        per_donor = {}
+    for t in sorted(set(x for x in label if x)):
+        m = (label == t) & is_meas
+        if m.sum() == 0:
+            out[t] = {"n_cells_measured": 0, "note": "no cells from HLA-measuring datasets (excluded)"}
+            continue
+        c = a[m]; dn = donor[m]
+        donor_low = []
         for d in set(dn.tolist()):
             cc = c[dn == d]
-            if len(cc) < MIN_CELLS_PER_DONOR:
-                continue
-            per_donor[d] = {f"low_k{k}": float((cc < k).mean()) for k in LOW_THRESHOLDS}
-            per_donor[d]["detect"] = float((cc >= 1).mean())
-            per_donor[d]["n"] = int(len(cc))
-        if not per_donor:
-            continue
-        # worst-donor = donor with the HIGHEST HLA-low fraction at k=1 (blocker most likely to fail)
-        worst = max(per_donor, key=lambda d: per_donor[d]["low_k1"])
+            if len(cc) >= MIN_CELLS_PER_DONOR:
+                donor_low.append(float((cc < 1).mean()))
+        dl = np.array(sorted(donor_low)) if donor_low else np.array([])
         out[t] = {
-            "n_cells": int(m.sum()), "n_donors": len(per_donor),
-            "pooled_low_k1": float((c < 1).mean()), "pooled_low_k2": float((c < 2).mean()),
-            "pooled_detect": float((c >= 1).mean()),
-            "worst_donor_low_k1": per_donor[worst]["low_k1"],
-            "worst_donor_low_k2": per_donor[worst]["low_k2"],
-            "worst_donor_n": per_donor[worst]["n"],
+            "n_cells_measured": int(m.sum()),
+            "n_datasets_measuring": int(len(set(dataset[m].tolist()))),
+            "n_informative_donors": int(len(dl)),
+            "pooled_low_k1": round(float((c < 1).mean()), 4),
+            "pooled_detect": round(float((c >= 1).mean()), 4),
+            "median_donor_low_k1": round(float(np.median(dl)), 4) if len(dl) else None,
+            "p90_donor_low_k1": round(float(np.percentile(dl, 90)), 4) if len(dl) else None,
+            "worst_donor_low_k1": round(float(dl.max()), 4) if len(dl) else None,
         }
-    return out
+    return out, meta
 
 
 def couple_to_rung7(worst_hla_low_overall: float):
@@ -247,9 +261,7 @@ def main_run() -> int:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     HB.start()
     d4 = _load("d4", "17_logicgate_data.py")
-    import cellxgene_census
-    HB.set(f"opening CELLxGENE Census {d4.CENSUS_VERSION} ...")
-    census = cellxgene_census.open_soma(census_version=d4.CENSUS_VERSION)
+    census = None                                   # LAZY: opened only if a tile is missing (network-free re-aggregate)
     tissues = d4.NORMAL_TISSUES
     tile_dir = CACHE if CACHE else (OUT_DIR / "tiles")
     tile_dir.mkdir(parents=True, exist_ok=True)
@@ -263,6 +275,10 @@ def main_run() -> int:
             log(f"[{ti + 1}/{len(tissues)}] {tissue}: RESUMED from tile ({d['counts'].shape[0]:,} cells)")
             all_counts.append(d["counts"]); all_label.append(d["label"]); all_donor.append(d["donor"])
             continue
+        if census is None:                          # first missing tile -> open Census now (only if needed)
+            import cellxgene_census
+            HB.set(f"opening CELLxGENE Census {d4.CENSUS_VERSION} ...")
+            census = cellxgene_census.open_soma(census_version=d4.CENSUS_VERSION)
         res = pull_vital_hla(census, d4, tissue, ti, len(tissues))
         if res is None:
             continue
@@ -274,11 +290,16 @@ def main_run() -> int:
     counts = np.vstack(all_counts) if all_counts else np.zeros((0, 3), np.int32)
     label = np.concatenate(all_label) if all_label else np.array([], object)
     donor = np.concatenate(all_donor) if all_donor else np.array([], object)
-    per_type = aggregate(counts, label, donor, gene_idx=0)            # HLA-A (the sensed gene)
+    per_type, coverage = aggregate(counts, label, donor, gene_idx=0)  # HLA-A (the sensed gene)
+    log(f"dataset coverage: {coverage['n_datasets_excluded_unmeasured']}/{coverage['n_datasets_total']} "
+        f"datasets excluded as non-HLA-measuring ({coverage['n_cells_excluded_unmeasured']:,} cells dropped)")
 
-    worst_overall = max((v["worst_donor_low_k1"] for v in per_type.values()), default=0.0)
-    worst_type = max(per_type, key=lambda t: per_type[t]["worst_donor_low_k1"]) if per_type else None
-    coupling = couple_to_rung7(worst_overall)
+    # headline = the vital type with the highest POOLED HLA-low fraction (among HLA-measuring datasets);
+    # pooled (not single-worst-donor) is the robust, RUNG-7-relevant 'fraction of normal cells HLA-low'.
+    valid = {t: v for t, v in per_type.items() if v.get("n_cells_measured", 0) > 0 and v.get("pooled_low_k1") is not None}
+    worst_type = max(valid, key=lambda t: valid[t]["pooled_low_k1"]) if valid else None
+    worst_pooled = valid[worst_type]["pooled_low_k1"] if worst_type else 0.0
+    coupling = couple_to_rung7(worst_pooled)
 
     result = {
         "tag": "rung8_hla_heterogeneity",
@@ -286,14 +307,18 @@ def main_run() -> int:
                     "RUNG-7's single load-bearing parameter with atlas data.",
         "census_version": d4.CENSUS_VERSION, "hla_genes": HLA_GENES, "sensed_gene": "HLA-A",
         "n_cells_total": int(counts.shape[0]),
+        "dataset_coverage": coverage,
         "per_vital_type": per_type,
         "worst_vital_type": worst_type,
-        "worst_vital_HLA_low_frac_k1": round(float(worst_overall), 4),
+        "worst_vital_pooled_HLA_low_k1": round(float(worst_pooled), 4),
         "rung7_coupling": coupling,
-        "CEILING": "mRNA HLA != surface MHC-I protein; scRNA DROPOUT inflates the HLA-low fraction (headline "
-                   "is an UPPER BOUND -> conservatively OVER-estimates toxicity); HLA-I is IFN-gamma inducible "
-                   "(resting atlas may understate induced levels); scRNA resolves the HLA-A GENE not the A*02 "
-                   "ALLELE. Worst-donor (never pooled), per RUNG-5/6.",
+        "CEILING": "v2 fix: only DATASETS that actually measured HLA are counted (Census returns 0 for "
+                   "'not measured' too -> v1 conflated unmeasured with HLA-low; see dataset_coverage). Residual: "
+                   "mRNA HLA != surface MHC-I protein; scRNA DROPOUT still inflates HLA-low (UPPER BOUND -> "
+                   "conservatively over-estimates toxicity); HLA-I is IFN-gamma inducible (resting atlas may "
+                   "understate induced); HLA-A GENE not the A*02 ALLELE. Headline = POOLED among measuring "
+                   "datasets (robust); per-type worst/p90/median donor also reported. Gold-standard fix = "
+                   "Census feature_dataset_presence_matrix (needs refetch).",
         "INTERPRETATION": "This replaces RUNG-7's assumed 5% normal HLA-low fraction with a measured, "
                           "per-vital-tissue number. The worst vital type sets the gate's off-tumour-toxicity "
                           "floor (data_grounded_FPR). If the measured HLA-low fraction is well below 5%, the "
@@ -302,13 +327,14 @@ def main_run() -> int:
     }
     RESULT_JSON.write_text(json.dumps(result, indent=2))
     log(f"wrote {RESULT_JSON}")
-    log(f"WORST vital type = {worst_type}  HLA-low(k=1) = {worst_overall:.1%}  "
+    log(f"WORST vital type = {worst_type}  pooled HLA-low(k1) = {worst_pooled:.1%}  "
         f"-> data-grounded gate FPR = {coupling.get('data_grounded_FPR', 'n/a')}")
-    for t, v in sorted(per_type.items(), key=lambda kv: -kv[1]["worst_donor_low_k1"]):
-        log(f"  {t:22} n={v['n_cells']:>7,} donors={v['n_donors']:>3}  "
-            f"worst-donor HLA-low(k1)={v['worst_donor_low_k1']:.1%}  pooled detect={v['pooled_detect']:.1%}")
+    log(f"{'vital type':22} {'n_meas':>8} {'donors':>6} {'pooled_low':>10} {'p90_donor':>9} {'detect':>7}")
+    for t, v in sorted(valid.items(), key=lambda kv: -kv[1]["pooled_low_k1"]):
+        log(f"  {t:22} {v['n_cells_measured']:>8,} {v['n_informative_donors']:>6} "
+            f"{v['pooled_low_k1']:>10.1%} {(v['p90_donor_low_k1'] or 0):>9.1%} {v['pooled_detect']:>7.1%}")
     HB.stop()
-    _make_figure(per_type)
+    _make_figure(valid)
     return 0
 
 
@@ -319,21 +345,22 @@ def _make_figure(per_type):
         import matplotlib.pyplot as plt
     except Exception as e:
         log(f"matplotlib unavailable ({e}); skipped figure"); return
-    if not per_type:
-        log("no vital types -> no figure"); return
-    items = sorted(per_type.items(), key=lambda kv: kv[1]["worst_donor_low_k1"], reverse=True)
-    names = [t for t, _ in items]
-    worst = [v["worst_donor_low_k1"] * 100 for _, v in items]
+    valid = {t: v for t, v in per_type.items() if v.get("pooled_low_k1") is not None}
+    if not valid:
+        log("no measured vital types -> no figure"); return
+    items = sorted(valid.items(), key=lambda kv: kv[1]["pooled_low_k1"], reverse=True)
+    names = [f"{t} (n={v['n_cells_measured']:,})" for t, v in items]
     pooled = [v["pooled_low_k1"] * 100 for _, v in items]
+    p90 = [(v["p90_donor_low_k1"] or 0) * 100 for _, v in items]
     y = np.arange(len(names))
     fig, ax = plt.subplots(figsize=(10, max(3, 0.5 * len(names) + 1.5)))
-    ax.barh(y, worst, color="#C1432B", label="worst-donor HLA-low (drives gate toxicity)")
-    ax.barh(y, pooled, height=0.5, color="#2B6CB0", label="pooled HLA-low")
+    ax.barh(y, p90, color="#C1432B", label="p90-donor HLA-low (high-end)")
+    ax.barh(y, pooled, height=0.5, color="#2B6CB0", label="pooled HLA-low (headline)")
     ax.axvline(5, ls="--", color="grey", label="RUNG-7 assumed 5%")
     ax.set_yticks(y); ax.set_yticklabels(names, fontsize=8); ax.invert_yaxis()
-    ax.set_xlabel("% of vital cells that are HLA-A-low (UMI=0) — UPPER BOUND (dropout-inflated)")
-    ax.set_title("RUNG-8: normal-tissue HLA-low fraction per vital cell type\n"
-                 "(grounds RUNG-7's safety parameter; worst-donor, never pooled)", fontsize=11)
+    ax.set_xlabel("% of vital cells HLA-A-low (UMI=0) among HLA-MEASURING datasets — UPPER BOUND (dropout)")
+    ax.set_title("RUNG-8 (v2): normal-tissue HLA-low fraction per vital cell type\n"
+                 "(measuring datasets only; grounds RUNG-7's safety parameter)", fontsize=11)
     ax.legend(fontsize=8); ax.grid(axis="x", alpha=0.3)
     fig.tight_layout(); fig.savefig(FIGURE_PNG, dpi=130)
     log(f"wrote {FIGURE_PNG}")
@@ -349,40 +376,48 @@ def selftest() -> int:
         checks.append((name, bool(cond))); ok += bool(cond)
         print(f"  [{'PASS' if cond else 'FAIL'}] {name}")
 
-    # two vital types, two donors each; donor D2 of cardiomyocyte is HLA-low (all zeros)
+    # two HLA-MEASURING donors per type (each has some HLA>0); cardiomyocyte D2 is all-zero (real silence)
     rng = np.random.default_rng(8)
     rows = []
     def block(label, donor, n, hla_low):
         a = np.zeros(n, int) if hla_low else rng.integers(3, 30, n)
         for i in range(n):
             rows.append((label, donor, a[i]))
-    block("cardiomyocyte", "ds::D1", 100, False)     # healthy HLA-high
-    block("cardiomyocyte", "ds::D2", 100, True)      # HLA-low donor -> worst donor
-    block("neuron", "ds::D3", 100, False)
-    block("neuron", "ds::D4", 100, False)
+    block("cardiomyocyte", "dsA::D1", 100, False)    # measuring dataset, HLA-high
+    block("cardiomyocyte", "dsA::D2", 100, True)     # SAME dataset dsA (measuring) but this donor all-zero
+    block("neuron", "dsB::D3", 100, False)
+    block("neuron", "dsB::D4", 100, False)
     label = np.array([r[0] for r in rows], object)
     donor = np.array([r[1] for r in rows], object)
     counts = np.array([[r[2], r[2], r[2]] for r in rows], np.int32)
 
-    agg = aggregate(counts, label, donor, gene_idx=0)
+    agg, cov = aggregate(counts, label, donor, gene_idx=0)
+    check("aggregate returns (per_type, coverage) tuple", isinstance(cov, dict) and "n_datasets_total" in cov)
     check("both vital types aggregated", set(agg) == {"cardiomyocyte", "neuron"})
-    check("cardiomyocyte worst-donor HLA-low(k1) == 100% (the all-zero donor)",
-          abs(agg["cardiomyocyte"]["worst_donor_low_k1"] - 1.0) < 1e-9)
-    check("cardiomyocyte pooled HLA-low(k1) == 50% (one of two donors zero)",
+    check("cardiomyocyte pooled HLA-low(k1) == 50% (D2 zero, in a MEASURING dataset -> kept)",
           abs(agg["cardiomyocyte"]["pooled_low_k1"] - 0.5) < 1e-9)
-    check("neuron worst-donor HLA-low ~ 0 (all detected)", agg["neuron"]["worst_donor_low_k1"] < 0.05)
-    check("worst-donor >= pooled (per type)",
+    check("cardiomyocyte worst-donor HLA-low(k1) == 100% (the all-zero donor D2)",
+          abs(agg["cardiomyocyte"]["worst_donor_low_k1"] - 1.0) < 1e-9)
+    check("neuron pooled HLA-low ~ 0 (all detected)", agg["neuron"]["pooled_low_k1"] < 0.05)
+    check("worst >= pooled (per type)",
           all(agg[t]["worst_donor_low_k1"] >= agg[t]["pooled_low_k1"] - 1e-9 for t in agg))
 
-    # MIN_CELLS gate: a tiny donor must not enter the worst-donor max
-    rows2 = [("neuron", "ds::tiny", 0)] * 5 + [("neuron", "ds::big", v) for v in rng.integers(5, 30, 80)]
+    # THE v2 FIX: a dataset with NO HLA anywhere (unmeasured) is excluded, NOT counted as HLA-low.
+    rows3 = ([("kidney_tubule", "dsMeas::D1", v) for v in rng.integers(3, 30, 80)]   # measuring
+             + [("kidney_tubule", "dsUnmeas::D9", 0) for _ in range(80)])            # never measured -> exclude
+    l3 = np.array([r[0] for r in rows3], object); d3 = np.array([r[1] for r in rows3], object)
+    c3 = np.array([[r[2]] * 3 for r in rows3], np.int32)
+    agg3, cov3 = aggregate(c3, l3, d3, gene_idx=0)
+    check("unmeasured dataset excluded (1 of 2 datasets dropped)", cov3["n_datasets_excluded_unmeasured"] == 1)
+    check("kidney_tubule pooled HLA-low ~ 0 (the unmeasured all-zero dataset was NOT counted as low)",
+          agg3["kidney_tubule"]["pooled_low_k1"] < 0.05)
+
+    # MIN_CELLS gate: a tiny donor must not enter the informative-donor set
+    rows2 = [("neuron", "dsX::tiny", 7)] * 5 + [("neuron", "dsX::big", v) for v in rng.integers(5, 30, 80)]
     lab2 = np.array([r[0] for r in rows2], object); dn2 = np.array([r[1] for r in rows2], object)
     cnt2 = np.array([[r[2]] * 3 for r in rows2], np.int32)
-    agg2 = aggregate(cnt2, lab2, dn2, gene_idx=0)
-    check("tiny donor (<MIN_CELLS) excluded from worst-donor", agg2["neuron"]["n_donors"] == 1)
-
-    # worst-donor monotone: higher HLA-low fraction in worst donor => higher headline
-    check("aggregate returns worst_donor_n", agg["cardiomyocyte"]["worst_donor_n"] == 100)
+    agg2, _ = aggregate(cnt2, lab2, dn2, gene_idx=0)
+    check("tiny donor (<MIN_CELLS) excluded from informative donors", agg2["neuron"]["n_informative_donors"] == 1)
 
     # RUNG-7 coupling runs and FPR rises with the measured HLA-low fraction
     c_lo = couple_to_rung7(0.01).get("data_grounded_FPR", None)
