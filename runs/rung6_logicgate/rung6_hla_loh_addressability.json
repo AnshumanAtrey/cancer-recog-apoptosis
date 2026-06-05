@@ -1,0 +1,167 @@
+{
+  "tag": "rung6_hla_loh_addressability",
+  "hypothesis": "How much of RUNG-5's 100% surface-gate addressability gap does a genetic HLA-LOH NOT-gate close? Contrast the GENEROUS any-HLA-LOH ceiling vs the ACTUAL deployed A2 Bio Tmod gate (HLA-A*02-specific).",
+  "data_source": "Martinez-Jimenez et al. 2023, Nat Genet, DOI 10.1038/s41588-023-01367-1, Supplementary Data (MOESM6) sheet 'GIE per sample'; 6,319 WGS tumours.",
+  "n_samples_total": 6319,
+  "surface_gap_rung5": 1.0,
+  "lost_cn_threshold": 0.5,
+  "a02_match": "A*02",
+  "per_cancer": {
+    "NSCLC": {
+      "label": "lung (NSCLC-pooled; RUNG-5 was LUAD)",
+      "n_patients": 587,
+      "carries_a02": {
+        "n": 587,
+        "k": 262,
+        "fraction": 0.4463,
+        "ci_lower": 0.4128,
+        "ci_upper": 0.4802,
+        "residual_gap": 0.5537
+      },
+      "het_a02": {
+        "n": 587,
+        "k": 224,
+        "fraction": 0.3816,
+        "ci_lower": 0.3491,
+        "ci_upper": 0.415,
+        "residual_gap": 0.6184
+      },
+      "any_hla_loh": {
+        "n": 587,
+        "k": 163,
+        "fraction": 0.2777,
+        "ci_lower": 0.2481,
+        "ci_upper": 0.3089,
+        "residual_gap": 0.7223
+      },
+      "a02_tmod_addressable": {
+        "n": 587,
+        "k": 29,
+        "fraction": 0.0494,
+        "ci_lower": 0.0363,
+        "ci_upper": 0.0658,
+        "residual_gap": 0.9506
+      },
+      "surface_gap_rung5": 1.0,
+      "gap_after_any_loh_gate": 0.7223,
+      "gap_after_a02_tmod_gate": 0.9506,
+      "overstatement_factor_any_vs_a02": 5.62
+    },
+    "BRCA": {
+      "label": "breast carcinoma",
+      "n_patients": 938,
+      "carries_a02": {
+        "n": 938,
+        "k": 448,
+        "fraction": 0.4776,
+        "ci_lower": 0.4509,
+        "ci_upper": 0.5045,
+        "residual_gap": 0.5224
+      },
+      "het_a02": {
+        "n": 938,
+        "k": 374,
+        "fraction": 0.3987,
+        "ci_lower": 0.3727,
+        "ci_upper": 0.4252,
+        "residual_gap": 0.6013
+      },
+      "any_hla_loh": {
+        "n": 938,
+        "k": 127,
+        "fraction": 0.1354,
+        "ci_lower": 0.1179,
+        "ci_upper": 0.1546,
+        "residual_gap": 0.8646
+      },
+      "a02_tmod_addressable": {
+        "n": 938,
+        "k": 29,
+        "fraction": 0.0309,
+        "ci_lower": 0.0227,
+        "ci_upper": 0.0413,
+        "residual_gap": 0.9691
+      },
+      "surface_gap_rung5": 1.0,
+      "gap_after_any_loh_gate": 0.8646,
+      "gap_after_a02_tmod_gate": 0.9691,
+      "overstatement_factor_any_vs_a02": 4.38
+    },
+    "COREAD": {
+      "label": "colorectal cancer",
+      "n_patients": 662,
+      "carries_a02": {
+        "n": 662,
+        "k": 324,
+        "fraction": 0.4894,
+        "ci_lower": 0.4575,
+        "ci_upper": 0.5214,
+        "residual_gap": 0.5106
+      },
+      "het_a02": {
+        "n": 662,
+        "k": 263,
+        "fraction": 0.3973,
+        "ci_lower": 0.3664,
+        "ci_upper": 0.4289,
+        "residual_gap": 0.6027
+      },
+      "any_hla_loh": {
+        "n": 662,
+        "k": 135,
+        "fraction": 0.2039,
+        "ci_lower": 0.1791,
+        "ci_upper": 0.2306,
+        "residual_gap": 0.7961
+      },
+      "a02_tmod_addressable": {
+        "n": 662,
+        "k": 38,
+        "fraction": 0.0574,
+        "ci_lower": 0.0439,
+        "ci_upper": 0.0737,
+        "residual_gap": 0.9426
+      },
+      "surface_gap_rung5": 1.0,
+      "gap_after_any_loh_gate": 0.7961,
+      "gap_after_a02_tmod_gate": 0.9426,
+      "overstatement_factor_any_vs_a02": 3.55
+    }
+  },
+  "a02_addressable_sensitivity_to_lostCN": {
+    "0.3": {
+      "NSCLC": 0.0477,
+      "BRCA": 0.0299,
+      "COREAD": 0.0559
+    },
+    "0.5": {
+      "NSCLC": 0.0494,
+      "BRCA": 0.0309,
+      "COREAD": 0.0574
+    },
+    "0.7": {
+      "NSCLC": 0.0511,
+      "BRCA": 0.0341,
+      "COREAD": 0.0574
+    }
+  },
+  "HEADLINE": {
+    "NSCLC": {
+      "any_loh_gate_addressable": 0.2777,
+      "a02_tmod_addressable": 0.0494,
+      "gap_after_a02_tmod": 0.9506
+    },
+    "BRCA": {
+      "any_loh_gate_addressable": 0.1354,
+      "a02_tmod_addressable": 0.0309,
+      "gap_after_a02_tmod": 0.9691
+    },
+    "COREAD": {
+      "any_loh_gate_addressable": 0.2039,
+      "a02_tmod_addressable": 0.0574,
+      "gap_after_a02_tmod": 0.9426
+    }
+  },
+  "CEILING": "Synthesis of OUR surface gap (scRNA atlas) + FIELD's published HLA-LOH calls (WGS) \u2014 different modalities, different patients, same cancer types. Patient-level not clonal (subclonal LOH => true addressable is LOWER; TRACERx ~76% of LUAD LOH subclonal). Lung is NSCLC-pooled, not LUAD. A*02 group match (A2 Bio is A*02:01). NOT a wet result.",
+  "INTERPRETATION": "any-HLA-LOH (some allele-specific gate in principle) gives a generous ceiling; the ACTUAL single-allele A*02 Tmod gate addresses ~3-6% of patients (5-9x smaller) because it needs loss of the SPECIFIC sensed allele. The 100% gap barely moves for a single-allele gate. Implication: a PANEL of allele-specific blockers (A*02 + B*07 + ...) is needed to recover the any-HLA-LOH ceiling. This is the next design step."
+}

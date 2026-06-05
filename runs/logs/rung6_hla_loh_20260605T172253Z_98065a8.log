@@ -1,0 +1,33 @@
+# cancer-recon-apoptosis — run log
+# step          : rung6_hla_loh
+# utc           : 20260605T172253Z
+# commit_short  : 98065a8  (+uncommitted changes)
+# commit_full   : 98065a84f21de54d47ea64f4dcf55cfa30a8cfd1
+# branch        : main
+# python        : 3.12.6
+# platform      : macOS-26.3-arm64-arm-64bit
+#================================================================
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/24_hla_loh_addressability.py selftest
+  [PASS] per-row A*02-LOH addressability matches hand calc
+  [PASS] carries_a02 counts A*02 in either slot
+  [PASS] het_a02 excludes homozygous A*02/A*02
+  [PASS] invariant a02_addr <= het <= carries
+  [PASS] any_hla_loh >= a02_addressable (count)
+  [PASS] looser lost-CN threshold is monotone (>=)
+  [PASS] jeffreys_upper(0,50) > 0 (no false zero)
+  [PASS] jeffreys_lower(50,50) < 1 (no false one)
+
+selftest: 8/8 checks passed
+[exit 0]
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/24_hla_loh_addressability.py run
+[rung6] loaded 6,319 samples from mjimenez2023_MOESM6.xlsx sheet 'GIE per sample'
+[rung6] wrote /Users/atrey/Desktop/code/side-claude-income/research-papers/cancer-treatment/runs/rung6_logicgate/rung6_hla_loh_addressability.json
+
+  cancer   n     anyHLA-LOH     A*02-Tmod      gap(A*02)   over-state
+  NSCLC    587  27.8% [24.8%-30.9%]  4.9% [3.6%-6.6%]  95.1%      5.62x
+  BRCA     938  13.5% [11.8%-15.5%]  3.1% [2.3%-4.1%]  96.9%      4.38x
+  COREAD   662  20.4% [17.9%-23.1%]  5.7% [4.4%-7.4%]  94.3%      3.55x
+[rung6] wrote /Users/atrey/Desktop/code/side-claude-income/research-papers/cancer-treatment/runs/rung6_logicgate/rung6_hla_loh.png
+[exit 0]
