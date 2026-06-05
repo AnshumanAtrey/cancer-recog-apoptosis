@@ -158,11 +158,18 @@ def build_andnot3_family(panel, opt, top_pos=TOP_POS, n_neg=N_NEG):
     tum_cov = {g: float((panel.counts[is_tum, j] >= opt.K).mean()) if is_tum.any() else 0.0
                for j, g in enumerate(genes)}
     norm_pos = (panel.counts[is_norm] >= opt.K) if is_norm.any() else np.zeros((0, len(genes)))
-    pos_genes = sorted([g for g in genes], key=lambda g: -tum_cov[g])[:top_pos]
-    neg_genes = sorted([g for j, g in enumerate(genes)
-                        if is_norm.any() and norm_pos[:, j].mean() > NORM_BROAD and tum_cov[g] < 0.05],
-                       key=lambda g: -(norm_pos[:, genes.index(g)].mean()))[:n_neg]
-    log(f"family: {len(pos_genes)} positives (top tumour-cov) x C(.,2) x {len(neg_genes)} broadly-normal NOT markers")
+    norm_frac = {g: (float(norm_pos[:, j].mean()) if is_norm.any() else 0.0) for j, g in enumerate(genes)}
+    pos_genes = sorted(genes, key=lambda g: -tum_cov[g])[:top_pos]
+    # NOT-slot = broadly-normal surface markers (the genes that COULD spare normal tissue). The cached panel
+    # only carries tumour-EXPRESSED genes, so a strict "tumour-absent" NOT marker barely exists here; we take
+    # the broadly-normal genes and PREFER the lowest tumour coverage (closest to a real 'off in tumour' NOT),
+    # with a fallback to the most-broadly-normal genes so the family is never trivially empty.
+    broadly = [g for g in genes if norm_frac[g] > NORM_BROAD]
+    if len(broadly) < n_neg:
+        broadly = sorted(genes, key=lambda g: -norm_frac[g])[:max(n_neg, len(broadly))]
+    neg_genes = sorted(broadly, key=lambda g: (tum_cov[g], -norm_frac[g]))[:n_neg]
+    log(f"family: {len(pos_genes)} positives (top tumour-cov) x C(.,2) x {len(neg_genes)} NOT markers "
+        f"({len(broadly)} broadly-normal > {NORM_BROAD}); NOT e.g. {neg_genes[:5]}")
     fam = []
     for a, b in itertools.combinations(pos_genes, 2):          # deterministic (sorted input)
         for c in neg_genes:
@@ -184,12 +191,16 @@ def sweep(panel, family, opt, required_vital):
     checkpoint of (n_scored, n_safe, safe_gates, best). Heartbeat shows batch progress."""
     ck = _ckpt_path()
     ck.parent.mkdir(parents=True, exist_ok=True)
-    state = {"n_scored": 0, "n_safe": 0, "safe_gates": [], "best": [], "verdict_counts": {}}
+    state = {"n_scored": 0, "n_safe": 0, "n_selective": 0, "safe_gates": [], "selective_gates": [],
+             "best": [], "verdict_counts": {}}
     if ck.exists():
         try:
-            state = json.loads(ck.read_text())
+            loaded = json.loads(ck.read_text())
+            state.update(loaded)                         # tolerate older checkpoints missing new keys
+            for kdef in ("n_selective",): state.setdefault(kdef, 0)
+            state.setdefault("selective_gates", [])
             log(f"RESUMING sweep from checkpoint: {state['n_scored']:,}/{len(family):,} scored, "
-                f"{state['n_safe']} safe so far")
+                f"{state['n_safe']} safe ({state['n_selective']} SELECTIVE) so far")
         except Exception as e:
             log(f"checkpoint unreadable ({e}); starting fresh")
     start = state["n_scored"]
@@ -204,16 +215,19 @@ def sweep(panel, family, opt, required_vital):
                 state["verdict_counts"].get(_verdict_key(r["verdict"]), 0) + 1
             if r["safe"]:
                 state["n_safe"] += 1
-                if len(state["safe_gates"]) < 200:
-                    state["safe_gates"].append({k: r[k] for k in ("gate", "coverage", "vital_leak", "vital_worst", "verdict")})
-            # keep the 10 lowest-vital-leak gates as "closest to safe" (the honest near-miss frontier)
+            if r["selective"]:                           # SELECTIVE = safe AND coverage >= COV_BAR (the gap-CLOSERS)
+                state["n_selective"] += 1
+                if len(state["selective_gates"]) < 200:
+                    state["selective_gates"].append({k: r[k] for k in ("gate", "coverage", "vital_leak", "vital_worst", "verdict")})
+            # keep the 10 highest-coverage SAFE gates as the honest "closest to a gap-closer" frontier
             state["best"].append({"gate": r["gate"], "vital_leak": r["vital_leak"], "strict_leak": r["strict_leak"],
-                                  "coverage": r["coverage"], "verdict": r["verdict"]})
-        state["best"] = sorted(state["best"], key=lambda x: (x["vital_leak"], x["strict_leak"]))[:10]
+                                  "coverage": r["coverage"], "safe": r["safe"], "verdict": r["verdict"]})
+        # frontier = safe gates ranked by HIGHEST coverage (closest to useful), then lowest vital leak
+        state["best"] = sorted(state["best"], key=lambda x: (not x["safe"], -x["coverage"], x["vital_leak"]))[:10]
         state["n_scored"] = hi
         ck.write_text(json.dumps(state))
         log(f"  batch done: {hi:,}/{len(family):,} scored, {state['n_safe']} safe, "
-            f"best vital_leak so far={state['best'][0]['vital_leak'] if state['best'] else 'n/a'} (ckpt saved)")
+            f"{state['n_selective']} SELECTIVE (safe+useful) (ckpt saved)")
     return state
 
 
@@ -233,17 +247,19 @@ def main_run() -> int:
         log("EMPTY family (no positives or no broadly-normal NOT markers) — a genuine structural negative.")
     state = sweep(panel, family, opt, d5.lg.VITAL_NONREGEN)
 
+    # The gap is CLOSED only by a SELECTIVE gate (safe AND coverage >= COV_BAR). A SAFE-LOW-COVERAGE gate is
+    # safe but fires on ~nobody -> it addresses no patients, so it does NOT close the gap.
     closes_gap = None
-    if state["n_safe"] > 0:
-        # a SURPRISE positive: report it, but it is NOT believed until the full RUNG-5 rigor (scripts/23 FDR +
-        # donor-permutation null + bootstrap) and wet-lab agonism. Flag loudly.
-        log(f"*** {state['n_safe']} 3-input SURFACE AND-NOT gates passed the worst-donor safety bar — SURPRISE. "
-            f"These are HYPOTHESES; route through scripts/23 (FDR/perm/bootstrap) before believing.")
-        closes_gap = "candidate(s) found — UNVERIFIED (needs FDR/permutation/bootstrap + wet-lab agonism)"
+    if state["n_selective"] > 0:
+        log(f"*** {state['n_selective']} 3-input SURFACE AND-NOT gates are SELECTIVE (safe AND useful) — SURPRISE. "
+            f"HYPOTHESES only; route through scripts/23 (FDR/perm/bootstrap) + wet-lab agonism before believing.")
+        closes_gap = f"candidate(s) found ({state['n_selective']} SELECTIVE) — UNVERIFIED (needs FDR/perm/bootstrap + wet lab)"
     else:
-        log("0 of N 3-input surface AND-NOT gates are worst-donor-safe — CONFIRMS the NOT-slot must be genetic "
-            "(surface NOT markers are broadly normal-expressed; they cannot selectively spare vital tissue).")
-        closes_gap = "NO — 0 safe; addressability gap stays 100% with surface-only 3-input AND-NOT gates"
+        log(f"0 of {state['n_scored']:,} 3-input surface AND-NOT gates are SELECTIVE (safe AND useful) "
+            f"[{state['n_safe']} were safe-but-low-coverage, firing on ~nobody] — CONFIRMS the NOT-slot must be "
+            f"GENETIC: a broadly-normal SURFACE marker either leaks into vital tissue or kills tumour coverage.")
+        closes_gap = (f"NO — 0 SELECTIVE of {state['n_scored']:,}; surface-only 3-input AND-NOT gates cannot close "
+                      f"the gap (addressability stays 100%). {state['n_safe']} safe-but-low-coverage (fire on ~nobody).")
 
     result = {
         "tag": "rung10_andnot3_surface_sweep",
@@ -253,10 +269,10 @@ def main_run() -> int:
         "surfaceome_source": src, "surfaceome_full": n_full, "surfaceome_tumour_expressed": n_short,
         "n_positives": len(pos_genes), "n_neg_markers": len(neg_genes),
         "n_gates_scored": state["n_scored"], "family_size": len(family),
-        "n_safe": state["n_safe"], "closes_gap": closes_gap,
+        "n_safe": state["n_safe"], "n_selective": state["n_selective"], "closes_gap": closes_gap,
         "verdict_distribution": state["verdict_counts"],
-        "safe_gates_sample": state["safe_gates"][:50],
-        "closest_to_safe_near_miss_frontier": state["best"],
+        "selective_gates_sample": state.get("selective_gates", [])[:50],
+        "closest_to_useful_safe_frontier": state["best"],
         "positives_used": pos_genes, "neg_markers_used": neg_genes,
         "CEILING": "Transcript-level (mRNA != surface protein). A surviving gate is a HYPOTHESIS needing the "
                    "full FDR/permutation/bootstrap rigor (scripts/23) + wet-lab agonism, NOT a cure. Same "
@@ -296,17 +312,18 @@ def _make_figure(state, n):
     ax[0].barh(range(len(labels)), vals, color=["#C1432B" if "SELECTIVE" not in k or "NON" in k else "#4C9F70" for k in labels])
     ax[0].set_yticks(range(len(labels))); ax[0].set_yticklabels(labels, fontsize=8); ax[0].invert_yaxis()
     ax[0].set_xlabel(f"# of {n:,} 3-input surface AND-NOT gates"); ax[0].set_xscale("log")
-    ax[0].set_title(f"RUNG-10 arm(a): verdicts ({state['n_safe']} safe of {n:,})")
+    ax[0].set_title(f"RUNG-10 arm(a): verdicts ({state.get('n_selective', 0)} SELECTIVE / {state['n_safe']} safe of {n:,})")
     best = state.get("best", [])[:10][::-1]
     if best:
-        names = [b["gate"][:34] for b in best]; leaks = [b["vital_leak"] * 100 for b in best]
-        ax[1].barh(range(len(names)), leaks, color="#888")
-        ax[1].axvline(2.0, ls="--", color="#C1432B", label="safety bar (2% vital leak)")
+        names = [b["gate"][:34] for b in best]; covs = [b["coverage"] * 100 for b in best]
+        ax[1].barh(range(len(names)), covs, color=["#4C9F70" if b.get("safe") else "#888" for b in best])
+        ax[1].axvline(15.0, ls="--", color="#C1432B", label="useful-coverage bar (15%)")
         ax[1].set_yticks(range(len(names))); ax[1].set_yticklabels(names, fontsize=7)
-        ax[1].set_xlabel("worst-donor vital leak %"); ax[1].set_title("closest-to-safe gates (near-miss frontier)")
+        ax[1].set_xlabel("tumour coverage %"); ax[1].set_title("closest-to-USEFUL safe gates (frontier)")
         ax[1].legend(fontsize=8)
-    fig.suptitle("RUNG-10 arm(a): no 3-input SURFACE AND-NOT gate is worst-donor-safe -> NOT-slot must be genetic"
-                 if state["n_safe"] == 0 else "RUNG-10 arm(a): surprise candidate(s) — UNVERIFIED", fontsize=11)
+    fig.suptitle("RUNG-10 arm(a): no 3-input SURFACE AND-NOT gate is SELECTIVE -> NOT-slot must be genetic"
+                 if state.get("n_selective", 0) == 0 else "RUNG-10 arm(a): surprise SELECTIVE candidate(s) — UNVERIFIED",
+                 fontsize=11)
     fig.tight_layout(rect=(0, 0, 1, 0.95)); fig.savefig(FIGURE_PNG, dpi=130)
     log(f"wrote {FIGURE_PNG}")
 
