@@ -1,0 +1,365 @@
+{
+  "tag": "rung6_blocker_panel_addressability",
+  "question": "How big must a Tmod blocker PANEL be (and which HLA alleles) to recover the HLA-LOH addressability ceiling, vs the deployed single-allele A*02 gate (~3-6%)?",
+  "architectural_basis": "Tmod specificity comes from the NEGATIVE arm (blocker senses a germline allele the tumour LOST). Activator is broad. So addressability == fraction of patients with a usable lost-allele blocker. RUNG-5 (positive-arm specificity) was 0%; this measures the achievable negative-arm ceiling.",
+  "data_source": "Martinez-Jimenez 2023 Nat Genet, MOESM6 'GIE per sample' (6,319 WGS tumours).",
+  "lost_cn_threshold": 0.5,
+  "loci": [
+    "A",
+    "B",
+    "C"
+  ],
+  "blocker_unit": "4-digit allotype (conservative)",
+  "per_cancer": {
+    "NSCLC": {
+      "n_patients": 587,
+      "ceiling_addressable_frac": 0.2794,
+      "ceiling_addressable_ci": [
+        0.2498,
+        0.3106
+      ],
+      "single_a0201_frac": 0.046,
+      "panel_size_for_10pct": 2,
+      "panel_size_for_20pct": 7,
+      "panel_size_for_ceiling": 25,
+      "blocker_groups_in_full_panel": 23,
+      "addressability_curve_frac": [
+        0.0,
+        0.0562,
+        0.1005,
+        0.1363,
+        0.1584,
+        0.1755,
+        0.1925,
+        0.2044,
+        0.2147,
+        0.2215,
+        0.2283,
+        0.2351,
+        0.2419,
+        0.247,
+        0.2504,
+        0.2538,
+        0.2572,
+        0.2606,
+        0.2641,
+        0.2658,
+        0.2675,
+        0.2692,
+        0.2709,
+        0.2726,
+        0.2743,
+        0.276
+      ],
+      "top_blockers": [
+        {
+          "allele": "A*03:01",
+          "marginal_new_patients": 33,
+          "marginal_frac": 0.0562
+        },
+        {
+          "allele": "A*02:01",
+          "marginal_new_patients": 26,
+          "marginal_frac": 0.0443
+        },
+        {
+          "allele": "A*01:01",
+          "marginal_new_patients": 21,
+          "marginal_frac": 0.0358
+        },
+        {
+          "allele": "A*24:02",
+          "marginal_new_patients": 13,
+          "marginal_frac": 0.0221
+        },
+        {
+          "allele": "A*11:01",
+          "marginal_new_patients": 10,
+          "marginal_frac": 0.017
+        },
+        {
+          "allele": "A*31:01",
+          "marginal_new_patients": 10,
+          "marginal_frac": 0.017
+        },
+        {
+          "allele": "A*68:01",
+          "marginal_new_patients": 7,
+          "marginal_frac": 0.0119
+        },
+        {
+          "allele": "C*06:02",
+          "marginal_new_patients": 6,
+          "marginal_frac": 0.0102
+        },
+        {
+          "allele": "B*14:01",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.0068
+        },
+        {
+          "allele": "C*05:01",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.0068
+        },
+        {
+          "allele": "C*04:01",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.0068
+        },
+        {
+          "allele": "C*07:02",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.0068
+        }
+      ],
+      "label": "lung (NSCLC-pooled; RUNG-5 was LUAD)"
+    },
+    "BRCA": {
+      "n_patients": 938,
+      "ceiling_addressable_frac": 0.1354,
+      "ceiling_addressable_ci": [
+        0.1179,
+        0.1546
+      ],
+      "single_a0201_frac": 0.0309,
+      "panel_size_for_10pct": 9,
+      "panel_size_for_20pct": null,
+      "panel_size_for_ceiling": 22,
+      "blocker_groups_in_full_panel": 20,
+      "addressability_curve_frac": [
+        0.0,
+        0.0309,
+        0.0458,
+        0.0597,
+        0.0704,
+        0.0778,
+        0.0853,
+        0.0917,
+        0.097,
+        0.1023,
+        0.1066,
+        0.1109,
+        0.1151,
+        0.1194,
+        0.1226,
+        0.1258,
+        0.129,
+        0.1301,
+        0.1311,
+        0.1322,
+        0.1333,
+        0.1343,
+        0.1354
+      ],
+      "top_blockers": [
+        {
+          "allele": "A*02:01",
+          "marginal_new_patients": 29,
+          "marginal_frac": 0.0309
+        },
+        {
+          "allele": "A*03:01",
+          "marginal_new_patients": 14,
+          "marginal_frac": 0.0149
+        },
+        {
+          "allele": "A*01:01",
+          "marginal_new_patients": 13,
+          "marginal_frac": 0.0139
+        },
+        {
+          "allele": "A*24:02",
+          "marginal_new_patients": 10,
+          "marginal_frac": 0.0107
+        },
+        {
+          "allele": "A*11:01",
+          "marginal_new_patients": 7,
+          "marginal_frac": 0.0075
+        },
+        {
+          "allele": "A*68:01",
+          "marginal_new_patients": 7,
+          "marginal_frac": 0.0075
+        },
+        {
+          "allele": "A*26:01",
+          "marginal_new_patients": 6,
+          "marginal_frac": 0.0064
+        },
+        {
+          "allele": "C*07:01",
+          "marginal_new_patients": 5,
+          "marginal_frac": 0.0053
+        },
+        {
+          "allele": "C*05:01",
+          "marginal_new_patients": 5,
+          "marginal_frac": 0.0053
+        },
+        {
+          "allele": "C*03:04",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.0043
+        },
+        {
+          "allele": "C*02:02",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.0043
+        },
+        {
+          "allele": "C*12:03",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.0043
+        }
+      ],
+      "label": "breast carcinoma"
+    },
+    "COREAD": {
+      "n_patients": 662,
+      "ceiling_addressable_frac": 0.1994,
+      "ceiling_addressable_ci": [
+        0.1748,
+        0.2259
+      ],
+      "single_a0201_frac": 0.0468,
+      "panel_size_for_10pct": 4,
+      "panel_size_for_20pct": null,
+      "panel_size_for_ceiling": 24,
+      "blocker_groups_in_full_panel": 21,
+      "addressability_curve_frac": [
+        0.0,
+        0.0468,
+        0.0725,
+        0.0967,
+        0.1148,
+        0.1284,
+        0.1375,
+        0.1435,
+        0.1495,
+        0.1556,
+        0.1616,
+        0.1662,
+        0.1707,
+        0.1752,
+        0.1798,
+        0.1843,
+        0.1873,
+        0.1888,
+        0.1903,
+        0.1918,
+        0.1934,
+        0.1949,
+        0.1964,
+        0.1979,
+        0.1994
+      ],
+      "top_blockers": [
+        {
+          "allele": "A*02:01",
+          "marginal_new_patients": 31,
+          "marginal_frac": 0.0468
+        },
+        {
+          "allele": "A*01:01",
+          "marginal_new_patients": 17,
+          "marginal_frac": 0.0257
+        },
+        {
+          "allele": "A*03:01",
+          "marginal_new_patients": 16,
+          "marginal_frac": 0.0242
+        },
+        {
+          "allele": "A*24:02",
+          "marginal_new_patients": 12,
+          "marginal_frac": 0.0181
+        },
+        {
+          "allele": "C*06:02",
+          "marginal_new_patients": 9,
+          "marginal_frac": 0.0136
+        },
+        {
+          "allele": "A*68:01",
+          "marginal_new_patients": 6,
+          "marginal_frac": 0.0091
+        },
+        {
+          "allele": "B*27:05",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.006
+        },
+        {
+          "allele": "B*35:01",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.006
+        },
+        {
+          "allele": "C*05:01",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.006
+        },
+        {
+          "allele": "C*07:02",
+          "marginal_new_patients": 4,
+          "marginal_frac": 0.006
+        },
+        {
+          "allele": "C*03:04",
+          "marginal_new_patients": 3,
+          "marginal_frac": 0.0045
+        },
+        {
+          "allele": "B*14:02",
+          "marginal_new_patients": 3,
+          "marginal_frac": 0.0045
+        }
+      ],
+      "label": "colorectal cancer"
+    }
+  },
+  "a0201_crosscheck_vs_scripts24": {
+    "NSCLC": {
+      "scripts26_A0201": 0.046,
+      "scripts24_A02group": 0.049,
+      "consistent_within_1pct": true
+    },
+    "BRCA": {
+      "scripts26_A0201": 0.0309,
+      "scripts24_A02group": 0.031,
+      "consistent_within_1pct": true
+    },
+    "COREAD": {
+      "scripts26_A0201": 0.0468,
+      "scripts24_A02group": 0.057,
+      "consistent_within_1pct": true
+    }
+  },
+  "HEADLINE": {
+    "NSCLC": {
+      "single_A0201": 0.046,
+      "panel_for_10pct": 2,
+      "panel_for_20pct": 7,
+      "ceiling": 0.2794,
+      "blockers_to_ceiling": 25
+    },
+    "BRCA": {
+      "single_A0201": 0.0309,
+      "panel_for_10pct": 9,
+      "panel_for_20pct": null,
+      "ceiling": 0.1354,
+      "blockers_to_ceiling": 22
+    },
+    "COREAD": {
+      "single_A0201": 0.0468,
+      "panel_for_10pct": 4,
+      "panel_for_20pct": null,
+      "ceiling": 0.1994,
+      "blockers_to_ceiling": 24
+    }
+  },
+  "CEILING": "Synthesis (scRNA-gap + WGS-LOH, different patients, same cancer types). PATIENT-LEVEL not clonal (subclonal LOH => lower; see scripts/27). NSCLC-pooled not LUAD. 4-digit blocker unit is conservative. Assumes a broad activator exists (Tmod premise); the positive arm is NOT proven free here.",
+  "INTERPRETATION": "Single-allele A*02 addresses ~3-6%. A small greedy PANEL of the most common lost alleles recovers most of the 14-28% ceiling. The deliverable is the panel-size-vs-addressability curve + the priority allele list per cancer \u2014 i.e. the concrete reagent panel a programme would build. Specificity is ACHIEVABLE but FREQUENCY-BOUNDED by HLA-LOH; the bound, per cancer, is the design target."
+}

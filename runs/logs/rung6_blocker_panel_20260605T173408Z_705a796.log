@@ -1,0 +1,40 @@
+# cancer-recon-apoptosis — run log
+# step          : rung6_blocker_panel
+# utc           : 20260605T173408Z
+# commit_short  : 705a796  (+uncommitted changes)
+# commit_full   : 705a7960fe093448501871d771d60ca42bf1a242
+# branch        : main
+# python        : 3.12.6
+# platform      : macOS-26.3-arm64-arm-64bit
+#================================================================
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/26_blocker_panel_addressability.py selftest
+  [PASS] patient0 usable == {A*02:01}
+  [PASS] patient1 usable == {A*01:01, B*08:01}
+  [PASS] patient2 (all homozygous/retained) usable == {}
+  [PASS] curve starts at 0
+  [PASS] curve is monotone non-decreasing
+  [PASS] ceiling (full panel) addresses the 2 addressable patients
+  [PASS] greedy panel only contains usable alleles
+  [PASS] analyse ceiling frac == 2/3
+  [PASS] single A*02:01 frac == 1/3
+  [PASS] panel_for_ceiling <= n_distinct_alleles
+
+selftest: 10/10 checks passed
+[exit 0]
+
+$ /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -u scripts/26_blocker_panel_addressability.py run
+[rung6/panel] loaded 6,319 samples
+[rung6/panel] wrote /Users/atrey/Desktop/code/side-claude-income/research-papers/cancer-treatment/runs/rung6_logicgate/rung6_blocker_panel.json
+
+  cancer   n    A*02:01   panel->10%  panel->20%  ceiling   blockers->ceiling  groups
+  NSCLC   587    4.6%          2           7    27.9%          25            23
+  BRCA    938    3.1%          9        None    13.5%          22            20
+  COREAD  662    4.7%          4        None    19.9%          24            21
+
+  A*02:01 cross-check vs scripts/24:
+    NSCLC: scripts/26=4.6%  scripts/24=4.9%  OK
+    BRCA: scripts/26=3.1%  scripts/24=3.1%  OK
+    COREAD: scripts/26=4.7%  scripts/24=5.7%  OK
+[rung6/panel] wrote /Users/atrey/Desktop/code/side-claude-income/research-papers/cancer-treatment/runs/rung6_logicgate/rung6_blocker_panel.png
+[exit 0]
