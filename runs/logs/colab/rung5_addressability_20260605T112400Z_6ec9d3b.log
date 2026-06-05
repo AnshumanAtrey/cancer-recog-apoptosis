@@ -1,0 +1,203 @@
+# cancer-recon-apoptosis — run log
+# step          : rung5_addressability
+# utc           : 20260605T112400Z
+# commit_short  : 6ec9d3b
+# commit_full   : 6ec9d3bc6a8245c816b9edb9c0db9c4373f81d61
+# branch        : main
+# python        : 3.12.13
+# platform      : Linux-6.6.122+-x86_64-with-glibc2.35
+#================================================================
+
+$ /usr/bin/python3 -u scripts/23_heldout_validate.py
+============================================================================================
+RUNG 5 — HELD-OUT VALIDATION (family-max FDR + donor-permutation null + winner's-curse shrinkage)
+       validated on synthetic ground truth BEFORE any real surfaceome run
+============================================================================================
+
+[SIGNAL]  11280 cells, 14 donors, family=36 AND-pairs (planted clean gate = POS1 AND POS2)
+    [fdr] perm 12/120 (36 gates) 1s ~7s left
+    [fdr] perm 24/120 (36 gates) 1s ~6s left
+    [fdr] perm 36/120 (36 gates) 2s ~4s left
+    [fdr] perm 48/120 (36 gates) 2s ~4s left
+    [fdr] perm 60/120 (36 gates) 3s ~3s left
+    [fdr] perm 72/120 (36 gates) 3s ~2s left
+    [fdr] perm 84/120 (36 gates) 4s ~2s left
+    [fdr] perm 96/120 (36 gates) 5s ~1s left
+    [fdr] perm 108/120 (36 gates) 5s ~1s left
+    [fdr] perm 120/120 (36 gates) 5s ~0s left
+  family-max threshold cov=0.22 (p95 of decoy family-max); best true safe cov=0.96
+  discoveries (beat family-max): ['POS1 AND POS2', 'POS1 AND BROAD', 'POS2 AND BROAD']
+
+[NULL]    11280 cells, 14 donors, family=36 AND-pairs (NO truly exclusive gate exists)
+    [fdr] perm 12/120 (36 gates) 0s ~4s left
+    [fdr] perm 24/120 (36 gates) 1s ~4s left
+    [fdr] perm 36/120 (36 gates) 1s ~3s left
+    [fdr] perm 48/120 (36 gates) 2s ~3s left
+    [fdr] perm 60/120 (36 gates) 2s ~2s left
+    [fdr] perm 72/120 (36 gates) 3s ~2s left
+    [fdr] perm 84/120 (36 gates) 3s ~1s left
+    [fdr] perm 96/120 (36 gates) 4s ~1s left
+    [fdr] perm 108/120 (36 gates) 4s ~0s left
+    [fdr] perm 120/120 (36 gates) 5s ~0s left
+  family-max threshold cov=0.00; best true safe cov=0.00
+  discoveries (beat family-max): NONE
+  look-elsewhere: family-max cov p95=0.48 vs typical per-gate p95=0.01  -> inflation +0.46 (CONFIRMED; family-max correction is needed)
+
+[GUARD B] clean gate : obs vital_leak=0.0060, null mean=0.0060, p=1.00 -> donor-dependent=False
+[GUARD B] ATK3 gate  : obs vital_leak=0.0896, null mean=0.0333, p=0.00 -> donor-dependent=True (lethal donor concentration)
+
+[GUARD C] winner's-curse panel: 7600 cells, 16 donors, family=78 AND-pairs (each partner covers ONE tumour donor ~1/6~0.16, clean on normal)
+    [boot] resample 15/150 2s
+    [boot] resample 30/150 4s
+    [boot] resample 45/150 5s
+    [boot] resample 60/150 6s
+    [boot] resample 75/150 7s
+    [boot] resample 90/150 8s
+    [boot] resample 105/150 10s
+    [boot] resample 120/150 11s
+    [boot] resample 135/150 12s
+    [boot] resample 150/150 13s
+  naive winner   : DRV AND P2               cov=0.16 vital=0.006 selective=True (coverage lives in ONE donor)
+  optimism (in-bag - OOB): cov=+0.290  (that donor falls out-of-bag -> held-out coverage collapses)
+  corrected cov  : 0.00  (COV_BAR=0.15) -> still_selective=False
+
+============================================================================================
+VALIDATION CHECKS:
+  [OK] SIGNAL: planted clean gate (POS1 AND POS2) SURVIVES family-max FDR
+  [OK] SIGNAL: decoy null is NON-DEGENERATE (family-max threshold > 0.05, not the old vacuous 0)
+  [OK] SIGNAL: family-max FDR REJECTS sub-threshold safe gates (discoveries < safe; noise pairs excluded)
+  [OK] NULL: NO gate survives family-max (no false discovery)
+  [OK] family-max NECESSARY: family-max cov-null p95 > per-gate p95 (look-elsewhere)
+  [OK] decoy family size == true family size N
+  [OK] GUARD B: clean gate NOT flagged AND donor-concentrated lethal gate IS flagged
+  [OK] GUARD C: coverage optimism (in-bag - OOB) > 0 (winner's curse exists)
+  [OK] GUARD C: shrinkage DEMOTES an over-claimed winner (selective -> not)
+============================================================================================
+results -> runs/rung5_logicgate/heldout_validation.json
+figure -> runs/rung5_logicgate/rung5_heldout_validation.png
+============================================================================================
+CEILING: this is the look-elsewhere / winner's-curse rigor LAYER, proven on known answers. It does
+NOT find a gate; it makes the eventual real-data verdict honest. mRNA!=protein; recognition is a
+separate axis, never multiplied with RUNG-1/2/3.
+[exit 0]
+
+$ /usr/bin/python3 -u scripts/25_logicgate_data_rung5.py selftest
+[+    0.0s] [rung5] === RUNG 5 data-layer SELF-TEST (synthetic donor panel; validates the full downstream) ===
+[+    0.1s] [rung5] [selftest] panel: 8,050 cells (6,240 normal / 1,810 malignant), 15 donors, 7 genes
+[+    0.1s] [rung5] family: 7 genes >= COV_FLOOR 0.05; activators=top 7 by coverage
+[+    0.1s] [rung5] family size N = 21 gates (AND + AND-NOT). FDR/shrinkage operate on exactly this set.
+[+    0.1s] [rung5] [selftest] donor split: DISCOVERY 5 / SELECT 5 / REPORT 5
+[+    0.1s] [rung5] [selftest] scoring family of 21 gates on ALL donors (vectorised worst-over-donor) ...
+[+    1.5s] [rung5] [selftest] 11 SAFE on all audited axes; 3 also clear coverage (pre-FDR).
+[+    1.5s] [rung5] [selftest] family-max decoy FDR (N_PERM=100) + winner's-curse shrinkage (N_BOOT=100) ...
+    [fdr] perm 10/100 (21 gates) 0s ~2s left
+    [fdr] perm 20/100 (21 gates) 1s ~2s left
+    [fdr] perm 30/100 (21 gates) 1s ~2s left
+    [fdr] perm 40/100 (21 gates) 1s ~1s left
+    [fdr] perm 50/100 (21 gates) 1s ~1s left
+    [fdr] perm 60/100 (21 gates) 1s ~1s left
+    [fdr] perm 70/100 (21 gates) 2s ~1s left
+    [fdr] perm 80/100 (21 gates) 2s ~0s left
+    [fdr] perm 90/100 (21 gates) 2s ~0s left
+    [fdr] perm 100/100 (21 gates) 2s ~0s left
+    [boot] resample 10/100 0s
+    [boot] resample 20/100 1s
+    [boot] resample 30/100 1s
+    [boot] resample 40/100 2s
+    [boot] resample 50/100 2s
+    [boot] resample 60/100 3s
+    [boot] resample 70/100 3s
+    [boot] resample 80/100 4s
+    [boot] resample 90/100 4s
+    [boot] resample 100/100 4s
+[+    8.5s] [rung5] [selftest] family-max threshold cov=0.157; 3 gates pass FDR + shrinkage (pre-GUARD-B).
+[+    9.7s] [rung5] [selftest] 3 gates SURVIVE FDR + shrinkage + GUARD B (donor-permutation null).
+[+    9.7s] [rung5] [selftest] ADDRESSABILITY GAP (worst-case over ALL 7 patients, 1 under-powered counted as not-addressed): 57% have NO safe gate at coverage >= 0.15 [point over 6 powered patients: 50%].  by type: {'breast carcinoma': 1.0, 'lung adenocarcinoma': 0.25}
+[+   10.9s] [rung5] figure -> runs/rung5_logicgate/rung5_selftest.png
+[+   10.9s] [rung5] results -> runs/rung5_logicgate/rung5_selftest.json
+============================================================================================
+SELF-TEST CHECKS:
+  [OK] downstream ran end-to-end (family -> score -> FDR -> shrinkage -> gap)
+  [OK] a safe gate exists (planted CLEANA AND CLEANB)
+  [OK] at least one gate SURVIVES FDR + shrinkage
+  [OK] the planted clean gate is among survivors
+  [OK] addressability gap is computed per cancer type
+  [OK] BRCA gap > LUAD gap (planted: clean gate misses BRCA patients)
+  [OK] under-powered patient path is exercised (>=1 under-powered)
+  [OK] worst-case gap >= point gap (invariant; headline is the worst-case)
+  [OK] F4-NEW-2: noisy under-powered LUAD patient FORCED not-addressed (LUAD worst-case > 0 though powered LUAD addressed)
+============================================================================================
+[+   10.9s] [rung5] self-test PASSED — downstream integration validated; real run is the Colab fetch
+[exit 0]
+
+$ pip install cellxgene-census
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 91.2/91.2 kB 4.2 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 55.6/55.6 kB 5.1 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 203.4/203.4 kB 9.6 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 22.3/22.3 MB 71.1 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 175.3/175.3 kB 11.8 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 89.5/89.5 kB 8.7 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 60.1/60.1 kB 5.4 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 92.0 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 97.5 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 319.6/319.6 kB 29.2 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 15.0/15.0 MB 95.9 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 108.7 MB/s eta 0:00:00
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+google-colab 1.0.0 requires pandas==2.2.2, but you have pandas 2.3.3 which is incompatible.
+gcsfs 2025.3.0 requires fsspec==2025.3.0, but you have fsspec 2026.4.0 which is incompatible.
+datasets 4.0.0 requires fsspec[http]<=2025.3.0,>=2023.1.0, but you have fsspec 2026.4.0 which is incompatible.
+[exit 0]
+
+$ pip install omnipath
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 51.6/51.6 kB 3.9 MB/s eta 0:00:00
+[exit 0]
+
+$ /usr/bin/python3 -u scripts/25_logicgate_data_rung5.py
+[+    5.2s] [rung5] === RUNG 5 REAL run — donor-aware, MEMORY-SAFE, two-pass full-surfaceome addressability gap ===
+[+    5.2s] [rung5] knobs: K_ACTIVATORS=80 COV_FLOOR=0.05 GENE_FLOOR=0.02 MAX_FAMILY=1000 N_PERM=20 N_BOOT=20
+11:25:28 [INFO] Downloading data from `https://omnipathdb.org/queries/enzsub?format=json`
+11:25:28 [INFO] Downloading data from `https://omnipathdb.org/queries/interactions?format=json`
+11:25:28 [INFO] Downloading data from `https://omnipathdb.org/queries/complexes?format=json`
+11:25:29 [INFO] Downloading data from `https://omnipathdb.org/queries/annotations?format=json`
+11:25:29 [INFO] Downloading data from `https://omnipathdb.org/queries/intercell?format=json`
+11:25:29 [INFO] Downloading data from `https://omnipathdb.org/about?format=text`
+11:25:30 [INFO] Downloading data from `https://omnipathdb.org/intercell?format=tsv`
+
+0.00B [00:00, ?B/s]
+1.03MB [00:00, 6.22MB/s]
+3.22MB [00:00, 13.8MB/s]
+8.33MB [00:00, 23.8MB/s]
+15.2MB [00:00, 38.2MB/s]
+19.1MB [00:00, 38.7MB/s]
+22.4MB [00:00, 37.2MB/s]
+25.1MB [00:00, 34.6MB/s]
+27.9MB [00:00, 32.8MB/s]
+31.5MB [00:01, 34.1MB/s]
+36.2MB [00:01, 38.5MB/s]
+40.9MB [00:01, 42.0MB/s]
+45.6MB [00:01, 43.5MB/s]
+50.5MB [00:01, 45.9MB/s]
+52.9MB [00:01, 37.1MB/s]
+11:25:34 [INFO] omnipath intercell rows=388239 cols=['category', 'parent', 'database', 'scope', 'aspect', 'source', 'uniprot', 'genesymbol', 'entity_type', 'consensus_score', 'transmitter', 'receiver', 'secreted', 'plasma_membrane_transmembrane', 'plasma_membrane_peripheral']
+11:25:34 [INFO] surface-indicating categories matched: ['cell_surface', 'cell_surface_enzyme', 'cell_surface_ligand', 'cell_surface_peptidase', 'plasma_membrane_transmembrane']
+11:25:34 [INFO] omnipath surface gene set: 5007 genes
+[+   15.6s] [rung5] surfaceome from OmniPath (SURFY-incl.): 5007 genes -> cached
+[+   15.6s] [rung5] surfaceome source=omnipath, 5007 genes (full set is SCREENED; only tumour-expressed genes are carried at depth -> fits free-Colab RAM)
+[+   16.5s] [rung5] RESUMING from /content/drive/MyDrive/cancer-recon/rung5_cache.r5.tumour.npz
+[+   21.5s] [rung5] two-pass: 682/5007 surface genes are tumour-expressed (>= 0.02) -> normal atlas fetched for THESE only
+[+   23.0s] [rung5] RESUMING from /content/drive/MyDrive/cancer-recon/rung5_cache.r5.normal.npz
+[+   44.2s] [rung5] [real] panel ready: 1,264,719 cells x 682 genes (dtype=int16, ram 0.0GB) -> scoring
+[+   45.3s] [rung5] [real] panel: 1,264,719 cells (1,214,719 normal / 50,000 malignant), 1596 donors, 682 genes
+[+   45.7s] [rung5] family: 371 genes >= COV_FLOOR 0.05; activators=top 80 by coverage
+[+   59.2s] [rung5] family 26440 > MAX_FAMILY 1000 -> capping (logged; the dropped gates are the lowest-activator-coverage AND pairs)
+[+   59.2s] [rung5] family size N = 1000 gates (AND + AND-NOT). FDR/shrinkage operate on exactly this set.
+[+   60.4s] [rung5] [real] donor split: DISCOVERY 532 / SELECT 532 / REPORT 532
+[+   60.4s] [rung5] [real] scoring family of 1000 gates on ALL donors (vectorised worst-over-donor) ...
+[+  114.4s] [rung5] [real] 0 SAFE on all audited axes; 0 also clear coverage (pre-FDR).
+[+  114.4s] [rung5] [real] 0 SAFE gates -> addressability gap is TOTAL (100%); skipping FDR/bootstrap (nothing to validate).
+[+  124.7s] [rung5] [real] ADDRESSABILITY GAP: 100% of 211 patients have NO safe gate.  best gate leaks: vital=0.045 strict=0.545 regen=0.009 (gate LRRC26 AND RPSA)
+[+  137.7s] [rung5] figure -> runs/rung5_logicgate/rung5_real.png
+[+  137.7s] [rung5] results -> runs/rung5_logicgate/rung5_addressability.json
+[rung5] CEILING: transcript-only HYPOTHESIS; CITE-seq/flow confirm co-positivity; agonism = wet-lab.
+[exit 0]
