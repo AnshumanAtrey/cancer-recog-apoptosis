@@ -1,0 +1,134 @@
+{
+  "tag": "rung8_hla_heterogeneity",
+  "question": "What fraction of NORMAL vital cells are HLA-low (so the Tmod blocker fails)? \u2014 grounds RUNG-7's single load-bearing parameter with atlas data.",
+  "census_version": "2024-07-01",
+  "hla_genes": [
+    "HLA-A",
+    "HLA-B",
+    "HLA-C"
+  ],
+  "sensed_gene": "HLA-A",
+  "n_cells_total": 699530,
+  "per_vital_type": {
+    "adrenal_cortical": {
+      "n_cells": 3812,
+      "n_donors": 7,
+      "pooled_low_k1": 1.0,
+      "pooled_low_k2": 1.0,
+      "pooled_detect": 0.0,
+      "worst_donor_low_k1": 1.0,
+      "worst_donor_low_k2": 1.0,
+      "worst_donor_n": 600
+    },
+    "cardiac_conduction": {
+      "n_cells": 13115,
+      "n_donors": 24,
+      "pooled_low_k1": 0.9801753717117804,
+      "pooled_low_k2": 0.9992375142966069,
+      "pooled_detect": 0.019824628288219594,
+      "worst_donor_low_k1": 1.0,
+      "worst_donor_low_k2": 1.0,
+      "worst_donor_n": 600
+    },
+    "cardiomyocyte": {
+      "n_cells": 18377,
+      "n_donors": 32,
+      "pooled_low_k1": 0.8872503673069598,
+      "pooled_low_k2": 0.9757305327311313,
+      "pooled_detect": 0.11274963269304021,
+      "worst_donor_low_k1": 1.0,
+      "worst_donor_low_k2": 1.0,
+      "worst_donor_n": 600
+    },
+    "cholangiocyte": {
+      "n_cells": 2957,
+      "n_donors": 16,
+      "pooled_low_k1": 0.5684815691579304,
+      "pooled_low_k2": 0.71897193101116,
+      "pooled_detect": 0.43151843084206964,
+      "worst_donor_low_k1": 0.8969072164948454,
+      "worst_donor_low_k2": 0.9690721649484536,
+      "worst_donor_n": 97
+    },
+    "kidney_podocyte": {
+      "n_cells": 4156,
+      "n_donors": 33,
+      "pooled_low_k1": 0.5640038498556305,
+      "pooled_low_k2": 0.7370067372473532,
+      "pooled_detect": 0.4359961501443696,
+      "worst_donor_low_k1": 0.9514925373134329,
+      "worst_donor_low_k2": 0.996268656716418,
+      "worst_donor_n": 268
+    },
+    "kidney_tubule": {
+      "n_cells": 19286,
+      "n_donors": 75,
+      "pooled_low_k1": 0.6137094265270144,
+      "pooled_low_k2": 0.7654256973970756,
+      "pooled_detect": 0.38629057347298557,
+      "worst_donor_low_k1": 1.0,
+      "worst_donor_low_k2": 1.0,
+      "worst_donor_n": 600
+    },
+    "lung_pneumocyte": {
+      "n_cells": 70629,
+      "n_donors": 166,
+      "pooled_low_k1": 0.7491257132339407,
+      "pooled_low_k2": 0.8181766696399496,
+      "pooled_detect": 0.2508742867660593,
+      "worst_donor_low_k1": 1.0,
+      "worst_donor_low_k2": 1.0,
+      "worst_donor_n": 600
+    },
+    "neuron": {
+      "n_cells": 335566,
+      "n_donors": 660,
+      "pooled_low_k1": 0.846745498650042,
+      "pooled_low_k2": 0.949348265318894,
+      "pooled_detect": 0.153254501349958,
+      "worst_donor_low_k1": 1.0,
+      "worst_donor_low_k2": 1.0,
+      "worst_donor_n": 600
+    },
+    "pancreatic_islet": {
+      "n_cells": 19128,
+      "n_donors": 41,
+      "pooled_low_k1": 0.23677331660393142,
+      "pooled_low_k2": 0.3242367210372229,
+      "pooled_detect": 0.7632266833960686,
+      "worst_donor_low_k1": 1.0,
+      "worst_donor_low_k2": 1.0,
+      "worst_donor_n": 600
+    },
+    "skeletal_myocyte": {
+      "n_cells": 40649,
+      "n_donors": 142,
+      "pooled_low_k1": 0.6262638687298581,
+      "pooled_low_k2": 0.7858495903958277,
+      "pooled_detect": 0.37373613127014194,
+      "worst_donor_low_k1": 1.0,
+      "worst_donor_low_k2": 1.0,
+      "worst_donor_n": 54
+    },
+    "vascular_endothelium": {
+      "n_cells": 171855,
+      "n_donors": 552,
+      "pooled_low_k1": 0.5524075528788804,
+      "pooled_low_k2": 0.6687032672892845,
+      "pooled_detect": 0.44759244712111956,
+      "worst_donor_low_k1": 1.0,
+      "worst_donor_low_k2": 1.0,
+      "worst_donor_n": 599
+    }
+  },
+  "worst_vital_type": "adrenal_cortical",
+  "worst_vital_HLA_low_frac_k1": 1.0,
+  "rung7_coupling": {
+    "normal_hla_low_frac_measured": 1.0,
+    "data_grounded_FPR": 0.292,
+    "data_grounded_TPR": 0.4821,
+    "note": "RUNG-7 model re-run with the MEASURED worst-vital HLA-low fraction in place of the assumed 5%. FPR = the gate's off-tumour toxicity at this measured blocker-failure rate."
+  },
+  "CEILING": "mRNA HLA != surface MHC-I protein; scRNA DROPOUT inflates the HLA-low fraction (headline is an UPPER BOUND -> conservatively OVER-estimates toxicity); HLA-I is IFN-gamma inducible (resting atlas may understate induced levels); scRNA resolves the HLA-A GENE not the A*02 ALLELE. Worst-donor (never pooled), per RUNG-5/6.",
+  "INTERPRETATION": "This replaces RUNG-7's assumed 5% normal HLA-low fraction with a measured, per-vital-tissue number. The worst vital type sets the gate's off-tumour-toxicity floor (data_grounded_FPR). If the measured HLA-low fraction is well below 5%, the blocker is more reliable than assumed (good); if higher, RUNG-7's safety was optimistic and the gate is more toxic than modelled."
+}

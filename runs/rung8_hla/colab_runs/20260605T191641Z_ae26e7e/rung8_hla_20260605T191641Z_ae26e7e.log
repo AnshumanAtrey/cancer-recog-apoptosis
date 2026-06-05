@@ -1,0 +1,201 @@
+# cancer-recon-apoptosis — run log
+# step          : rung8_hla
+# utc           : 20260605T191641Z
+# commit_short  : ae26e7e
+# commit_full   : ae26e7e07c91e678c6c715b9688e2f8f9cb6e142
+# branch        : main
+# python        : 3.12.13
+# platform      : Linux-6.6.122+-x86_64-with-glibc2.35
+#================================================================
+
+$ /usr/bin/python3 -u scripts/29_hla_heterogeneity.py selftest
+  [PASS] both vital types aggregated
+  [PASS] cardiomyocyte worst-donor HLA-low(k1) == 100% (the all-zero donor)
+  [PASS] cardiomyocyte pooled HLA-low(k1) == 50% (one of two donors zero)
+  [PASS] neuron worst-donor HLA-low ~ 0 (all detected)
+  [PASS] worst-donor >= pooled (per type)
+  [PASS] tiny donor (<MIN_CELLS) excluded from worst-donor
+  [PASS] aggregate returns worst_donor_n
+  [PASS] RUNG-7 coupling returns an FPR
+  [PASS] data-grounded FPR rises with measured HLA-low frac
+[+    0.9s] [rung8] selftest heartbeat
+  [PASS] heartbeat starts and stops without error
+
+selftest: 10/10 checks passed
+[exit 0]
+
+$ pip install cellxgene-census
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 91.2/91.2 kB 3.7 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 55.6/55.6 kB 4.0 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 203.4/203.4 kB 8.6 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 22.3/22.3 MB 46.9 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 175.3/175.3 kB 14.4 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 89.5/89.5 kB 7.3 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 60.1/60.1 kB 4.5 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 77.3 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 101.6 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 319.6/319.6 kB 23.6 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 15.0/15.0 MB 93.1 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 73.9 MB/s eta 0:00:00
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+google-colab 1.0.0 requires pandas==2.2.2, but you have pandas 2.3.3 which is incompatible.
+gcsfs 2025.3.0 requires fsspec==2025.3.0, but you have fsspec 2026.4.0 which is incompatible.
+datasets 4.0.0 requires fsspec[http]<=2025.3.0,>=2023.1.0, but you have fsspec 2026.4.0 which is incompatible.
+[exit 0]
+
+$ /usr/bin/python3 -u scripts/29_hla_heterogeneity.py run
+[+    6.2s] [rung8] opening CELLxGENE Census 2024-07-01 ...
+[+    7.1s] [rung8] cache/tiles -> /content/drive/MyDrive/cancer-recon/rung8_tiles  (resumable: completed tissues are skipped on re-run)
+[+    7.7s] [rung8] [1/9] heart: reading obs metadata (cell_type, donor) ...
+[+   11.9s] [rung8] [1/9] heart: 791,411 normal cells, 300,254 vital -> capping per donor
+[+   12.2s] [rung8] [1/9] heart: materialising HLA-A/B/C for 61,514 vital cells ...
+/content/cancer-recon-apoptosis/scripts/29_hla_heterogeneity.py:174: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+   20.1s] [heartbeat] [1/9] heart: materialising HLA-A/B/C for 61,514 vital cells ... | RAM 1.0GB
+[+   40.1s] [heartbeat] [1/9] heart: materialising HLA-A/B/C for 61,514 vital cells ... | RAM 2.6GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+   54.2s] [rung8] [1/9] heart: kept 61,514 vital cells (types: ['cardiomyocyte', 'neuron', 'skeletal_myocyte', 'vascular_endothelium']) RAM 2.6GB
+[+   54.3s] [rung8] [1/9] heart: tile checkpointed -> rung8_heart.npz (safe to disconnect now)
+[+   54.3s] [rung8] [2/9] brain: reading obs metadata (cell_type, donor) ...
+[+   57.3s] [rung8] [2/9] brain: 10,560,614 normal cells, 7,610,558 vital -> capping per donor
+[+   64.4s] [heartbeat] [2/9] brain: 10,560,614 normal cells, 7,610,558 vital -> capping per donor | RAM 2.6GB
+[+   84.4s] [heartbeat] [2/9] brain: 10,560,614 normal cells, 7,610,558 vital -> capping per donor | RAM 2.6GB
+[+   90.4s] [rung8] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ...
+/content/cancer-recon-apoptosis/scripts/29_hla_heterogeneity.py:174: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  104.7s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 2.6GB
+[+  124.7s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 5.1GB
+[+  144.7s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 5.2GB
+[+  164.7s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 5.2GB
+[+  184.7s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.2GB
+[+  204.9s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  225.0s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  245.0s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  265.0s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  285.0s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  305.0s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  325.0s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  345.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  365.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  385.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  405.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  425.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  445.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  465.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  485.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  505.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  525.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  545.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  565.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  585.1s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  605.2s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  625.2s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  645.2s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+[+  665.2s] [heartbeat] [2/9] brain: materialising HLA-A/B/C for 364,181 vital cells ... | RAM 6.4GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+  678.7s] [rung8] [2/9] brain: kept 364,181 vital cells (types: ['cardiac_conduction', 'neuron', 'skeletal_myocyte', 'vascular_endothelium']) RAM 6.4GB
+[+  679.2s] [rung8] [2/9] brain: tile checkpointed -> rung8_brain.npz (safe to disconnect now)
+[+  679.2s] [rung8] [3/9] kidney: reading obs metadata (cell_type, donor) ...
+[+  681.9s] [rung8] [3/9] kidney: 550,007 normal cells, 71,502 vital -> capping per donor
+[+  682.1s] [rung8] [3/9] kidney: materialising HLA-A/B/C for 50,274 vital cells ...
+/content/cancer-recon-apoptosis/scripts/29_hla_heterogeneity.py:174: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  685.3s] [heartbeat] [3/9] kidney: materialising HLA-A/B/C for 50,274 vital cells ... | RAM 6.4GB
+[+  705.3s] [heartbeat] [3/9] kidney: materialising HLA-A/B/C for 50,274 vital cells ... | RAM 6.4GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+  716.6s] [rung8] [3/9] kidney: kept 50,274 vital cells (types: ['kidney_podocyte', 'kidney_tubule', 'neuron', 'skeletal_myocyte', 'vascular_endothelium']) RAM 6.4GB
+[+  716.7s] [rung8] [3/9] kidney: tile checkpointed -> rung8_kidney.npz (safe to disconnect now)
+[+  716.7s] [rung8] [4/9] liver: reading obs metadata (cell_type, donor) ...
+[+  718.6s] [rung8] [4/9] liver: 748,717 normal cells, 49,078 vital -> capping per donor
+[+  718.6s] [rung8] [4/9] liver: materialising HLA-A/B/C for 29,954 vital cells ...
+/content/cancer-recon-apoptosis/scripts/29_hla_heterogeneity.py:174: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  725.3s] [heartbeat] [4/9] liver: materialising HLA-A/B/C for 29,954 vital cells ... | RAM 6.4GB
+[+  745.4s] [heartbeat] [4/9] liver: materialising HLA-A/B/C for 29,954 vital cells ... | RAM 6.4GB
+[+  765.4s] [heartbeat] [4/9] liver: materialising HLA-A/B/C for 29,954 vital cells ... | RAM 6.4GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+  768.6s] [rung8] [4/9] liver: kept 29,954 vital cells (types: ['cholangiocyte', 'kidney_tubule', 'neuron', 'skeletal_myocyte', 'vascular_endothelium']) RAM 6.4GB
+[+  768.6s] [rung8] [4/9] liver: tile checkpointed -> rung8_liver.npz (safe to disconnect now)
+[+  768.6s] [rung8] [5/9] lung: reading obs metadata (cell_type, donor) ...
+[+  781.4s] [rung8] [5/9] lung: 1,512,380 normal cells, 358,425 vital -> capping per donor
+[+  782.1s] [rung8] [5/9] lung: materialising HLA-A/B/C for 145,166 vital cells ...
+/content/cancer-recon-apoptosis/scripts/29_hla_heterogeneity.py:174: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  785.4s] [heartbeat] [5/9] lung: materialising HLA-A/B/C for 145,166 vital cells ... | RAM 6.4GB
+[+  805.4s] [heartbeat] [5/9] lung: materialising HLA-A/B/C for 145,166 vital cells ... | RAM 6.4GB
+[+  825.4s] [heartbeat] [5/9] lung: materialising HLA-A/B/C for 145,166 vital cells ... | RAM 6.4GB
+[+  845.5s] [heartbeat] [5/9] lung: materialising HLA-A/B/C for 145,166 vital cells ... | RAM 6.4GB
+[+  865.5s] [heartbeat] [5/9] lung: materialising HLA-A/B/C for 145,166 vital cells ... | RAM 6.4GB
+[+  885.5s] [heartbeat] [5/9] lung: materialising HLA-A/B/C for 145,166 vital cells ... | RAM 6.4GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+  898.1s] [rung8] [5/9] lung: kept 145,166 vital cells (types: ['cardiomyocyte', 'kidney_tubule', 'lung_pneumocyte', 'neuron', 'skeletal_myocyte', 'vascular_endothelium']) RAM 6.4GB
+[+  898.3s] [rung8] [5/9] lung: tile checkpointed -> rung8_lung.npz (safe to disconnect now)
+[+  898.3s] [rung8] [6/9] bone marrow: reading obs metadata (cell_type, donor) ...
+[+  901.8s] [rung8] [6/9] bone marrow: 296,739 normal cells, 1,164 vital -> capping per donor
+[+  901.8s] [rung8] [6/9] bone marrow: materialising HLA-A/B/C for 1,164 vital cells ...
+/content/cancer-recon-apoptosis/scripts/29_hla_heterogeneity.py:174: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  905.5s] [heartbeat] [6/9] bone marrow: materialising HLA-A/B/C for 1,164 vital cells ... | RAM 6.4GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+  912.3s] [rung8] [6/9] bone marrow: kept 1,164 vital cells (types: ['skeletal_myocyte', 'vascular_endothelium']) RAM 6.4GB
+[+  912.4s] [rung8] [6/9] bone marrow: tile checkpointed -> rung8_bone_marrow.npz (safe to disconnect now)
+[+  912.4s] [rung8] [7/9] pancreas: reading obs metadata (cell_type, donor) ...
+[+  914.4s] [rung8] [7/9] pancreas: 166,012 normal cells, 99,569 vital -> capping per donor
+[+  914.5s] [rung8] [7/9] pancreas: materialising HLA-A/B/C for 27,458 vital cells ...
+/content/cancer-recon-apoptosis/scripts/29_hla_heterogeneity.py:174: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  925.6s] [heartbeat] [7/9] pancreas: materialising HLA-A/B/C for 27,458 vital cells ... | RAM 6.4GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+  928.6s] [rung8] [7/9] pancreas: kept 27,458 vital cells (types: ['neuron', 'pancreatic_islet', 'skeletal_myocyte', 'vascular_endothelium']) RAM 6.4GB
+[+  928.6s] [rung8] [7/9] pancreas: tile checkpointed -> rung8_pancreas.npz (safe to disconnect now)
+[+  928.7s] [rung8] [8/9] adrenal gland: reading obs metadata (cell_type, donor) ...
+[+  931.2s] [rung8] [8/9] adrenal gland: 437,889 normal cells, 375,791 vital -> capping per donor
+[+  931.7s] [rung8] [8/9] adrenal gland: materialising HLA-A/B/C for 19,819 vital cells ...
+/content/cancer-recon-apoptosis/scripts/29_hla_heterogeneity.py:174: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  945.6s] [heartbeat] [8/9] adrenal gland: materialising HLA-A/B/C for 19,819 vital cells ... | RAM 6.4GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+  947.0s] [rung8] [8/9] adrenal gland: kept 19,819 vital cells (types: ['adrenal_cortical', 'kidney_tubule', 'neuron', 'skeletal_myocyte', 'vascular_endothelium']) RAM 6.4GB
+[+  947.0s] [rung8] [8/9] adrenal gland: tile checkpointed -> rung8_adrenal_gland.npz (safe to disconnect now)
+[+  947.0s] [rung8] [9/9] skeletal muscle: reading obs metadata (cell_type, donor) ...
+[+  947.6s] [rung8] [9/9] skeletal muscle: 0 normal cells matched
+[+  947.6s] [rung8] all tissues done — aggregating per (vital type, donor) ...
+[+  959.5s] [rung8] wrote /content/cancer-recon-apoptosis/runs/rung8_hla/rung8_hla_heterogeneity.json
+[+  959.5s] [rung8] WORST vital type = adrenal_cortical  HLA-low(k=1) = 100.0%  -> data-grounded gate FPR = 0.292
+[+  959.5s] [rung8]   adrenal_cortical       n=  3,812 donors=  7  worst-donor HLA-low(k1)=100.0%  pooled detect=0.0%
+[+  959.5s] [rung8]   cardiac_conduction     n= 13,115 donors= 24  worst-donor HLA-low(k1)=100.0%  pooled detect=2.0%
+[+  959.5s] [rung8]   cardiomyocyte          n= 18,377 donors= 32  worst-donor HLA-low(k1)=100.0%  pooled detect=11.3%
+[+  959.5s] [rung8]   kidney_tubule          n= 19,286 donors= 75  worst-donor HLA-low(k1)=100.0%  pooled detect=38.6%
+[+  959.5s] [rung8]   lung_pneumocyte        n= 70,629 donors=166  worst-donor HLA-low(k1)=100.0%  pooled detect=25.1%
+[+  959.5s] [rung8]   neuron                 n=335,566 donors=660  worst-donor HLA-low(k1)=100.0%  pooled detect=15.3%
+[+  959.5s] [rung8]   pancreatic_islet       n= 19,128 donors= 41  worst-donor HLA-low(k1)=100.0%  pooled detect=76.3%
+[+  959.5s] [rung8]   skeletal_myocyte       n= 40,649 donors=142  worst-donor HLA-low(k1)=100.0%  pooled detect=37.4%
+[+  959.5s] [rung8]   vascular_endothelium   n=171,855 donors=552  worst-donor HLA-low(k1)=100.0%  pooled detect=44.8%
+[+  959.5s] [rung8]   kidney_podocyte        n=  4,156 donors= 33  worst-donor HLA-low(k1)=95.1%  pooled detect=43.6%
+[+  959.5s] [rung8]   cholangiocyte          n=  2,957 donors= 16  worst-donor HLA-low(k1)=89.7%  pooled detect=43.2%
+[+  960.8s] [rung8] wrote /content/cancer-recon-apoptosis/runs/rung8_hla/rung8_hla.png
+[exit 0]
