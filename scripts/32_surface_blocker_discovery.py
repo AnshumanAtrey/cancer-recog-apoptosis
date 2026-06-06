@@ -50,12 +50,100 @@ CACHE = Path(os.environ["RUNG10B_CACHE"]) if os.environ.get("RUNG10B_CACHE") els
 TUM_FLOOR = float(os.environ.get("R10_TUM_FLOOR", "0.02"))     # 'tumour-absent' if tumour coverage < this
 VITAL_HIGH = float(os.environ.get("R10_VITAL_HIGH", "0.5"))    # 'vital-high' if WORST-donor detection > this
 MIN_DONOR_CELLS = 30                                           # a donor needs >= this many cells to be powered
+PER_DONOR_CAP = int(os.environ.get("R10_DONOR_CAP", "300"))    # cap vital cells per (type,donor): bounds size
+CHUNK_CELLS = int(os.environ.get("R10_CHUNK", "40000"))        # materialise this many cells per call (OOM-safe)
 K = 2
 
 
 def _load(name, mod):
     spec = importlib.util.spec_from_file_location(name, PROJECT_ROOT / "scripts" / mod)
     m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m
+
+
+# ---------------------------------------------------------------------------
+#  OOM-safe fetch: scout vital joinids, materialise in CELL CHUNKS, accumulate per-(type,donor), discard.
+#  The earlier whole-tissue materialise (364k x 4325 dense ~6-12GB) SIGKILLed on brain; chunking caps RAM to
+#  ~one chunk (40k x 4325 int16 ~ 0.35GB) regardless of tissue size.
+# ---------------------------------------------------------------------------
+def _scout_vital_joinids(census, d4, tissue, r30):
+    exp = census["census_data"]["homo_sapiens"]
+    vf = f"is_primary_data == True and disease == 'normal' and tissue_general == '{tissue}'"
+    tbl = exp.obs.read(value_filter=vf,
+                       column_names=["soma_joinid", "cell_type", "donor_id", "dataset_id"]).concat()
+    if tbl.num_rows == 0:
+        return np.array([], np.int64)
+    jid = tbl.column("soma_joinid").to_numpy()
+    ct_codes, ct_vals = r30._codes(tbl.column("cell_type"))
+    mapped = np.array([r30._vital_label(c, d4.VITAL_AUDIT) for c in ct_vals], dtype=object)
+    is_vital = np.array([m is not None for m in mapped])[ct_codes]
+    if not is_vital.any():
+        return np.array([], np.int64)
+    labels = mapped[ct_codes]
+    ds_codes, _ = r30._codes(tbl.column("dataset_id"))
+    dn_codes, _ = r30._codes(tbl.column("donor_id"))
+    dgid = ds_codes.astype(np.int64) * (int(dn_codes.max()) + 1) + dn_codes
+    keep, vidx = [], np.where(is_vital)[0]
+    lab_v = labels[vidx]
+    for lab in np.unique(lab_v):
+        lm = vidx[lab_v == lab]
+        for g in np.unique(dgid[lm]):
+            keep.extend(lm[dgid[lm] == g][:PER_DONOR_CAP].tolist())
+    return jid[np.sort(np.array(keep, np.int64))]
+
+
+def _fetch_chunked(census, d4, tissue, ti, ntis, genes, idx, r30, log, HB):
+    """Scout + cell-chunked materialise -> per-(type,donor) accumulators for this tissue (OOM-safe)."""
+    import cellxgene_census
+    HB.set(f"[{ti+1}/{ntis}] {tissue}: scouting vital cells ...")
+    joinids = _scout_vital_joinids(census, d4, tissue, r30)
+    tc, td = defaultdict(int), {}
+    if len(joinids) == 0:
+        log(f"[{ti+1}/{ntis}] {tissue}: no vital cells"); return tc, td, 0
+    G = len(genes)
+    nch = (len(joinids) + CHUNK_CELLS - 1) // CHUNK_CELLS
+    for ci in range(nch):
+        HB.set(f"[{ti+1}/{ntis}] {tissue}: materialise chunk {ci+1}/{nch} ({len(joinids):,} vital cells x {G} genes)")
+        chunk = joinids[ci * CHUNK_CELLS:(ci + 1) * CHUNK_CELLS]
+        ad = cellxgene_census.get_anndata(
+            census, organism="Homo sapiens", obs_coords=chunk.tolist(),
+            var_value_filter=f"feature_name in {genes}",
+            column_names={"obs": ["cell_type", "donor_id", "dataset_id"]})
+        vnames = list(ad.var["feature_name"]) if "feature_name" in ad.var else list(ad.var_names)
+        X = ad.X
+        Xd = np.asarray(X.todense() if hasattr(X, "todense") else X)
+        counts = np.zeros((Xd.shape[0], G), np.int16)
+        for j, g in enumerate(vnames):
+            if g in idx:
+                counts[:, idx[g]] = Xd[:, j].astype(np.int16)
+        del Xd
+        labels = np.array([r30._vital_label(c, d4.VITAL_AUDIT) for c in ad.obs["cell_type"].astype(str)], dtype=object)
+        donors = np.array([f"{ds}::{dn}" for ds, dn in
+                           zip(ad.obs["dataset_id"].astype(str), ad.obs["donor_id"].astype(str))], dtype=object)
+        accumulate_tile(counts, labels, donors, tc, td)
+        del ad, counts
+    return tc, td, len(joinids)
+
+
+def _save_acc(tile, acc_cells, acc_det):
+    keys = list(acc_cells.keys())
+    np.savez_compressed(tile, keys=np.array([f"{t}\t{d}" for (t, d) in keys], dtype=object),
+                        ncells=np.array([acc_cells[k] for k in keys], np.int64),
+                        det=np.array([acc_det[k] for k in keys], np.int64) if keys else np.zeros((0, 1), np.int64))
+
+
+def _load_acc_tile(tile):
+    d = np.load(tile, allow_pickle=True)
+    c, dt = defaultdict(int), {}
+    for ks, nc, det in zip(d["keys"], d["ncells"], d["det"]):
+        t, dn = str(ks).split("\t"); key = (t, dn)
+        c[key] = int(nc); dt[key] = np.asarray(det, np.int64)
+    return c, dt
+
+
+def _merge_acc(into_cells, into_det, src_cells, src_det):
+    for k, n in src_cells.items():
+        into_cells[k] += n
+        into_det[k] = (into_det[k] + src_det[k]) if k in into_det else np.asarray(src_det[k]).copy()
 
 
 # ---------------------------------------------------------------------------
@@ -125,35 +213,32 @@ def main_run() -> int:
     log(f"surfaceome {len(genes_full)}; tumour-absent (<{TUM_FLOOR}) = {len(tumour_absent)} -> streaming their "
         f"vital-normal expression (the only candidate single-blocker NOT-markers)")
 
-    r30.GENES = list(tumour_absent)
-    r30.IDX = {g: i for i, g in enumerate(tumour_absent)}
+    idx = {g: i for i, g in enumerate(tumour_absent)}
     import cellxgene_census
     tissues = d5.d4.NORMAL_TISSUES
     tile_dir = CACHE if CACHE else (OUT_DIR / "tiles")
     tile_dir.mkdir(parents=True, exist_ok=True)
-    log(f"cache/tiles -> {tile_dir} (resumable; {len(tumour_absent)} genes x vital cells, STREAMED)")
+    log(f"cache/tiles -> {tile_dir} (resumable; {len(tumour_absent)} genes, cell-chunked materialise, cap "
+        f"{PER_DONOR_CAP}/donor, chunk {CHUNK_CELLS})")
 
-    acc_cells = defaultdict(int)
-    acc_det = {}
+    acc_cells, acc_det = defaultdict(int), {}
     census = None
     for ti, tissue in enumerate(tissues):
-        tile = tile_dir / f"rung10b_{tissue.replace(' ', '_')}.npz"
+        tile = tile_dir / f"rung10b_acc_{tissue.replace(' ', '_')}.npz"   # small per-tissue accumulator tile
         if tile.exists():
-            d = np.load(tile, allow_pickle=True)
-            log(f"[{ti+1}/{len(tissues)}] {tissue}: RESUMED tile ({d['counts'].shape[0]:,} cells) -> accumulate")
-            accumulate_tile(d["counts"], d["label"], d["donor"], acc_cells, acc_det)
-            del d
+            tc, td = _load_acc_tile(tile)
+            log(f"[{ti+1}/{len(tissues)}] {tissue}: RESUMED acc-tile ({len(tc)} (type,donor) groups)")
+            _merge_acc(acc_cells, acc_det, tc, td)
             continue
         if census is None:
             HB.set(f"opening CELLxGENE Census {d5.d4.CENSUS_VERSION} ...")
             census = cellxgene_census.open_soma(census_version=d5.d4.CENSUS_VERSION)
-        res = r30.pull_vital_genes(census, d5.d4, tissue, ti, len(tissues))
-        if res is None:
+        tc, td, n = _fetch_chunked(census, d5.d4, tissue, ti, len(tissues), tumour_absent, idx, r30, log, HB)
+        if n == 0:
             continue
-        np.savez_compressed(tile, counts=res["counts"], label=res["label"], donor=res["donor"])
-        log(f"[{ti+1}/{len(tissues)}] {tissue}: tile checkpointed -> {tile.name} (safe to disconnect)")
-        accumulate_tile(res["counts"], res["label"], res["donor"], acc_cells, acc_det)
-        del res
+        _save_acc(tile, tc, td)
+        log(f"[{ti+1}/{len(tissues)}] {tissue}: acc-tile checkpointed -> {tile.name} ({n:,} cells, safe to disconnect)")
+        _merge_acc(acc_cells, acc_det, tc, td)
 
     HB.set("all tissues streamed — worst-donor screen for tumour-absent + vital-high blockers ...")
     report, vtypes = find_candidates(acc_cells, acc_det, tumour_absent)
