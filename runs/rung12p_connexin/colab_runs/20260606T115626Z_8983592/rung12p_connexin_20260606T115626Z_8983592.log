@@ -1,0 +1,62 @@
+# cancer-recon-apoptosis — run log
+# step          : rung12p_connexin
+# utc           : 20260606T115626Z
+# commit_short  : 8983592  (+uncommitted changes)
+# commit_full   : 8983592092592a9ffcf0515d34dc21d370118cdf
+# branch        : main
+# python        : 3.12.13
+# platform      : Linux-6.6.122+-x86_64-with-glibc2.35
+#================================================================
+
+$ /usr/bin/python3 -u scripts/34_connexin_containment.py selftest
+  [PASS] HK-deep: n_deep counts only deep cells
+  [PASS] HK-deep: CX_HEART detected in 60/60 deep
+  [PASS] HK-deep: CX_SILENT (only in shallow cells) NOT counted
+  [PASS] under-powered donor excluded from vital_types
+  [PASS] CX_HEART leaks into cardiomyocyte
+  [PASS] CX_LIVERONLY leaks into hepatocyte only
+  [PASS] CX_ONEDONOR leaks (top-donor rule: one patient's heart expressing it IS a risk)
+  [PASS] CX_ONEDONOR is NOT vital-silent (top-donor high)
+  [PASS] CX_SILENT is vital-silent across ALL types
+  [PASS] CX_HEART is NOT vital-silent
+  [PASS] worst_donor < top_donor for split-donor connexin
+
+selftest: 11/11 checks passed
+[exit 0]
+
+$ /usr/bin/python3 -u scripts/34_connexin_containment.py run
+[+    0.0s] [rung5] RESUMING from /content/drive/MyDrive/cancer-recon/rung5_cache.r5.tumour.npz
+[+    5.7s] [rung9] tumour connexin coverage from RUNG-5 cache: 17/23 connexins present in the surfaceome panel
+[+    9.8s] [rung9] connexin containment screen: 23 connexins + 4 HK depth-control genes; tiles -> /content/drive/MyDrive/cancer-recon/rung12p_tiles (resumable, HK-deep filter, worst-donor)
+[+    9.8s] [rung9] [1/9] heart: RESUMED acc-tile (150 (type,donor) groups)
+[+    9.9s] [rung9] [2/9] brain: RESUMED acc-tile (1315 (type,donor) groups)
+[+    9.9s] [rung9] [3/9] kidney: RESUMED acc-tile (327 (type,donor) groups)
+[+    9.9s] [rung9] [4/9] liver: RESUMED acc-tile (175 (type,donor) groups)
+[+    9.9s] [rung9] [5/9] lung: RESUMED acc-tile (583 (type,donor) groups)
+[+    9.9s] [rung9] [6/9] bone marrow: RESUMED acc-tile (18 (type,donor) groups)
+[+    9.9s] [rung9] [7/9] pancreas: RESUMED acc-tile (85 (type,donor) groups)
+[+    9.9s] [rung9] [8/9] adrenal gland: RESUMED acc-tile (50 (type,donor) groups)
+[+    9.9s] [rung9] opening CELLxGENE Census 2024-07-01 ...
+[+   10.3s] [rung9] [9/9] skeletal muscle: scouting vital cells ...
+[+   13.1s] [rung9] [9/9] skeletal muscle: no vital cells
+[+   13.1s] [rung9] all tissues streamed — worst-donor leak/containment screen ...
+[+   13.1s] [rung9] wrote /content/cancer-recon-apoptosis/runs/rung12p_connexin/rung12p_connexin.json
+[+   13.1s] [rung9] DECISIVE: DECISIVE NEGATIVE: a PASSIVE gap-junctional death wave CANNOT be tumour-contained. (1) the tumour barely couples — its most-expressed gap-junction connexin GJA1/Cx43 is in only 5.6% of malignant cells and NO connexin clears 10% (consistent with the known loss of gap-junctional communication in cancer) -> a passive wave can't even spread THROUGH the tumour; (2) the connexin the tumour does express most (GJA1/Cx43) is worst-case-donor high in 8/11 vital types ['cardiomyocyte', 'kidney_podocyte', 'kidney_tubule', 'lung_pneumocyte', 'neuron', 'pancreatic_islet', 'skeletal_myocyte', 'vascular_endothelium']; the only vital-silent channels are ['GJA8', 'GJA10', 'GJD3', 'GJD4'] (eye-restricted lens/retina connexins, absent from the tumour surfaceome -> biologically irrelevant as a tumour coupling channel). => propagation MUST be (a) RECOGNITION-GATED per hop AND (b) use ENGINEERED coupling (synNotch / engineered ligand-receptor), NOT native gap junctions. That is Part B. (Scope: connexin/pannexin channels, mRNA-level.)
+[+   13.1s] [rung9]   tumour-expressed connexins (>0.1): []
+[+   13.1s] [rung9]   GJA1 /Cx43  tumour=0.06  leaks_into=['cardiomyocyte', 'kidney_podocyte', 'kidney_tubule', 'lung_pneumocyte', 'neuron', 'pancreatic_islet', 'skeletal_myocyte', 'vascular_endothelium']
+[+   13.1s] [rung9]   GJA3 /Cx46  tumour=0.00  leaks_into=['cardiomyocyte', 'kidney_podocyte', 'pancreatic_islet']
+[+   13.1s] [rung9]   GJA4 /Cx37  tumour=0.00  leaks_into=['kidney_tubule', 'neuron', 'pancreatic_islet', 'skeletal_myocyte', 'vascular_endothelium']
+[+   13.1s] [rung9]   GJA5 /Cx40  tumour=0.00  leaks_into=['cardiomyocyte', 'kidney_podocyte', 'kidney_tubule', 'skeletal_myocyte', 'vascular_endothelium']
+[+   13.1s] [rung9]   GJB1 /Cx32  tumour=0.02  leaks_into=['cholangiocyte', 'kidney_tubule', 'pancreatic_islet']
+[+   13.1s] [rung9]   GJB2 /Cx26  tumour=0.02  leaks_into=['lung_pneumocyte', 'pancreatic_islet']
+[+   13.1s] [rung9]   GJB3 /GJB3  tumour=0.02  leaks_into=['kidney_tubule']
+[+   13.1s] [rung9]   GJB4 /GJB4  tumour=0.00  leaks_into=['kidney_tubule']
+[+   13.1s] [rung9]   GJB7 /GJB7  tumour=0.00  leaks_into=['neuron']
+[+   13.1s] [rung9]   GJC1 /Cx45  tumour=0.00  leaks_into=['cardiomyocyte', 'kidney_tubule', 'neuron', 'skeletal_myocyte', 'vascular_endothelium']
+[+   13.1s] [rung9]   GJC3 /GJC3  tumour=0.01  leaks_into=['neuron']
+[+   13.1s] [rung9]   GJD2 /Cx36  tumour=0.00  leaks_into=['pancreatic_islet']
+[+   13.1s] [rung9]   PANX1/PANX1 tumour=0.02  leaks_into=['lung_pneumocyte', 'neuron', 'pancreatic_islet', 'skeletal_myocyte', 'vascular_endothelium']
+[+   13.1s] [rung9]   PANX2/PANX2 tumour=0.01  leaks_into=['neuron']
+[+   13.1s] [rung9]   PANX3/PANX3 tumour=  ?   leaks_into=['neuron']
+[rung12p] wrote /content/cancer-recon-apoptosis/runs/rung12p_connexin/rung12p_connexin.png
+[exit 0]

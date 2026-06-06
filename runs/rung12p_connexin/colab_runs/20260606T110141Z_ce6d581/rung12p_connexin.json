@@ -1,0 +1,2115 @@
+{
+  "tag": "rung12p_connexin_containment",
+  "idea": "Anshuman's propagation arm: seed-and-spread apoptosis decouples killing from per-cell recognition. This Part-A run asks whether a PASSIVE (gap-junctional) death wave can be contained to the tumour, or whether the relay must be recognition-gated per hop.",
+  "question": "Is there a connexin worst-donor VITAL-LOW across ALL vital cell types (a containable channel) that is also TUMOUR-expressed (usable)?",
+  "census_version": "2024-07-01",
+  "K": 2,
+  "min_deep_cells": 30,
+  "leak_floor": 0.1,
+  "silent_floor": 0.05,
+  "tum_high": 0.1,
+  "hk_depth_control": [
+    "ACTB",
+    "GAPDH",
+    "RPL13A",
+    "MALAT1"
+  ],
+  "tumour_connexin_coverage": {
+    "GJA1": 0.0558,
+    "GJA3": 0.0002,
+    "GJA4": 0.0015,
+    "GJA5": 0.0005,
+    "GJB1": 0.0185,
+    "GJB2": 0.0214,
+    "GJB3": 0.0192,
+    "GJB4": 0.0042,
+    "GJB5": 0.005,
+    "GJB6": 0.0024,
+    "GJB7": 0.003,
+    "GJC1": 0.0024,
+    "GJC2": 0.0004,
+    "GJC3": 0.0091,
+    "GJD2": 0.0,
+    "PANX1": 0.0166,
+    "PANX2": 0.0057
+  },
+  "tumour_expressed_connexins": [],
+  "usable_passive_channels": [],
+  "DECISIVE": "PARTIAL: 4 vital-silent connexin(s) ['GJA8', 'GJA10', 'GJD3', 'GJD4'] exist but none are tumour-expressed (>0.1) \u2014 no USABLE passive channel; gated relay still required. (Tumour side from cached surfaceome; connexins absent there are unknown.)",
+  "n_connexins_screened": 23,
+  "n_vital_types": 11,
+  "vital_types": [
+    "adrenal_cortical",
+    "cardiac_conduction",
+    "cardiomyocyte",
+    "cholangiocyte",
+    "kidney_podocyte",
+    "kidney_tubule",
+    "lung_pneumocyte",
+    "neuron",
+    "pancreatic_islet",
+    "skeletal_myocyte",
+    "vascular_endothelium"
+  ],
+  "per_connexin": {
+    "GJA1": {
+      "common": "Cx43",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0035,
+          "worst_donor": 0.0,
+          "top_donor": 0.0101,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0008,
+          "worst_donor": 0.0,
+          "top_donor": 0.0067,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0976,
+          "worst_donor": 0.0,
+          "top_donor": 0.3133,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0518,
+          "worst_donor": 0.0,
+          "top_donor": 0.2881,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0284,
+          "worst_donor": 0.0,
+          "top_donor": 0.41,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0878,
+          "worst_donor": 0.0,
+          "top_donor": 0.7017,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.008,
+          "worst_donor": 0.0,
+          "top_donor": 0.82,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0183,
+          "worst_donor": 0.0,
+          "top_donor": 0.2151,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0176,
+          "worst_donor": 0.0,
+          "top_donor": 0.3169,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0768,
+          "worst_donor": 0.0,
+          "top_donor": 0.678,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "cardiomyocyte",
+        "kidney_podocyte",
+        "kidney_tubule",
+        "lung_pneumocyte",
+        "neuron",
+        "pancreatic_islet",
+        "skeletal_myocyte",
+        "vascular_endothelium"
+      ]
+    },
+    "GJA3": {
+      "common": "Cx46",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0149,
+          "worst_donor": 0.0,
+          "top_donor": 0.0609,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0003,
+          "worst_donor": 0.0,
+          "top_donor": 0.0075,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0276,
+          "worst_donor": 0.0,
+          "top_donor": 0.2833,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0166,
+          "worst_donor": 0.0,
+          "top_donor": 0.2143,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0027,
+          "worst_donor": 0.0,
+          "top_donor": 0.0441,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0006,
+          "worst_donor": 0.0,
+          "top_donor": 0.0424,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0082,
+          "worst_donor": 0.0,
+          "top_donor": 0.1033,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0045,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0006,
+          "worst_donor": 0.0,
+          "top_donor": 0.0452,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "cardiomyocyte",
+        "kidney_podocyte",
+        "pancreatic_islet"
+      ]
+    },
+    "GJA4": {
+      "common": "Cx37",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0024,
+          "worst_donor": 0.0,
+          "top_donor": 0.0267,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0016,
+          "worst_donor": 0.0,
+          "top_donor": 0.0678,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0333,
+          "worst_donor": 0.0,
+          "top_donor": 0.352,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0003,
+          "worst_donor": 0.0,
+          "top_donor": 0.0067,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0008,
+          "worst_donor": 0.0,
+          "top_donor": 0.2174,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0103,
+          "worst_donor": 0.0,
+          "top_donor": 0.2903,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.1136,
+          "worst_donor": 0.0,
+          "top_donor": 0.6982,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0664,
+          "worst_donor": 0.0,
+          "top_donor": 0.4966,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "kidney_tubule",
+        "neuron",
+        "pancreatic_islet",
+        "skeletal_myocyte",
+        "vascular_endothelium"
+      ]
+    },
+    "GJA5": {
+      "common": "Cx40",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0229,
+          "worst_donor": 0.0,
+          "top_donor": 0.1567,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0032,
+          "worst_donor": 0.0,
+          "top_donor": 0.1186,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0116,
+          "worst_donor": 0.0,
+          "top_donor": 0.1325,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0008,
+          "worst_donor": 0.0,
+          "top_donor": 0.03,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0067,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0263,
+          "worst_donor": 0.0,
+          "top_donor": 0.6049,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0354,
+          "worst_donor": 0.0,
+          "top_donor": 0.4375,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "cardiomyocyte",
+        "kidney_podocyte",
+        "kidney_tubule",
+        "skeletal_myocyte",
+        "vascular_endothelium"
+      ]
+    },
+    "GJA8": {
+      "common": "GJA8",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0006,
+          "worst_donor": 0.0,
+          "top_donor": 0.0167,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0034,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": []
+    },
+    "GJA9": {
+      "common": "GJA9",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.001,
+          "worst_donor": 0.0,
+          "top_donor": 0.02,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0044,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.01,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.005,
+          "worst_donor": 0.0,
+          "top_donor": 0.0933,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0049,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0108,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": []
+    },
+    "GJA10": {
+      "common": "GJA10",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0033,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0038,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0033,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": []
+    },
+    "GJB1": {
+      "common": "Cx32",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0867,
+          "worst_donor": 0.0,
+          "top_donor": 0.4194,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.027,
+          "worst_donor": 0.0,
+          "top_donor": 0.5567,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0036,
+          "worst_donor": 0.0,
+          "top_donor": 0.0604,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0004,
+          "worst_donor": 0.0,
+          "top_donor": 0.0353,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.05,
+          "worst_donor": 0.0,
+          "top_donor": 0.4407,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0003,
+          "worst_donor": 0.0,
+          "top_donor": 0.0106,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0008,
+          "worst_donor": 0.0,
+          "top_donor": 0.0533,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "cholangiocyte",
+        "kidney_tubule",
+        "pancreatic_islet"
+      ]
+    },
+    "GJB2": {
+      "common": "Cx26",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0033,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0033,
+          "worst_donor": 0.0,
+          "top_donor": 0.0533,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0024,
+          "worst_donor": 0.0,
+          "top_donor": 0.1667,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0056,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0063,
+          "worst_donor": 0.0,
+          "top_donor": 0.1299,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.004,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.027,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "lung_pneumocyte",
+        "pancreatic_islet"
+      ]
+    },
+    "GJB3": {
+      "common": "GJB3",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0017,
+          "worst_donor": 0.0,
+          "top_donor": 0.1111,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0008,
+          "worst_donor": 0.0,
+          "top_donor": 0.042,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0003,
+          "worst_donor": 0.0,
+          "top_donor": 0.02,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0054,
+          "worst_donor": 0.0,
+          "top_donor": 0.0968,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.007,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "kidney_tubule"
+      ]
+    },
+    "GJB4": {
+      "common": "GJB4",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0009,
+          "worst_donor": 0.0,
+          "top_donor": 0.101,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0034,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0323,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0033,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "kidney_tubule"
+      ]
+    },
+    "GJB5": {
+      "common": "GJB5",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0003,
+          "worst_donor": 0.0,
+          "top_donor": 0.0404,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.01,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0002,
+          "worst_donor": 0.0,
+          "top_donor": 0.0539,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0033,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": []
+    },
+    "GJB6": {
+      "common": "Cx30",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0017,
+          "worst_donor": 0.0,
+          "top_donor": 0.0606,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0033,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0007,
+          "worst_donor": 0.0,
+          "top_donor": 0.0867,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0033,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0208,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": []
+    },
+    "GJB7": {
+      "common": "GJB7",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0005,
+          "worst_donor": 0.0,
+          "top_donor": 0.0067,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0033,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0002,
+          "worst_donor": 0.0,
+          "top_donor": 0.012,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0056,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0033,
+          "worst_donor": 0.0,
+          "top_donor": 0.1347,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0017,
+          "worst_donor": 0.0,
+          "top_donor": 0.043,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0108,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "neuron"
+      ]
+    },
+    "GJC1": {
+      "common": "Cx45",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0064,
+          "worst_donor": 0.0,
+          "top_donor": 0.0216,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0066,
+          "worst_donor": 0.0,
+          "top_donor": 0.0367,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0365,
+          "worst_donor": 0.0,
+          "top_donor": 0.1533,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0021,
+          "worst_donor": 0.0,
+          "top_donor": 0.0435,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0466,
+          "worst_donor": 0.0,
+          "top_donor": 0.4337,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0003,
+          "worst_donor": 0.0,
+          "top_donor": 0.0156,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0264,
+          "worst_donor": 0.0,
+          "top_donor": 0.68,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0074,
+          "worst_donor": 0.0,
+          "top_donor": 0.0736,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0612,
+          "worst_donor": 0.0,
+          "top_donor": 0.47,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0196,
+          "worst_donor": 0.0,
+          "top_donor": 0.4516,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "cardiomyocyte",
+        "kidney_tubule",
+        "neuron",
+        "skeletal_myocyte",
+        "vascular_endothelium"
+      ]
+    },
+    "GJC2": {
+      "common": "Cx47",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0033,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0074,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0244,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0012,
+          "worst_donor": 0.0,
+          "top_donor": 0.0337,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0002,
+          "worst_donor": 0.0,
+          "top_donor": 0.0033,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0003,
+          "worst_donor": 0.0,
+          "top_donor": 0.02,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0029,
+          "worst_donor": 0.0,
+          "top_donor": 0.0767,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": []
+    },
+    "GJC3": {
+      "common": "GJC3",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0233,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0004,
+          "worst_donor": 0.0,
+          "top_donor": 0.0134,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0008,
+          "worst_donor": 0.0,
+          "top_donor": 0.0267,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0009,
+          "worst_donor": 0.0,
+          "top_donor": 0.1212,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0148,
+          "worst_donor": 0.0,
+          "top_donor": 0.09,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0004,
+          "worst_donor": 0.0,
+          "top_donor": 0.027,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "neuron"
+      ]
+    },
+    "GJD2": {
+      "common": "Cx36",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0028,
+          "worst_donor": 0.0,
+          "top_donor": 0.0102,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0005,
+          "worst_donor": 0.0,
+          "top_donor": 0.0033,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0012,
+          "worst_donor": 0.0,
+          "top_donor": 0.0426,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0031,
+          "worst_donor": 0.0,
+          "top_donor": 0.08,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0499,
+          "worst_donor": 0.0,
+          "top_donor": 0.2667,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0175,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "pancreatic_islet"
+      ]
+    },
+    "GJD3": {
+      "common": "GJD3",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0041,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0101,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0011,
+          "worst_donor": 0.0,
+          "top_donor": 0.0404,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0093,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0008,
+          "worst_donor": 0.0,
+          "top_donor": 0.0435,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": []
+    },
+    "GJD4": {
+      "common": "GJD4",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0034,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0236,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": []
+    },
+    "PANX1": {
+      "common": "PANX1",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0014,
+          "worst_donor": 0.0,
+          "top_donor": 0.0108,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0143,
+          "worst_donor": 0.0,
+          "top_donor": 0.07,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0056,
+          "worst_donor": 0.0,
+          "top_donor": 0.08,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0066,
+          "worst_donor": 0.0,
+          "top_donor": 0.0462,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0048,
+          "worst_donor": 0.0,
+          "top_donor": 0.0179,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0047,
+          "worst_donor": 0.0,
+          "top_donor": 0.037,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0086,
+          "worst_donor": 0.0,
+          "top_donor": 0.1767,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0188,
+          "worst_donor": 0.0,
+          "top_donor": 0.3603,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0345,
+          "worst_donor": 0.0,
+          "top_donor": 0.3978,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0037,
+          "worst_donor": 0.0,
+          "top_donor": 0.1961,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0027,
+          "worst_donor": 0.0,
+          "top_donor": 0.1132,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "lung_pneumocyte",
+        "neuron",
+        "pancreatic_islet",
+        "skeletal_myocyte",
+        "vascular_endothelium"
+      ]
+    },
+    "PANX2": {
+      "common": "PANX2",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0014,
+          "worst_donor": 0.0,
+          "top_donor": 0.0054,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0005,
+          "worst_donor": 0.0,
+          "top_donor": 0.0042,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0003,
+          "worst_donor": 0.0,
+          "top_donor": 0.01,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0011,
+          "worst_donor": 0.0,
+          "top_donor": 0.03,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0008,
+          "worst_donor": 0.0,
+          "top_donor": 0.021,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0839,
+          "worst_donor": 0.0,
+          "top_donor": 0.8267,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.003,
+          "worst_donor": 0.0,
+          "top_donor": 0.0435,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0003,
+          "worst_donor": 0.0,
+          "top_donor": 0.0278,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0001,
+          "worst_donor": 0.0,
+          "top_donor": 0.0147,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "neuron"
+      ]
+    },
+    "PANX3": {
+      "common": "PANX3",
+      "by_vital_type": {
+        "adrenal_cortical": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1413,
+          "n_donors": 7
+        },
+        "cardiac_conduction": {
+          "pooled_deep": 0.0003,
+          "worst_donor": 0.0,
+          "top_donor": 0.0067,
+          "n_deep": 6225,
+          "n_donors": 24
+        },
+        "cardiomyocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 8701,
+          "n_donors": 32
+        },
+        "cholangiocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 1961,
+          "n_donors": 16
+        },
+        "kidney_podocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 3785,
+          "n_donors": 33
+        },
+        "kidney_tubule": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 12445,
+          "n_donors": 74
+        },
+        "lung_pneumocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 38567,
+          "n_donors": 166
+        },
+        "neuron": {
+          "pooled_deep": 0.0012,
+          "worst_donor": 0.0,
+          "top_donor": 0.16,
+          "n_deep": 173687,
+          "n_donors": 652
+        },
+        "pancreatic_islet": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 10139,
+          "n_donors": 41
+        },
+        "skeletal_myocyte": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0,
+          "n_deep": 24867,
+          "n_donors": 139
+        },
+        "vascular_endothelium": {
+          "pooled_deep": 0.0,
+          "worst_donor": 0.0,
+          "top_donor": 0.0033,
+          "n_deep": 101693,
+          "n_donors": 543
+        }
+      },
+      "leaks_into": [
+        "neuron"
+      ]
+    }
+  },
+  "leak_map": {
+    "GJA1": [
+      "cardiomyocyte",
+      "kidney_podocyte",
+      "kidney_tubule",
+      "lung_pneumocyte",
+      "neuron",
+      "pancreatic_islet",
+      "skeletal_myocyte",
+      "vascular_endothelium"
+    ],
+    "GJA3": [
+      "cardiomyocyte",
+      "kidney_podocyte",
+      "pancreatic_islet"
+    ],
+    "GJA4": [
+      "kidney_tubule",
+      "neuron",
+      "pancreatic_islet",
+      "skeletal_myocyte",
+      "vascular_endothelium"
+    ],
+    "GJA5": [
+      "cardiomyocyte",
+      "kidney_podocyte",
+      "kidney_tubule",
+      "skeletal_myocyte",
+      "vascular_endothelium"
+    ],
+    "GJA8": [],
+    "GJA9": [],
+    "GJA10": [],
+    "GJB1": [
+      "cholangiocyte",
+      "kidney_tubule",
+      "pancreatic_islet"
+    ],
+    "GJB2": [
+      "lung_pneumocyte",
+      "pancreatic_islet"
+    ],
+    "GJB3": [
+      "kidney_tubule"
+    ],
+    "GJB4": [
+      "kidney_tubule"
+    ],
+    "GJB5": [],
+    "GJB6": [],
+    "GJB7": [
+      "neuron"
+    ],
+    "GJC1": [
+      "cardiomyocyte",
+      "kidney_tubule",
+      "neuron",
+      "skeletal_myocyte",
+      "vascular_endothelium"
+    ],
+    "GJC2": [],
+    "GJC3": [
+      "neuron"
+    ],
+    "GJD2": [
+      "pancreatic_islet"
+    ],
+    "GJD3": [],
+    "GJD4": [],
+    "PANX1": [
+      "lung_pneumocyte",
+      "neuron",
+      "pancreatic_islet",
+      "skeletal_myocyte",
+      "vascular_endothelium"
+    ],
+    "PANX2": [
+      "neuron"
+    ],
+    "PANX3": [
+      "neuron"
+    ]
+  },
+  "vital_silent_connexins_ALL_types": [
+    "GJA8",
+    "GJA10",
+    "GJD3",
+    "GJD4"
+  ],
+  "n_vital_silent_connexins": 4,
+  "CEILING": "mRNA != functional gap-junction coupling (connexin transcript != open channel); HK-deep filter mitigates but doesn't erase dropout; LOW calls are the anti-conservative direction so the depth control is load-bearing; tumour side from cached RUNG-5 surfaceome (connexins not in that panel are 'unknown', not 'absent'). SCOPE: passive connexin/pannexin channels.",
+  "INTERPRETATION": "If no connexin is vital-silent everywhere, the bystander/gap-junction route can't be tumour-contained -> Anshuman's wave must re-check tumour identity at each hop (gated relay). That gated relay is exactly Part B: does per-hop gating with a LEAKIER recognition than R5 required still clear the tumour without a normal-tissue death wave (errors don't cascade)?"
+}

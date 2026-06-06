@@ -1,0 +1,260 @@
+# cancer-recon-apoptosis — run log
+# step          : rung12p_connexin
+# utc           : 20260606T110141Z
+# commit_short  : ce6d581
+# commit_full   : ce6d581d0e8b25aa5406fc43639ff4bc3f1fac3d
+# branch        : main
+# python        : 3.12.13
+# platform      : Linux-6.6.122+-x86_64-with-glibc2.35
+#================================================================
+
+$ /usr/bin/python3 -u scripts/34_connexin_containment.py selftest
+  [PASS] HK-deep: n_deep counts only deep cells
+  [PASS] HK-deep: CX_HEART detected in 60/60 deep
+  [PASS] HK-deep: CX_SILENT (only in shallow cells) NOT counted
+  [PASS] under-powered donor excluded from vital_types
+  [PASS] CX_HEART leaks into cardiomyocyte
+  [PASS] CX_LIVERONLY leaks into hepatocyte only
+  [PASS] CX_ONEDONOR leaks (top-donor rule: one patient's heart expressing it IS a risk)
+  [PASS] CX_ONEDONOR is NOT vital-silent (top-donor high)
+  [PASS] CX_SILENT is vital-silent across ALL types
+  [PASS] CX_HEART is NOT vital-silent
+  [PASS] worst_donor < top_donor for split-donor connexin
+
+selftest: 11/11 checks passed
+[exit 0]
+
+$ pip cellxgene-census
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 91.2/91.2 kB 5.0 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 55.6/55.6 kB 5.1 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 203.4/203.4 kB 12.8 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 22.3/22.3 MB 71.0 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 175.3/175.3 kB 15.7 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 89.5/89.5 kB 9.1 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 60.1/60.1 kB 5.4 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 82.6 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 103.2 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 319.6/319.6 kB 26.4 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 15.0/15.0 MB 90.0 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 99.1 MB/s eta 0:00:00
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+google-colab 1.0.0 requires pandas==2.2.2, but you have pandas 2.3.3 which is incompatible.
+gcsfs 2025.3.0 requires fsspec==2025.3.0, but you have fsspec 2026.4.0 which is incompatible.
+datasets 4.0.0 requires fsspec[http]<=2025.3.0,>=2023.1.0, but you have fsspec 2026.4.0 which is incompatible.
+[exit 0]
+
+$ /usr/bin/python3 -u scripts/34_connexin_containment.py run
+[+    1.6s] [rung5] RESUMING from /content/drive/MyDrive/cancer-recon/rung5_cache.r5.tumour.npz
+[+    8.9s] [rung9] tumour connexin coverage from RUNG-5 cache: 17/23 connexins present in the surfaceome panel
+[+   13.2s] [rung9] connexin containment screen: 23 connexins + 4 HK depth-control genes; tiles -> /content/drive/MyDrive/cancer-recon/rung12p_tiles (resumable, HK-deep filter, worst-donor)
+[+   13.2s] [rung9] opening CELLxGENE Census 2024-07-01 ...
+[+   14.1s] [rung9] [1/9] heart: scouting vital cells ...
+[+   18.0s] [rung9] [1/9] heart: chunk 1/1 (35,047 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+   20.3s] [heartbeat] [1/9] heart: chunk 1/1 (35,047 vital cells x 27 genes) | RAM 1.8GB
+[+   40.3s] [heartbeat] [1/9] heart: chunk 1/1 (35,047 vital cells x 27 genes) | RAM 3.4GB
+[+   60.4s] [heartbeat] [1/9] heart: chunk 1/1 (35,047 vital cells x 27 genes) | RAM 3.5GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+   77.8s] [rung9] [1/9] heart: acc-tile checkpointed -> rung12p_acc_heart.npz (35,047 cells, safe to disconnect)
+[+   77.8s] [rung9] [2/9] brain: scouting vital cells ...
+[+   80.4s] [heartbeat] [2/9] brain: scouting vital cells ... | RAM 3.5GB
+[+  106.0s] [heartbeat] [2/9] brain: scouting vital cells ... | RAM 3.5GB
+[+  114.0s] [rung9] [2/9] brain: chunk 1/5 (199,908 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  126.0s] [heartbeat] [2/9] brain: chunk 1/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+[+  146.1s] [heartbeat] [2/9] brain: chunk 1/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+[+  166.1s] [heartbeat] [2/9] brain: chunk 1/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+[+  186.1s] [heartbeat] [2/9] brain: chunk 1/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+  192.9s] [rung9] [2/9] brain: chunk 2/5 (199,908 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  206.1s] [heartbeat] [2/9] brain: chunk 2/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+[+  226.1s] [heartbeat] [2/9] brain: chunk 2/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+[+  246.1s] [heartbeat] [2/9] brain: chunk 2/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+  258.4s] [rung9] [2/9] brain: chunk 3/5 (199,908 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  266.1s] [heartbeat] [2/9] brain: chunk 3/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+[+  286.2s] [heartbeat] [2/9] brain: chunk 3/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+[+  306.2s] [heartbeat] [2/9] brain: chunk 3/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+[+  326.2s] [heartbeat] [2/9] brain: chunk 3/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+  346.0s] [rung9] [2/9] brain: chunk 4/5 (199,908 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  346.2s] [heartbeat] [2/9] brain: chunk 4/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+[+  366.2s] [heartbeat] [2/9] brain: chunk 4/5 (199,908 vital cells x 27 genes) | RAM 3.7GB
+[+  386.2s] [heartbeat] [2/9] brain: chunk 4/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  406.2s] [heartbeat] [2/9] brain: chunk 4/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  426.3s] [heartbeat] [2/9] brain: chunk 4/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  446.3s] [heartbeat] [2/9] brain: chunk 4/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+  453.4s] [rung9] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  466.3s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  486.4s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  506.4s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  526.4s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  546.4s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  566.4s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  586.4s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  606.4s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  626.5s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  646.5s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  666.5s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  686.5s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  706.5s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  726.5s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  746.5s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  766.5s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  786.5s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  806.6s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  826.6s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  846.6s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  866.6s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  886.6s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+[+  906.6s] [heartbeat] [2/9] brain: chunk 5/5 (199,908 vital cells x 27 genes) | RAM 3.8GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+  926.1s] [rung9] [2/9] brain: acc-tile checkpointed -> rung12p_acc_brain.npz (199,908 cells, safe to disconnect)
+[+  926.1s] [rung9] [3/9] kidney: scouting vital cells ...
+[+  926.6s] [heartbeat] [3/9] kidney: scouting vital cells ... | RAM 3.8GB
+[+  928.3s] [rung9] [3/9] kidney: chunk 1/1 (38,595 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+  946.6s] [heartbeat] [3/9] kidney: chunk 1/1 (38,595 vital cells x 27 genes) | RAM 3.8GB
+[+  966.7s] [heartbeat] [3/9] kidney: chunk 1/1 (38,595 vital cells x 27 genes) | RAM 3.8GB
+[+  986.7s] [heartbeat] [3/9] kidney: chunk 1/1 (38,595 vital cells x 27 genes) | RAM 3.8GB
+[+ 1006.7s] [heartbeat] [3/9] kidney: chunk 1/1 (38,595 vital cells x 27 genes) | RAM 3.8GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+ 1014.0s] [rung9] [3/9] kidney: acc-tile checkpointed -> rung12p_acc_kidney.npz (38,595 cells, safe to disconnect)
+[+ 1014.0s] [rung9] [4/9] liver: scouting vital cells ...
+[+ 1015.5s] [rung9] [4/9] liver: chunk 1/1 (19,685 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+ 1026.7s] [heartbeat] [4/9] liver: chunk 1/1 (19,685 vital cells x 27 genes) | RAM 3.8GB
+[+ 1046.7s] [heartbeat] [4/9] liver: chunk 1/1 (19,685 vital cells x 27 genes) | RAM 3.8GB
+[+ 1066.7s] [heartbeat] [4/9] liver: chunk 1/1 (19,685 vital cells x 27 genes) | RAM 3.8GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+ 1075.7s] [rung9] [4/9] liver: acc-tile checkpointed -> rung12p_acc_liver.npz (19,685 cells, safe to disconnect)
+[+ 1075.7s] [rung9] [5/9] lung: scouting vital cells ...
+[+ 1079.5s] [rung9] [5/9] lung: chunk 1/3 (91,466 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+ 1086.9s] [heartbeat] [5/9] lung: chunk 1/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1106.9s] [heartbeat] [5/9] lung: chunk 1/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1126.9s] [heartbeat] [5/9] lung: chunk 1/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+ 1146.6s] [rung9] [5/9] lung: chunk 2/3 (91,466 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+ 1147.0s] [heartbeat] [5/9] lung: chunk 2/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1167.0s] [heartbeat] [5/9] lung: chunk 2/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1187.0s] [heartbeat] [5/9] lung: chunk 2/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1207.0s] [heartbeat] [5/9] lung: chunk 2/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1227.0s] [heartbeat] [5/9] lung: chunk 2/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1247.1s] [heartbeat] [5/9] lung: chunk 2/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1267.1s] [heartbeat] [5/9] lung: chunk 2/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1287.1s] [heartbeat] [5/9] lung: chunk 2/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1307.1s] [heartbeat] [5/9] lung: chunk 2/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+ 1308.0s] [rung9] [5/9] lung: chunk 3/3 (91,466 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+ 1327.1s] [heartbeat] [5/9] lung: chunk 3/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1347.2s] [heartbeat] [5/9] lung: chunk 3/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1367.2s] [heartbeat] [5/9] lung: chunk 3/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1387.2s] [heartbeat] [5/9] lung: chunk 3/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1407.2s] [heartbeat] [5/9] lung: chunk 3/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+[+ 1427.3s] [heartbeat] [5/9] lung: chunk 3/3 (91,466 vital cells x 27 genes) | RAM 3.8GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+ 1432.2s] [rung9] [5/9] lung: acc-tile checkpointed -> rung12p_acc_lung.npz (91,466 cells, safe to disconnect)
+[+ 1432.2s] [rung9] [6/9] bone marrow: scouting vital cells ...
+[+ 1433.2s] [rung9] [6/9] bone marrow: chunk 1/1 (993 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+ 1446.1s] [rung9] [6/9] bone marrow: acc-tile checkpointed -> rung12p_acc_bone_marrow.npz (993 cells, safe to disconnect)
+[+ 1446.1s] [rung9] [7/9] pancreas: scouting vital cells ...
+[+ 1447.0s] [rung9] [7/9] pancreas: chunk 1/1 (16,030 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+ 1447.3s] [heartbeat] [7/9] pancreas: chunk 1/1 (16,030 vital cells x 27 genes) | RAM 3.8GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+ 1465.0s] [rung9] [7/9] pancreas: acc-tile checkpointed -> rung12p_acc_pancreas.npz (16,030 cells, safe to disconnect)
+[+ 1465.0s] [rung9] [8/9] adrenal gland: scouting vital cells ...
+[+ 1465.9s] [rung9] [8/9] adrenal gland: chunk 1/1 (11,542 vital cells x 27 genes)
+/content/cancer-recon-apoptosis/scripts/34_connexin_containment.py:164: FutureWarning: The argument `column_names` is deprecated and will be removed in a future release. Please use `obs_column_names` and `var_column_names` instead.
+  ad = cellxgene_census.get_anndata(
+[+ 1467.4s] [heartbeat] [8/9] adrenal gland: chunk 1/1 (11,542 vital cells x 27 genes) | RAM 3.8GB
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+/usr/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+[+ 1485.9s] [rung9] [8/9] adrenal gland: acc-tile checkpointed -> rung12p_acc_adrenal_gland.npz (11,542 cells, safe to disconnect)
+[+ 1485.9s] [rung9] [9/9] skeletal muscle: scouting vital cells ...
+[+ 1486.7s] [rung9] [9/9] skeletal muscle: no vital cells
+[+ 1486.7s] [rung9] all tissues streamed — worst-donor leak/containment screen ...
+[+ 1486.7s] [rung9] wrote /content/cancer-recon-apoptosis/runs/rung12p_connexin/rung12p_connexin.json
+[+ 1486.7s] [rung9] DECISIVE: PARTIAL: 4 vital-silent connexin(s) ['GJA8', 'GJA10', 'GJD3', 'GJD4'] exist but none are tumour-expressed (>0.1) — no USABLE passive channel; gated relay still required. (Tumour side from cached surfaceome; connexins absent there are unknown.)
+[+ 1486.7s] [rung9]   tumour-expressed connexins (>0.1): []
+[+ 1486.7s] [rung9]   GJA1 /Cx43  tumour=0.06  leaks_into=['cardiomyocyte', 'kidney_podocyte', 'kidney_tubule', 'lung_pneumocyte', 'neuron', 'pancreatic_islet', 'skeletal_myocyte', 'vascular_endothelium']
+[+ 1486.7s] [rung9]   GJA3 /Cx46  tumour=0.00  leaks_into=['cardiomyocyte', 'kidney_podocyte', 'pancreatic_islet']
+[+ 1486.7s] [rung9]   GJA4 /Cx37  tumour=0.00  leaks_into=['kidney_tubule', 'neuron', 'pancreatic_islet', 'skeletal_myocyte', 'vascular_endothelium']
+[+ 1486.7s] [rung9]   GJA5 /Cx40  tumour=0.00  leaks_into=['cardiomyocyte', 'kidney_podocyte', 'kidney_tubule', 'skeletal_myocyte', 'vascular_endothelium']
+[+ 1486.7s] [rung9]   GJB1 /Cx32  tumour=0.02  leaks_into=['cholangiocyte', 'kidney_tubule', 'pancreatic_islet']
+[+ 1486.7s] [rung9]   GJB2 /Cx26  tumour=0.02  leaks_into=['lung_pneumocyte', 'pancreatic_islet']
+[+ 1486.7s] [rung9]   GJB3 /GJB3  tumour=0.02  leaks_into=['kidney_tubule']
+[+ 1486.7s] [rung9]   GJB4 /GJB4  tumour=0.00  leaks_into=['kidney_tubule']
+[+ 1486.7s] [rung9]   GJB7 /GJB7  tumour=0.00  leaks_into=['neuron']
+[+ 1486.7s] [rung9]   GJC1 /Cx45  tumour=0.00  leaks_into=['cardiomyocyte', 'kidney_tubule', 'neuron', 'skeletal_myocyte', 'vascular_endothelium']
+[+ 1486.7s] [rung9]   GJC3 /GJC3  tumour=0.01  leaks_into=['neuron']
+[+ 1486.7s] [rung9]   GJD2 /Cx36  tumour=0.00  leaks_into=['pancreatic_islet']
+[+ 1486.7s] [rung9]   PANX1/PANX1 tumour=0.02  leaks_into=['lung_pneumocyte', 'neuron', 'pancreatic_islet', 'skeletal_myocyte', 'vascular_endothelium']
+[+ 1486.7s] [rung9]   PANX2/PANX2 tumour=0.01  leaks_into=['neuron']
+[+ 1486.7s] [rung9]   PANX3/PANX3 tumour=  ?   leaks_into=['neuron']
+[rung12p] wrote /content/cancer-recon-apoptosis/runs/rung12p_connexin/rung12p_connexin.png
+[exit 0]
