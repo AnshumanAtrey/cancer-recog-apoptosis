@@ -1,0 +1,763 @@
+{
+  "tag": "rung12p_relay_neoantigen_bridge",
+  "question": "How much of RUNG-11's neoantigen addressability does the RUNG-12P gated relay UNLOCK vs a per-cell TCR-T, as a function of the (unknown, RUNG-12) TCR mut-vs-WT cross-bind beta?",
+  "inputs": {
+    "rung11_handles": 175,
+    "n_clean_always_safe": 55,
+    "per_cell_bar": 0.02,
+    "relay_ceiling_3d": 0.173,
+    "relay_ceiling_2d": 0.3,
+    "anchor_discount": 0.2
+  },
+  "RELAXATION_FACTOR": "8.6x (relay tolerates beta up to relay_ceiling/0.02 higher than per-cell)",
+  "proxy": "q_n = presentation_factor(wt_rank) * beta * (anchor_discount if anchor). beta swept (RUNG-12 would measure it per handle). CLEAN handles (WT not presented) -> q_n=0 -> always safe.",
+  "beta_sweep_coverage": [
+    {
+      "beta": 0.0,
+      "percell": {
+        "PDAC": 0.7295,
+        "CRC": 0.3606,
+        "NSCLC": 0.2911,
+        "BRCA": 0.1972,
+        "MELANOMA": 0.4286,
+        "GLIOMA": 0.5745,
+        "HCC": 0.0886,
+        "OV": 0.0851
+      },
+      "relay": {
+        "PDAC": 0.7295,
+        "CRC": 0.3606,
+        "NSCLC": 0.2911,
+        "BRCA": 0.1972,
+        "MELANOMA": 0.4286,
+        "GLIOMA": 0.5745,
+        "HCC": 0.0886,
+        "OV": 0.0851
+      }
+    },
+    {
+      "beta": 0.05,
+      "percell": {
+        "PDAC": 0.488,
+        "CRC": 0.2452,
+        "NSCLC": 0.1401,
+        "BRCA": 0.1581,
+        "MELANOMA": 0.3112,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0659,
+        "OV": 0.0573
+      },
+      "relay": {
+        "PDAC": 0.7295,
+        "CRC": 0.3606,
+        "NSCLC": 0.2911,
+        "BRCA": 0.1972,
+        "MELANOMA": 0.4286,
+        "GLIOMA": 0.5745,
+        "HCC": 0.0886,
+        "OV": 0.0851
+      }
+    },
+    {
+      "beta": 0.1,
+      "percell": {
+        "PDAC": 0.4867,
+        "CRC": 0.2288,
+        "NSCLC": 0.1197,
+        "BRCA": 0.1496,
+        "MELANOMA": 0.2402,
+        "GLIOMA": 0.3564,
+        "HCC": 0.0636,
+        "OV": 0.0445
+      },
+      "relay": {
+        "PDAC": 0.7295,
+        "CRC": 0.3606,
+        "NSCLC": 0.2911,
+        "BRCA": 0.1972,
+        "MELANOMA": 0.4286,
+        "GLIOMA": 0.5745,
+        "HCC": 0.0886,
+        "OV": 0.0851
+      }
+    },
+    {
+      "beta": 0.15,
+      "percell": {
+        "PDAC": 0.4863,
+        "CRC": 0.2244,
+        "NSCLC": 0.1189,
+        "BRCA": 0.1349,
+        "MELANOMA": 0.2402,
+        "GLIOMA": 0.3265,
+        "HCC": 0.0632,
+        "OV": 0.0432
+      },
+      "relay": {
+        "PDAC": 0.7295,
+        "CRC": 0.3606,
+        "NSCLC": 0.2911,
+        "BRCA": 0.1972,
+        "MELANOMA": 0.4286,
+        "GLIOMA": 0.5745,
+        "HCC": 0.0886,
+        "OV": 0.0851
+      }
+    },
+    {
+      "beta": 0.2,
+      "percell": {
+        "PDAC": 0.4445,
+        "CRC": 0.2076,
+        "NSCLC": 0.1009,
+        "BRCA": 0.1349,
+        "MELANOMA": 0.2402,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0423
+      },
+      "relay": {
+        "PDAC": 0.5852,
+        "CRC": 0.2885,
+        "NSCLC": 0.2059,
+        "BRCA": 0.1725,
+        "MELANOMA": 0.3167,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0732,
+        "OV": 0.0718
+      }
+    },
+    {
+      "beta": 0.25,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.199,
+        "NSCLC": 0.0999,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0423
+      },
+      "relay": {
+        "PDAC": 0.5328,
+        "CRC": 0.2683,
+        "NSCLC": 0.1815,
+        "BRCA": 0.1659,
+        "MELANOMA": 0.3112,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0716,
+        "OV": 0.0659
+      }
+    },
+    {
+      "beta": 0.3,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0985,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.4888,
+        "CRC": 0.2494,
+        "NSCLC": 0.1401,
+        "BRCA": 0.1646,
+        "MELANOMA": 0.3112,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0716,
+        "OV": 0.0588
+      }
+    },
+    {
+      "beta": 0.35,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0985,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.488,
+        "CRC": 0.2482,
+        "NSCLC": 0.1401,
+        "BRCA": 0.1636,
+        "MELANOMA": 0.3112,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0659,
+        "OV": 0.0573
+      }
+    },
+    {
+      "beta": 0.4,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0832,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.488,
+        "CRC": 0.2452,
+        "NSCLC": 0.1401,
+        "BRCA": 0.1581,
+        "MELANOMA": 0.3112,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0659,
+        "OV": 0.0573
+      }
+    },
+    {
+      "beta": 0.45,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0832,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.488,
+        "CRC": 0.2452,
+        "NSCLC": 0.1401,
+        "BRCA": 0.1581,
+        "MELANOMA": 0.3112,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0659,
+        "OV": 0.0573
+      }
+    },
+    {
+      "beta": 0.5,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0832,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.4875,
+        "CRC": 0.2445,
+        "NSCLC": 0.1393,
+        "BRCA": 0.1573,
+        "MELANOMA": 0.3112,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0659,
+        "OV": 0.056
+      }
+    },
+    {
+      "beta": 0.55,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0758,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.4875,
+        "CRC": 0.2445,
+        "NSCLC": 0.1393,
+        "BRCA": 0.1573,
+        "MELANOMA": 0.3112,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0659,
+        "OV": 0.056
+      }
+    },
+    {
+      "beta": 0.6,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0758,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.4875,
+        "CRC": 0.2395,
+        "NSCLC": 0.1382,
+        "BRCA": 0.1573,
+        "MELANOMA": 0.2868,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0659,
+        "OV": 0.056
+      }
+    },
+    {
+      "beta": 0.65,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0758,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.4875,
+        "CRC": 0.2299,
+        "NSCLC": 0.1361,
+        "BRCA": 0.1573,
+        "MELANOMA": 0.2402,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0659,
+        "OV": 0.056
+      }
+    },
+    {
+      "beta": 0.7,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0758,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.4875,
+        "CRC": 0.2299,
+        "NSCLC": 0.1266,
+        "BRCA": 0.1573,
+        "MELANOMA": 0.2402,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0659,
+        "OV": 0.056
+      }
+    },
+    {
+      "beta": 0.75,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0758,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.4875,
+        "CRC": 0.2299,
+        "NSCLC": 0.1266,
+        "BRCA": 0.1573,
+        "MELANOMA": 0.2402,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0659,
+        "OV": 0.056
+      }
+    },
+    {
+      "beta": 0.8,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0758,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.4875,
+        "CRC": 0.2299,
+        "NSCLC": 0.1266,
+        "BRCA": 0.1573,
+        "MELANOMA": 0.2402,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0659,
+        "OV": 0.056
+      }
+    },
+    {
+      "beta": 0.85,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0758,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.4875,
+        "CRC": 0.2299,
+        "NSCLC": 0.1266,
+        "BRCA": 0.1573,
+        "MELANOMA": 0.2402,
+        "GLIOMA": 0.5261,
+        "HCC": 0.0659,
+        "OV": 0.056
+      }
+    },
+    {
+      "beta": 0.9,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0758,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.4867,
+        "CRC": 0.2288,
+        "NSCLC": 0.1197,
+        "BRCA": 0.1496,
+        "MELANOMA": 0.2402,
+        "GLIOMA": 0.3564,
+        "HCC": 0.0636,
+        "OV": 0.0445
+      }
+    },
+    {
+      "beta": 0.95,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0758,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.4863,
+        "CRC": 0.2281,
+        "NSCLC": 0.1189,
+        "BRCA": 0.1489,
+        "MELANOMA": 0.2402,
+        "GLIOMA": 0.3564,
+        "HCC": 0.0636,
+        "OV": 0.0432
+      }
+    },
+    {
+      "beta": 1.0,
+      "percell": {
+        "PDAC": 0.4366,
+        "CRC": 0.1978,
+        "NSCLC": 0.0758,
+        "BRCA": 0.1144,
+        "MELANOMA": 0.2283,
+        "GLIOMA": 0.2212,
+        "HCC": 0.0618,
+        "OV": 0.0409
+      },
+      "relay": {
+        "PDAC": 0.4863,
+        "CRC": 0.2281,
+        "NSCLC": 0.1189,
+        "BRCA": 0.1489,
+        "MELANOMA": 0.2402,
+        "GLIOMA": 0.3564,
+        "HCC": 0.0636,
+        "OV": 0.0432
+      }
+    }
+  ],
+  "headline_at_beta": {
+    "beta": 0.5,
+    "per_cancer_percell_vs_relay": {
+      "PDAC": {
+        "percell": 0.4366,
+        "relay": 0.4875,
+        "unlock": 0.0509
+      },
+      "CRC": {
+        "percell": 0.1978,
+        "relay": 0.2445,
+        "unlock": 0.0467
+      },
+      "NSCLC": {
+        "percell": 0.0832,
+        "relay": 0.1393,
+        "unlock": 0.0561
+      },
+      "BRCA": {
+        "percell": 0.1144,
+        "relay": 0.1573,
+        "unlock": 0.0429
+      },
+      "MELANOMA": {
+        "percell": 0.2283,
+        "relay": 0.3112,
+        "unlock": 0.0829
+      },
+      "GLIOMA": {
+        "percell": 0.2212,
+        "relay": 0.5261,
+        "unlock": 0.3049
+      },
+      "HCC": {
+        "percell": 0.0618,
+        "relay": 0.0659,
+        "unlock": 0.0041
+      },
+      "OV": {
+        "percell": 0.0409,
+        "relay": 0.056,
+        "unlock": 0.0151
+      }
+    },
+    "n_handles_unlocked": 22,
+    "unlocked_handles_top": [
+      {
+        "handle": "IDH1 R132H / HLA-A*03:01",
+        "tier": "anchor",
+        "wt_rank": 1.018,
+        "qn": 0.065,
+        "cancers": {
+          "GLIOMA": 0.7,
+          "HCC": 0.01
+        }
+      },
+      {
+        "handle": "IDH1 R132H / HLA-A*26:01",
+        "tier": "anchor",
+        "wt_rank": 0.779,
+        "qn": 0.081,
+        "cancers": {
+          "GLIOMA": 0.7,
+          "HCC": 0.01
+        }
+      },
+      {
+        "handle": "IDH1 R132H / HLA-A*68:01",
+        "tier": "anchor",
+        "wt_rank": 0.073,
+        "qn": 0.1,
+        "cancers": {
+          "GLIOMA": 0.7,
+          "HCC": 0.01
+        }
+      },
+      {
+        "handle": "IDH1 R132H / HLA-C*07:01",
+        "tier": "anchor",
+        "wt_rank": 0.11,
+        "qn": 0.1,
+        "cancers": {
+          "GLIOMA": 0.7,
+          "HCC": 0.01
+        }
+      },
+      {
+        "handle": "IDH1 R132H / HLA-C*07:02",
+        "tier": "anchor",
+        "wt_rank": 0.149,
+        "qn": 0.1,
+        "cancers": {
+          "GLIOMA": 0.7,
+          "HCC": 0.01
+        }
+      },
+      {
+        "handle": "BRAF V600E / HLA-A*68:01",
+        "tier": "tcr_dependent",
+        "wt_rank": 1.536,
+        "qn": 0.155,
+        "cancers": {
+          "MELANOMA": 0.45,
+          "CRC": 0.1,
+          "NSCLC": 0.02
+        }
+      },
+      {
+        "handle": "BRAF V600E / HLA-C*06:02",
+        "tier": "tcr_dependent",
+        "wt_rank": 1.59,
+        "qn": 0.137,
+        "cancers": {
+          "MELANOMA": 0.45,
+          "CRC": 0.1,
+          "NSCLC": 0.02
+        }
+      },
+      {
+        "handle": "KRAS G12D / HLA-C*05:01",
+        "tier": "tcr_dependent",
+        "wt_rank": 1.809,
+        "qn": 0.064,
+        "cancers": {
+          "PDAC": 0.4,
+          "CRC": 0.13,
+          "NSCLC": 0.04,
+          "OV": 0.02
+        }
+      },
+      {
+        "handle": "KRAS G12V / HLA-B*07:02",
+        "tier": "anchor",
+        "wt_rank": 1.248,
+        "qn": 0.05,
+        "cancers": {
+          "PDAC": 0.22,
+          "CRC": 0.09,
+          "NSCLC": 0.03
+        }
+      },
+      {
+        "handle": "KRAS G12V / HLA-C*08:02",
+        "tier": "anchor",
+        "wt_rank": 1.323,
+        "qn": 0.045,
+        "cancers": {
+          "PDAC": 0.22,
+          "CRC": 0.09,
+          "NSCLC": 0.03
+        }
+      },
+      {
+        "handle": "KRAS G12C / HLA-C*05:01",
+        "tier": "tcr_dependent",
+        "wt_rank": 1.809,
+        "qn": 0.064,
+        "cancers": {
+          "NSCLC": 0.13,
+          "CRC": 0.03,
+          "PDAC": 0.01
+        }
+      },
+      {
+        "handle": "PIK3CA H1047R / HLA-C*07:01",
+        "tier": "anchor",
+        "wt_rank": 1.367,
+        "qn": 0.042,
+        "cancers": {
+          "BRCA": 0.13,
+          "CRC": 0.04,
+          "HNSC": 0.05
+        }
+      },
+      {
+        "handle": "PIK3CA H1047R / HLA-C*07:02",
+        "tier": "anchor",
+        "wt_rank": 0.907,
+        "qn": 0.073,
+        "cancers": {
+          "BRCA": 0.13,
+          "CRC": 0.04,
+          "HNSC": 0.05
+        }
+      },
+      {
+        "handle": "EGFR L858R / HLA-B*07:02",
+        "tier": "tcr_dependent",
+        "wt_rank": 1.92,
+        "qn": 0.027,
+        "cancers": {
+          "NSCLC": 0.11
+        }
+      },
+      {
+        "handle": "EGFR L858R / HLA-B*08:01",
+        "tier": "tcr_dependent",
+        "wt_rank": 1.611,
+        "qn": 0.13,
+        "cancers": {
+          "NSCLC": 0.11
+        }
+      },
+      {
+        "handle": "NRAS Q61K / HLA-A*02:01",
+        "tier": "tcr_dependent",
+        "wt_rank": 1.86,
+        "qn": 0.047,
+        "cancers": {
+          "MELANOMA": 0.07
+        }
+      },
+      {
+        "handle": "TP53 R175H / HLA-B*44:03",
+        "tier": "tcr_dependent",
+        "wt_rank": 1.72,
+        "qn": 0.093,
+        "cancers": {
+          "OV": 0.03,
+          "PDAC": 0.02,
+          "CRC": 0.02,
+          "BRCA": 0.02,
+          "NSCLC": 0.02,
+          "HNSC": 0.03
+        }
+      },
+      {
+        "handle": "TP53 R248Q / HLA-C*06:02",
+        "tier": "anchor",
+        "wt_rank": 0.135,
+        "qn": 0.1,
+        "cancers": {
+          "OV": 0.02,
+          "PDAC": 0.02,
+          "CRC": 0.02,
+          "BRCA": 0.015
+        }
+      },
+      {
+        "handle": "TP53 R273H / HLA-A*26:01",
+        "tier": "tcr_dependent",
+        "wt_rank": 1.898,
+        "qn": 0.034,
+        "cancers": {
+          "OV": 0.02,
+          "CRC": 0.02,
+          "NSCLC": 0.02
+        }
+      },
+      {
+        "handle": "TP53 Y220C / HLA-C*07:01",
+        "tier": "anchor",
+        "wt_rank": 0.039,
+        "qn": 0.1,
+        "cancers": {
+          "OV": 0.02,
+          "BRCA": 0.015,
+          "NSCLC": 0.015
+        }
+      }
+    ]
+  },
+  "CEILING": "beta is SWEPT globally not measured per handle (RUNG-12 AlphaFold/ESM would pin it down); presentation_factor is a transparent rank->presentation proxy; relay ceiling inherits RUNG-12P/B percolation-abstraction caveats; frequencies inherit RUNG-11's. Robust parts: the relaxation factor (relay_ceiling/per_cell_bar) and the SHAPE (relay sustains coverage as beta rises). Not per-handle truth -- an integration/what-if bridge.",
+  "INTERPRETATION": "CLEAN handles are safe in both architectures. The relay's value is on tcr_dependent handles: it converts 'safe only if the TCR is near-perfect (beta<=0.02/pf)' into 'safe if the TCR is decent (beta<=0.17/pf)'. Whether a given handle clears even the relaxed bar is the RUNG-12 structural question -- but the relay widens the target phase space ~8.6x."
+}
