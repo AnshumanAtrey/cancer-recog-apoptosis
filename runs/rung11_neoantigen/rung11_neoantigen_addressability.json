@@ -1,0 +1,2749 @@
+{
+  "tag": "rung11_neoantigen_addressability",
+  "axis": "SEQUENCE/neoantigen (is this protein MUTATED?) -- the tumour-EXCLUSIVE recognition axis, distinct from the EXPRESSION axis (RUNG 5-10b) which proved bounded.",
+  "question": "Per cancer type, what fraction of patients carry a driver hotspot whose MUTANT peptide is presented on an HLA allele they carry (ADDRESSABILITY), and how cleanly can the mutant be discriminated from wild-type at the pMHC level (DISCRIMINABILITY/safety)?",
+  "method": {
+    "presentation_predictor": "MHCflurry 2.0 Class1PresentationPredictor (affinity %rank + processing)",
+    "binder_rank": 2.0,
+    "strong_rank": 0.5,
+    "peptide_lengths": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "sequences": "UniProt canonical, validated wt residue == sequence[pos-1]",
+    "anchor_positions": "P2 and C-terminus (primary HLA-I anchors)"
+  },
+  "n_drivers": 17,
+  "n_alleles_panel": 20,
+  "n_alleles_supported": 20,
+  "n_handles_presented": 175,
+  "tier_counts": {
+    "tcr_dependent": 104,
+    "clean": 55,
+    "anchor": 16
+  },
+  "clean_fragility": {
+    "n_clean": 55,
+    "n_clean_fragile_wt_2to4": 26,
+    "n_gold_strong_mut_clear_wt": 8,
+    "note": "a 'clean' call (WT not presented) flips to tcr_dependent if the WT %rank cutoff tightens; fragile = WT in [2,4). GOLD = strong mutant binder (rank<=0.5) AND WT clearly off MHC (rank>4) -> the defensible targets."
+  },
+  "benchmarks_expression_axis": {
+    "hla_loh_any_ceiling": [
+      0.135,
+      0.278
+    ],
+    "a02_tmod_deployed": [
+      0.031,
+      0.057
+    ],
+    "note": "RUNG-6 expression-axis numbers we are trying to beat (patient-level upper bounds)."
+  },
+  "addressability_SAFE_range": {
+    "strict_clean_robust": {
+      "PDAC": {
+        "central": 0.049,
+        "upper_naive_sum": 0.0492,
+        "n_mutations_targetable": 4
+      },
+      "CRC": {
+        "central": 0.0766,
+        "upper_naive_sum": 0.0787,
+        "n_mutations_targetable": 6
+      },
+      "NSCLC": {
+        "central": 0.0315,
+        "upper_naive_sum": 0.0318,
+        "n_mutations_targetable": 4
+      },
+      "BRCA": {
+        "central": 0.0744,
+        "upper_naive_sum": 0.0757,
+        "n_mutations_targetable": 3
+      },
+      "MELANOMA": {
+        "central": 0.2041,
+        "upper_naive_sum": 0.2157,
+        "n_mutations_targetable": 3
+      },
+      "GLIOMA": {
+        "central": 0.0,
+        "upper_naive_sum": 0.0,
+        "n_mutations_targetable": 0
+      },
+      "HCC": {
+        "central": 0.0453,
+        "upper_naive_sum": 0.0453,
+        "n_mutations_targetable": 1
+      },
+      "OV": {
+        "central": 0.0038,
+        "upper_naive_sum": 0.0038,
+        "n_mutations_targetable": 1
+      }
+    },
+    "lenient_clean": {
+      "PDAC": {
+        "central": 0.4186,
+        "upper_naive_sum": 0.4277,
+        "n_mutations_targetable": 6
+      },
+      "CRC": {
+        "central": 0.1849,
+        "upper_naive_sum": 0.197,
+        "n_mutations_targetable": 9
+      },
+      "NSCLC": {
+        "central": 0.0733,
+        "upper_naive_sum": 0.0749,
+        "n_mutations_targetable": 7
+      },
+      "BRCA": {
+        "central": 0.0921,
+        "upper_naive_sum": 0.0947,
+        "n_mutations_targetable": 4
+      },
+      "MELANOMA": {
+        "central": 0.2283,
+        "upper_naive_sum": 0.2429,
+        "n_mutations_targetable": 3
+      },
+      "GLIOMA": {
+        "central": 0.2212,
+        "upper_naive_sum": 0.2212,
+        "n_mutations_targetable": 1
+      },
+      "HCC": {
+        "central": 0.0618,
+        "upper_naive_sum": 0.0623,
+        "n_mutations_targetable": 3
+      },
+      "OV": {
+        "central": 0.0409,
+        "upper_naive_sum": 0.0414,
+        "n_mutations_targetable": 4
+      }
+    },
+    "meaning": "SAFE = WT pMHC absent from healthy cells (cross-reactivity structurally impossible at pMHC level). Reported strict..lenient."
+  },
+  "addressability_BROAD_all_presented": {
+    "PDAC": {
+      "central": 0.7295,
+      "upper_naive_sum": 0.7524,
+      "n_mutations_targetable": 6
+    },
+    "CRC": {
+      "central": 0.3606,
+      "upper_naive_sum": 0.4128,
+      "n_mutations_targetable": 9
+    },
+    "NSCLC": {
+      "central": 0.2911,
+      "upper_naive_sum": 0.3218,
+      "n_mutations_targetable": 8
+    },
+    "BRCA": {
+      "central": 0.1972,
+      "upper_naive_sum": 0.2112,
+      "n_mutations_targetable": 5
+    },
+    "MELANOMA": {
+      "central": 0.4286,
+      "upper_naive_sum": 0.4834,
+      "n_mutations_targetable": 3
+    },
+    "GLIOMA": {
+      "central": 0.5745,
+      "upper_naive_sum": 0.5745,
+      "n_mutations_targetable": 1
+    },
+    "HCC": {
+      "central": 0.0886,
+      "upper_naive_sum": 0.0907,
+      "n_mutations_targetable": 3
+    },
+    "OV": {
+      "central": 0.0851,
+      "upper_naive_sum": 0.0881,
+      "n_mutations_targetable": 5
+    }
+  },
+  "gold_handles_strong_mut_clear_wt": [
+    {
+      "driver": "CTNNB1 S37F",
+      "allele": "HLA-C*07:02",
+      "anchor": true,
+      "mut_rank": 0.007,
+      "wt_rank": 5.491,
+      "cancers": {
+        "HCC": 0.06
+      }
+    },
+    {
+      "driver": "EGFR L858R",
+      "allele": "HLA-A*68:01",
+      "anchor": true,
+      "mut_rank": 0.153,
+      "wt_rank": 7.035,
+      "cancers": {
+        "NSCLC": 0.11
+      }
+    },
+    {
+      "driver": "PIK3CA E545K",
+      "allele": "HLA-A*11:01",
+      "anchor": true,
+      "mut_rank": 0.156,
+      "wt_rank": 5.79,
+      "cancers": {
+        "BRCA": 0.08,
+        "CRC": 0.05,
+        "HNSC": 0.04
+      }
+    },
+    {
+      "driver": "PIK3CA E545K",
+      "allele": "HLA-A*03:01",
+      "anchor": true,
+      "mut_rank": 0.169,
+      "wt_rank": 8.028,
+      "cancers": {
+        "BRCA": 0.08,
+        "CRC": 0.05,
+        "HNSC": 0.04
+      }
+    },
+    {
+      "driver": "CTNNB1 S37F",
+      "allele": "HLA-C*07:01",
+      "anchor": true,
+      "mut_rank": 0.385,
+      "wt_rank": 12.366,
+      "cancers": {
+        "HCC": 0.06
+      }
+    },
+    {
+      "driver": "CTNNB1 S37F",
+      "allele": "HLA-C*06:02",
+      "anchor": true,
+      "mut_rank": 0.448,
+      "wt_rank": 15.654,
+      "cancers": {
+        "HCC": 0.06
+      }
+    },
+    {
+      "driver": "PIK3CA E545K",
+      "allele": "HLA-A*68:01",
+      "anchor": true,
+      "mut_rank": 0.466,
+      "wt_rank": 6.628,
+      "cancers": {
+        "BRCA": 0.08,
+        "CRC": 0.05,
+        "HNSC": 0.04
+      }
+    },
+    {
+      "driver": "PIK3CA H1047R",
+      "allele": "HLA-C*06:02",
+      "anchor": true,
+      "mut_rank": 0.469,
+      "wt_rank": 4.501,
+      "cancers": {
+        "BRCA": 0.13,
+        "CRC": 0.04,
+        "HNSC": 0.05
+      }
+    }
+  ],
+  "oracle_validation_known_positives": {
+    "KRAS G12D / HLA-C*08:02": {
+      "presented": true,
+      "tier": "tcr_dependent",
+      "mut_rank": 0.051,
+      "peptide": "GADGVGKSAL"
+    },
+    "KRAS G12V / HLA-A*11:01": {
+      "presented": true,
+      "tier": "tcr_dependent",
+      "mut_rank": 0.104,
+      "peptide": "VVVGAVGVGK"
+    },
+    "TP53 R175H / HLA-A*02:01": {
+      "presented": true,
+      "tier": "clean",
+      "mut_rank": 1.983,
+      "peptide": "HMTEVVRHC"
+    }
+  },
+  "oracle_validation_n_recovered": "3/3",
+  "sanity_known_hard": {
+    "BRAF V600E / HLA-A*02:01": null
+  },
+  "per_driver": {
+    "KRAS G12D": {
+      "gene": "KRAS",
+      "mutation": "G12D",
+      "cancer_prev": {
+        "PDAC": 0.4,
+        "CRC": 0.13,
+        "NSCLC": 0.04,
+        "OV": 0.02
+      },
+      "by_allele": {
+        "HLA-A*02:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 0.645,
+          "wt_rank": 0.649,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KLVVVGADGV",
+          "pep_wt": "KLVVVGAGGV",
+          "strong": false
+        },
+        "HLA-A*01:01": {
+          "tier": "clean",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 1.902,
+          "wt_rank": 2.629,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "VVVGADGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": false
+        },
+        "HLA-A*03:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.28,
+          "wt_rank": 0.18,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGADGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": true
+        },
+        "HLA-A*11:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.2,
+          "wt_rank": 0.146,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGADGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": true
+        },
+        "HLA-A*26:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.587,
+          "wt_rank": 0.756,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGADGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": false
+        },
+        "HLA-A*68:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.23,
+          "wt_rank": 0.178,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGADGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": true
+        },
+        "HLA-B*07:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 1.15,
+          "wt_rank": 1.03,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GADGVGKSAL",
+          "pep_wt": "GAGGVGKSAL",
+          "strong": false
+        },
+        "HLA-B*08:01": {
+          "tier": "clean",
+          "len": 8,
+          "p_in_pep": 1,
+          "anchor": false,
+          "mut_rank": 0.822,
+          "wt_rank": 3.869,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "DGVGKSAL",
+          "pep_wt": "GGVGKSAL",
+          "strong": false
+        },
+        "HLA-B*35:01": {
+          "tier": "clean",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 1.802,
+          "wt_rank": 2.09,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "VVVGADGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": false
+        },
+        "HLA-B*40:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.786,
+          "wt_rank": 3.768,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "ADGVGKSAL",
+          "pep_wt": "AGGVGKSAL",
+          "strong": false
+        },
+        "HLA-C*07:02": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 4,
+          "anchor": false,
+          "mut_rank": 1.95,
+          "wt_rank": 2.595,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "VGADGVGKSAL",
+          "pep_wt": "VGAGGVGKSAL",
+          "strong": false
+        },
+        "HLA-C*08:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 0.051,
+          "wt_rank": 1.055,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GADGVGKSAL",
+          "pep_wt": "GAGGVGKSAL",
+          "strong": true
+        },
+        "HLA-C*06:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.967,
+          "wt_rank": 0.956,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGADGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": false
+        },
+        "HLA-C*05:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 0.104,
+          "wt_rank": 1.809,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GADGVGKSAL",
+          "pep_wt": "GAGGVGKSAL",
+          "strong": true
+        }
+      }
+    },
+    "KRAS G12V": {
+      "gene": "KRAS",
+      "mutation": "G12V",
+      "cancer_prev": {
+        "PDAC": 0.22,
+        "CRC": 0.09,
+        "NSCLC": 0.03
+      },
+      "by_allele": {
+        "HLA-A*02:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 0.369,
+          "wt_rank": 0.649,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KLVVVGAVGV",
+          "pep_wt": "KLVVVGAGGV",
+          "strong": true
+        },
+        "HLA-A*03:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.134,
+          "wt_rank": 0.18,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGAVGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": true
+        },
+        "HLA-A*11:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.104,
+          "wt_rank": 0.146,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGAVGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": true
+        },
+        "HLA-A*26:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.992,
+          "wt_rank": 0.756,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGAVGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": false
+        },
+        "HLA-A*68:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.149,
+          "wt_rank": 0.178,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGAVGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": true
+        },
+        "HLA-B*07:02": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.527,
+          "wt_rank": 1.248,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "AVGVGKSAL",
+          "pep_wt": "AGGVGKSAL",
+          "strong": false
+        },
+        "HLA-B*08:01": {
+          "tier": "clean",
+          "len": 8,
+          "p_in_pep": 1,
+          "anchor": false,
+          "mut_rank": 1.864,
+          "wt_rank": 3.869,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "VGVGKSAL",
+          "pep_wt": "GGVGKSAL",
+          "strong": false
+        },
+        "HLA-B*15:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 1.349,
+          "wt_rank": 3.804,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "AVGVGKSAL",
+          "pep_wt": "AGGVGKSAL",
+          "strong": false
+        },
+        "HLA-B*40:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 1.411,
+          "wt_rank": 6.91,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "TEYKLVVVGAV",
+          "pep_wt": "TEYKLVVVGAG",
+          "strong": false
+        },
+        "HLA-C*08:02": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.926,
+          "wt_rank": 1.323,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "AVGVGKSAL",
+          "pep_wt": "AGGVGKSAL",
+          "strong": false
+        },
+        "HLA-C*06:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 1.248,
+          "wt_rank": 0.956,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGAVGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": false
+        },
+        "HLA-C*05:01": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 1.461,
+          "wt_rank": 1.996,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "AVGVGKSAL",
+          "pep_wt": "AGGVGKSAL",
+          "strong": false
+        }
+      }
+    },
+    "KRAS G12C": {
+      "gene": "KRAS",
+      "mutation": "G12C",
+      "cancer_prev": {
+        "NSCLC": 0.13,
+        "CRC": 0.03,
+        "PDAC": 0.01
+      },
+      "by_allele": {
+        "HLA-A*02:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 0.417,
+          "wt_rank": 0.649,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KLVVVGACGV",
+          "pep_wt": "KLVVVGAGGV",
+          "strong": true
+        },
+        "HLA-A*03:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.196,
+          "wt_rank": 0.18,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGACGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": true
+        },
+        "HLA-A*11:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.138,
+          "wt_rank": 0.146,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGACGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": true
+        },
+        "HLA-A*26:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 1.147,
+          "wt_rank": 0.756,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGACGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": false
+        },
+        "HLA-A*68:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.236,
+          "wt_rank": 0.178,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGACGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": true
+        },
+        "HLA-B*07:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 0.724,
+          "wt_rank": 1.03,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GACGVGKSAL",
+          "pep_wt": "GAGGVGKSAL",
+          "strong": false
+        },
+        "HLA-B*40:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 1.693,
+          "wt_rank": 6.91,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "TEYKLVVVGAC",
+          "pep_wt": "TEYKLVVVGAG",
+          "strong": false
+        },
+        "HLA-C*08:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 0.836,
+          "wt_rank": 1.055,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GACGVGKSAL",
+          "pep_wt": "GAGGVGKSAL",
+          "strong": false
+        },
+        "HLA-C*06:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 1.535,
+          "wt_rank": 0.956,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGACGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": false
+        },
+        "HLA-C*05:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 1.434,
+          "wt_rank": 1.809,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GACGVGKSAL",
+          "pep_wt": "GAGGVGKSAL",
+          "strong": false
+        }
+      }
+    },
+    "KRAS G12R": {
+      "gene": "KRAS",
+      "mutation": "G12R",
+      "cancer_prev": {
+        "PDAC": 0.16
+      },
+      "by_allele": {
+        "HLA-A*02:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 0.875,
+          "wt_rank": 0.649,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KLVVVGARGV",
+          "pep_wt": "KLVVVGAGGV",
+          "strong": false
+        },
+        "HLA-A*03:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.192,
+          "wt_rank": 0.18,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGARGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": true
+        },
+        "HLA-A*11:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.18,
+          "wt_rank": 0.146,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGARGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": true
+        },
+        "HLA-A*26:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 1.579,
+          "wt_rank": 0.756,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGARGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": false
+        },
+        "HLA-A*68:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.249,
+          "wt_rank": 0.178,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVVGARGVGK",
+          "pep_wt": "VVVGAGGVGK",
+          "strong": true
+        },
+        "HLA-B*07:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 0.337,
+          "wt_rank": 1.03,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GARGVGKSAL",
+          "pep_wt": "GAGGVGKSAL",
+          "strong": true
+        },
+        "HLA-B*08:01": {
+          "tier": "clean",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 1.206,
+          "wt_rank": 4.685,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "GARGVGKSAL",
+          "pep_wt": "GAGGVGKSAL",
+          "strong": false
+        },
+        "HLA-C*07:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.169,
+          "wt_rank": 2.854,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "ARGVGKSAL",
+          "pep_wt": "AGGVGKSAL",
+          "strong": true
+        },
+        "HLA-C*07:02": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.356,
+          "wt_rank": 2.758,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "ARGVGKSAL",
+          "pep_wt": "AGGVGKSAL",
+          "strong": true
+        },
+        "HLA-C*06:02": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.456,
+          "wt_rank": 2.39,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "ARGVGKSAL",
+          "pep_wt": "AGGVGKSAL",
+          "strong": true
+        }
+      }
+    },
+    "TP53 R175H": {
+      "gene": "TP53",
+      "mutation": "R175H",
+      "cancer_prev": {
+        "OV": 0.03,
+        "PDAC": 0.02,
+        "CRC": 0.02,
+        "BRCA": 0.02,
+        "NSCLC": 0.02,
+        "HNSC": 0.03
+      },
+      "by_allele": {
+        "HLA-A*02:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 1.983,
+          "wt_rank": 2.522,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "HMTEVVRHC",
+          "pep_wt": "HMTEVVRRC",
+          "strong": false
+        },
+        "HLA-A*26:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 0.243,
+          "wt_rank": 0.541,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "EVVRHCPHH",
+          "pep_wt": "EVVRRCPHH",
+          "strong": true
+        },
+        "HLA-A*68:01": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 0.353,
+          "wt_rank": 0.737,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "EVVRHCPHHER",
+          "pep_wt": "EVVRRCPHHER",
+          "strong": true
+        },
+        "HLA-B*44:02": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 1.339,
+          "wt_rank": 1.445,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "TEVVRHCPH",
+          "pep_wt": "TEVVRRCPH",
+          "strong": false
+        },
+        "HLA-B*44:03": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 1.461,
+          "wt_rank": 1.72,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "TEVVRHCPH",
+          "pep_wt": "TEVVRRCPH",
+          "strong": false
+        },
+        "HLA-C*07:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 1.261,
+          "wt_rank": 2.759,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "VRHCPHHER",
+          "pep_wt": "VRRCPHHER",
+          "strong": false
+        }
+      }
+    },
+    "TP53 R248Q": {
+      "gene": "TP53",
+      "mutation": "R248Q",
+      "cancer_prev": {
+        "OV": 0.02,
+        "PDAC": 0.02,
+        "CRC": 0.02,
+        "BRCA": 0.015
+      },
+      "by_allele": {
+        "HLA-A*02:01": {
+          "tier": "clean",
+          "len": 10,
+          "p_in_pep": 4,
+          "anchor": false,
+          "mut_rank": 1.566,
+          "wt_rank": 3.518,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "GMNQRPILTI",
+          "pep_wt": "GMNRRPILTI",
+          "strong": false
+        },
+        "HLA-A*11:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 9,
+          "anchor": false,
+          "mut_rank": 1.217,
+          "wt_rank": 1.193,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "SSCMGGMNQR",
+          "pep_wt": "SSCMGGMNRR",
+          "strong": false
+        },
+        "HLA-A*68:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 9,
+          "anchor": false,
+          "mut_rank": 0.343,
+          "wt_rank": 0.358,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "SSCMGGMNQR",
+          "pep_wt": "SSCMGGMNRR",
+          "strong": true
+        },
+        "HLA-B*08:01": {
+          "tier": "tcr_dependent",
+          "len": 8,
+          "p_in_pep": 4,
+          "anchor": false,
+          "mut_rank": 0.601,
+          "wt_rank": 0.426,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GMNQRPIL",
+          "pep_wt": "GMNRRPIL",
+          "strong": false
+        },
+        "HLA-B*15:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.718,
+          "wt_rank": 9.177,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "NQRPILTII",
+          "pep_wt": "NRRPILTII",
+          "strong": false
+        },
+        "HLA-B*40:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 1.4,
+          "wt_rank": 4.384,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "NQRPILTII",
+          "pep_wt": "NRRPILTII",
+          "strong": false
+        },
+        "HLA-C*07:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 1,
+          "anchor": false,
+          "mut_rank": 0.576,
+          "wt_rank": 0.169,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "QRPILTIITL",
+          "pep_wt": "RRPILTIITL",
+          "strong": false
+        },
+        "HLA-C*07:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 1,
+          "anchor": false,
+          "mut_rank": 1.144,
+          "wt_rank": 0.498,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "QRPILTIITL",
+          "pep_wt": "RRPILTIITL",
+          "strong": false
+        },
+        "HLA-C*06:02": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.613,
+          "wt_rank": 0.135,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "NQRPILTII",
+          "pep_wt": "NRRPILTII",
+          "strong": false
+        }
+      }
+    },
+    "TP53 R273H": {
+      "gene": "TP53",
+      "mutation": "R273H",
+      "cancer_prev": {
+        "OV": 0.02,
+        "CRC": 0.02,
+        "NSCLC": 0.02
+      },
+      "by_allele": {
+        "HLA-A*26:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 0.999,
+          "wt_rank": 1.898,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "EVHVCACPGR",
+          "pep_wt": "EVRVCACPGR",
+          "strong": false
+        },
+        "HLA-A*68:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 0.174,
+          "wt_rank": 0.338,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "EVHVCACPGR",
+          "pep_wt": "EVRVCACPGR",
+          "strong": true
+        },
+        "HLA-B*08:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 1.235,
+          "wt_rank": 0.991,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "SFEVHVCAC",
+          "pep_wt": "SFEVRVCAC",
+          "strong": false
+        },
+        "HLA-C*07:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 0.156,
+          "wt_rank": 0.207,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GRNSFEVHV",
+          "pep_wt": "GRNSFEVRV",
+          "strong": true
+        },
+        "HLA-C*07:02": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 0.759,
+          "wt_rank": 1.029,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GRNSFEVHV",
+          "pep_wt": "GRNSFEVRV",
+          "strong": false
+        },
+        "HLA-C*08:02": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 1.67,
+          "wt_rank": 2.598,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "SFEVHVCAC",
+          "pep_wt": "SFEVRVCAC",
+          "strong": false
+        },
+        "HLA-C*06:02": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 0.212,
+          "wt_rank": 0.357,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GRNSFEVHV",
+          "pep_wt": "GRNSFEVRV",
+          "strong": true
+        }
+      }
+    },
+    "TP53 Y220C": {
+      "gene": "TP53",
+      "mutation": "Y220C",
+      "cancer_prev": {
+        "OV": 0.02,
+        "BRCA": 0.015,
+        "NSCLC": 0.015
+      },
+      "by_allele": {
+        "HLA-A*02:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 4,
+          "anchor": false,
+          "mut_rank": 0.656,
+          "wt_rank": 0.795,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVPCEPPEV",
+          "pep_wt": "VVPYEPPEV",
+          "strong": false
+        },
+        "HLA-B*07:02": {
+          "tier": "tcr_dependent",
+          "len": 8,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 0.632,
+          "wt_rank": 0.517,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VPCEPPEV",
+          "pep_wt": "VPYEPPEV",
+          "strong": false
+        },
+        "HLA-B*35:01": {
+          "tier": "tcr_dependent",
+          "len": 8,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 0.867,
+          "wt_rank": 0.577,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VPCEPPEV",
+          "pep_wt": "VPYEPPEV",
+          "strong": false
+        },
+        "HLA-C*07:01": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 0.758,
+          "wt_rank": 0.039,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "FRHSVVVPC",
+          "pep_wt": "FRHSVVVPY",
+          "strong": false
+        },
+        "HLA-C*07:02": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 0.962,
+          "wt_rank": 0.021,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "FRHSVVVPC",
+          "pep_wt": "FRHSVVVPY",
+          "strong": false
+        },
+        "HLA-C*08:02": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 4,
+          "anchor": false,
+          "mut_rank": 0.43,
+          "wt_rank": 0.48,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVPCEPPEV",
+          "pep_wt": "VVPYEPPEV",
+          "strong": true
+        },
+        "HLA-C*06:02": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 0.894,
+          "wt_rank": 0.148,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "FRHSVVVPC",
+          "pep_wt": "FRHSVVVPY",
+          "strong": false
+        },
+        "HLA-C*05:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 4,
+          "anchor": false,
+          "mut_rank": 0.426,
+          "wt_rank": 0.439,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "VVPCEPPEV",
+          "pep_wt": "VVPYEPPEV",
+          "strong": true
+        }
+      }
+    },
+    "PIK3CA H1047R": {
+      "gene": "PIK3CA",
+      "mutation": "H1047R",
+      "cancer_prev": {
+        "BRCA": 0.13,
+        "CRC": 0.04,
+        "HNSC": 0.05
+      },
+      "by_allele": {
+        "HLA-A*03:01": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 1.931,
+          "wt_rank": 1.906,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ARHGGWTTK",
+          "pep_wt": "AHHGGWTTK",
+          "strong": false
+        },
+        "HLA-A*26:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 1.725,
+          "wt_rank": 0.844,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "DARHGGWTTK",
+          "pep_wt": "DAHHGGWTTK",
+          "strong": false
+        },
+        "HLA-A*32:01": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.232,
+          "wt_rank": 0.202,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KQMNDARHGGW",
+          "pep_wt": "KQMNDAHHGGW",
+          "strong": true
+        },
+        "HLA-A*68:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 0.364,
+          "wt_rank": 0.193,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "DARHGGWTTK",
+          "pep_wt": "DAHHGGWTTK",
+          "strong": true
+        },
+        "HLA-B*44:02": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.665,
+          "wt_rank": 0.504,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KQMNDARHGGW",
+          "pep_wt": "KQMNDAHHGGW",
+          "strong": false
+        },
+        "HLA-B*44:03": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.664,
+          "wt_rank": 0.546,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KQMNDARHGGW",
+          "pep_wt": "KQMNDAHHGGW",
+          "strong": false
+        },
+        "HLA-B*15:01": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.77,
+          "wt_rank": 0.616,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KQMNDARHGGW",
+          "pep_wt": "KQMNDAHHGGW",
+          "strong": false
+        },
+        "HLA-C*07:01": {
+          "tier": "anchor",
+          "len": 10,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.063,
+          "wt_rank": 1.367,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ARHGGWTTKM",
+          "pep_wt": "AHHGGWTTKM",
+          "strong": true
+        },
+        "HLA-C*07:02": {
+          "tier": "anchor",
+          "len": 10,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.204,
+          "wt_rank": 0.907,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ARHGGWTTKM",
+          "pep_wt": "AHHGGWTTKM",
+          "strong": true
+        },
+        "HLA-C*06:02": {
+          "tier": "clean",
+          "len": 10,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.469,
+          "wt_rank": 4.501,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "ARHGGWTTKM",
+          "pep_wt": "AHHGGWTTKM",
+          "strong": true
+        }
+      }
+    },
+    "PIK3CA E545K": {
+      "gene": "PIK3CA",
+      "mutation": "E545K",
+      "cancer_prev": {
+        "BRCA": 0.08,
+        "CRC": 0.05,
+        "HNSC": 0.04
+      },
+      "by_allele": {
+        "HLA-A*01:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 1.927,
+          "wt_rank": 1.329,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "LSEITKQEK",
+          "pep_wt": "LSEITEQEK",
+          "strong": false
+        },
+        "HLA-A*03:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 0.169,
+          "wt_rank": 8.028,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "STRDPLSEITK",
+          "pep_wt": "STRDPLSEITE",
+          "strong": true
+        },
+        "HLA-A*11:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 0.156,
+          "wt_rank": 5.79,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "STRDPLSEITK",
+          "pep_wt": "STRDPLSEITE",
+          "strong": true
+        },
+        "HLA-A*26:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 4,
+          "anchor": false,
+          "mut_rank": 1.97,
+          "wt_rank": 0.982,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "EITKQEKDF",
+          "pep_wt": "EITEQEKDF",
+          "strong": false
+        },
+        "HLA-A*32:01": {
+          "tier": "clean",
+          "len": 10,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 0.935,
+          "wt_rank": 2.003,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "ITKQEKDFLW",
+          "pep_wt": "ITEQEKDFLW",
+          "strong": false
+        },
+        "HLA-A*68:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 0.466,
+          "wt_rank": 6.628,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "STRDPLSEITK",
+          "pep_wt": "STRDPLSEITE",
+          "strong": true
+        },
+        "HLA-B*44:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 0.056,
+          "wt_rank": 0.048,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "SEITKQEKDF",
+          "pep_wt": "SEITEQEKDF",
+          "strong": true
+        },
+        "HLA-B*44:03": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 0.077,
+          "wt_rank": 0.053,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "SEITKQEKDF",
+          "pep_wt": "SEITEQEKDF",
+          "strong": true
+        },
+        "HLA-B*40:01": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 0.226,
+          "wt_rank": 0.132,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "SEITKQEKDFL",
+          "pep_wt": "SEITEQEKDFL",
+          "strong": true
+        },
+        "HLA-C*07:01": {
+          "tier": "clean",
+          "len": 10,
+          "p_in_pep": 10,
+          "anchor": true,
+          "mut_rank": 1.109,
+          "wt_rank": 6.464,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "TRDPLSEITK",
+          "pep_wt": "TRDPLSEITE",
+          "strong": false
+        },
+        "HLA-C*06:02": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 1.523,
+          "wt_rank": 11.094,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "STRDPLSEITK",
+          "pep_wt": "STRDPLSEITE",
+          "strong": false
+        }
+      }
+    },
+    "BRAF V600E": {
+      "gene": "BRAF",
+      "mutation": "V600E",
+      "cancer_prev": {
+        "MELANOMA": 0.45,
+        "CRC": 0.1,
+        "NSCLC": 0.02
+      },
+      "by_allele": {
+        "HLA-A*01:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 1.822,
+          "wt_rank": 7.256,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "ATEKSRWSGSH",
+          "pep_wt": "ATVKSRWSGSH",
+          "strong": false
+        },
+        "HLA-A*03:01": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 10,
+          "anchor": false,
+          "mut_rank": 0.166,
+          "wt_rank": 0.177,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KIGDFGLATEK",
+          "pep_wt": "KIGDFGLATVK",
+          "strong": true
+        },
+        "HLA-A*11:01": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 10,
+          "anchor": false,
+          "mut_rank": 0.245,
+          "wt_rank": 0.261,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KIGDFGLATEK",
+          "pep_wt": "KIGDFGLATVK",
+          "strong": true
+        },
+        "HLA-A*32:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 0.524,
+          "wt_rank": 0.171,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GLATEKSRW",
+          "pep_wt": "GLATVKSRW",
+          "strong": false
+        },
+        "HLA-A*68:01": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 10,
+          "anchor": false,
+          "mut_rank": 1.404,
+          "wt_rank": 1.536,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KIGDFGLATEK",
+          "pep_wt": "KIGDFGLATVK",
+          "strong": false
+        },
+        "HLA-C*06:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 9,
+          "anchor": false,
+          "mut_rank": 1.412,
+          "wt_rank": 1.59,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "IGDFGLATEK",
+          "pep_wt": "IGDFGLATVK",
+          "strong": false
+        }
+      }
+    },
+    "EGFR L858R": {
+      "gene": "EGFR",
+      "mutation": "L858R",
+      "cancer_prev": {
+        "NSCLC": 0.11
+      },
+      "by_allele": {
+        "HLA-A*01:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.347,
+          "wt_rank": 0.246,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ITDFGRAKL",
+          "pep_wt": "ITDFGLAKL",
+          "strong": true
+        },
+        "HLA-A*03:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.14,
+          "wt_rank": 0.034,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KITDFGRAK",
+          "pep_wt": "KITDFGLAK",
+          "strong": true
+        },
+        "HLA-A*11:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.209,
+          "wt_rank": 0.04,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KITDFGRAK",
+          "pep_wt": "KITDFGLAK",
+          "strong": true
+        },
+        "HLA-A*26:01": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 1.631,
+          "wt_rank": 1.725,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "HVKITDFGR",
+          "pep_wt": "HVKITDFGL",
+          "strong": false
+        },
+        "HLA-A*32:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.867,
+          "wt_rank": 0.529,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KITDFGRAKL",
+          "pep_wt": "KITDFGLAKL",
+          "strong": false
+        },
+        "HLA-A*68:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 0.153,
+          "wt_rank": 7.035,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "HVKITDFGR",
+          "pep_wt": "HVKITDFGL",
+          "strong": true
+        },
+        "HLA-B*07:02": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 1.568,
+          "wt_rank": 1.92,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ITDFGRAKL",
+          "pep_wt": "ITDFGLAKL",
+          "strong": false
+        },
+        "HLA-B*08:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 0.447,
+          "wt_rank": 1.611,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "FGRAKLLGA",
+          "pep_wt": "FGLAKLLGA",
+          "strong": true
+        },
+        "HLA-B*44:02": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 1.625,
+          "wt_rank": 1.074,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "TDFGRAKLL",
+          "pep_wt": "TDFGLAKLL",
+          "strong": false
+        },
+        "HLA-B*44:03": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 1.608,
+          "wt_rank": 1.043,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "TDFGRAKLL",
+          "pep_wt": "TDFGLAKLL",
+          "strong": false
+        },
+        "HLA-B*40:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 0.87,
+          "wt_rank": 0.668,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "TDFGRAKLL",
+          "pep_wt": "TDFGLAKLL",
+          "strong": false
+        },
+        "HLA-C*08:02": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.037,
+          "wt_rank": 0.03,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ITDFGRAKL",
+          "pep_wt": "ITDFGLAKL",
+          "strong": true
+        },
+        "HLA-C*05:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 6,
+          "anchor": false,
+          "mut_rank": 0.038,
+          "wt_rank": 0.021,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ITDFGRAKL",
+          "pep_wt": "ITDFGLAKL",
+          "strong": true
+        }
+      }
+    },
+    "IDH1 R132H": {
+      "gene": "IDH1",
+      "mutation": "R132H",
+      "cancer_prev": {
+        "GLIOMA": 0.7,
+        "HCC": 0.01
+      },
+      "by_allele": {
+        "HLA-A*01:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 4,
+          "anchor": false,
+          "mut_rank": 1.182,
+          "wt_rank": 2.277,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "IIGHHAYGDQY",
+          "pep_wt": "IIGRHAYGDQY",
+          "strong": false
+        },
+        "HLA-A*03:01": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 1.906,
+          "wt_rank": 1.018,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "WVKPIIIGH",
+          "pep_wt": "WVKPIIIGR",
+          "strong": false
+        },
+        "HLA-A*26:01": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 0.59,
+          "wt_rank": 0.779,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "WVKPIIIGH",
+          "pep_wt": "WVKPIIIGR",
+          "strong": false
+        },
+        "HLA-A*68:01": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 1.371,
+          "wt_rank": 0.073,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "WVKPIIIGH",
+          "pep_wt": "WVKPIIIGR",
+          "strong": false
+        },
+        "HLA-B*07:02": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.622,
+          "wt_rank": 0.592,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KPIIIGHHA",
+          "pep_wt": "KPIIIGRHA",
+          "strong": false
+        },
+        "HLA-B*35:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.132,
+          "wt_rank": 0.21,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KPIIIGHHAY",
+          "pep_wt": "KPIIIGRHAY",
+          "strong": true
+        },
+        "HLA-B*15:01": {
+          "tier": "clean",
+          "len": 8,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 1.391,
+          "wt_rank": 2.288,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "IIIGHHAY",
+          "pep_wt": "IIIGRHAY",
+          "strong": false
+        },
+        "HLA-C*07:01": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.962,
+          "wt_rank": 0.11,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GHHAYGDQY",
+          "pep_wt": "GRHAYGDQY",
+          "strong": false
+        },
+        "HLA-C*07:02": {
+          "tier": "anchor",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 0.516,
+          "wt_rank": 0.149,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GHHAYGDQY",
+          "pep_wt": "GRHAYGDQY",
+          "strong": false
+        }
+      }
+    },
+    "CTNNB1 S37F": {
+      "gene": "CTNNB1",
+      "mutation": "S37F",
+      "cancer_prev": {
+        "HCC": 0.06
+      },
+      "by_allele": {
+        "HLA-A*02:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 0.365,
+          "wt_rank": 0.527,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "YLDSGIHFGA",
+          "pep_wt": "YLDSGIHSGA",
+          "strong": true
+        },
+        "HLA-A*01:01": {
+          "tier": "clean",
+          "len": 8,
+          "p_in_pep": 8,
+          "anchor": true,
+          "mut_rank": 0.563,
+          "wt_rank": 3.763,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "YLDSGIHF",
+          "pep_wt": "YLDSGIHS",
+          "strong": false
+        },
+        "HLA-A*24:02": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 0.004,
+          "wt_rank": 2.527,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "SYLDSGIHF",
+          "pep_wt": "SYLDSGIHS",
+          "strong": true
+        },
+        "HLA-A*26:01": {
+          "tier": "clean",
+          "len": 10,
+          "p_in_pep": 10,
+          "anchor": true,
+          "mut_rank": 1.499,
+          "wt_rank": 26.493,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "QSYLDSGIHF",
+          "pep_wt": "QSYLDSGIHS",
+          "strong": false
+        },
+        "HLA-A*32:01": {
+          "tier": "clean",
+          "len": 10,
+          "p_in_pep": 10,
+          "anchor": true,
+          "mut_rank": 1.478,
+          "wt_rank": 30.464,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "QSYLDSGIHF",
+          "pep_wt": "QSYLDSGIHS",
+          "strong": false
+        },
+        "HLA-B*08:01": {
+          "tier": "clean",
+          "len": 8,
+          "p_in_pep": 8,
+          "anchor": true,
+          "mut_rank": 1.481,
+          "wt_rank": 16.845,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "YLDSGIHF",
+          "pep_wt": "YLDSGIHS",
+          "strong": false
+        },
+        "HLA-B*35:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 1.44,
+          "wt_rank": 26.037,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "SYLDSGIHF",
+          "pep_wt": "SYLDSGIHS",
+          "strong": false
+        },
+        "HLA-B*44:03": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 1.983,
+          "wt_rank": 20.75,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "QQSYLDSGIHF",
+          "pep_wt": "QQSYLDSGIHS",
+          "strong": false
+        },
+        "HLA-B*15:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 1.104,
+          "wt_rank": 30.103,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "QQSYLDSGIHF",
+          "pep_wt": "QQSYLDSGIHS",
+          "strong": false
+        },
+        "HLA-C*07:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 0.385,
+          "wt_rank": 12.366,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "SYLDSGIHF",
+          "pep_wt": "SYLDSGIHS",
+          "strong": true
+        },
+        "HLA-C*07:02": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 0.007,
+          "wt_rank": 5.491,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "SYLDSGIHF",
+          "pep_wt": "SYLDSGIHS",
+          "strong": true
+        },
+        "HLA-C*08:02": {
+          "tier": "clean",
+          "len": 8,
+          "p_in_pep": 8,
+          "anchor": true,
+          "mut_rank": 0.148,
+          "wt_rank": 2.354,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "YLDSGIHF",
+          "pep_wt": "YLDSGIHS",
+          "strong": true
+        },
+        "HLA-C*06:02": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 9,
+          "anchor": true,
+          "mut_rank": 0.448,
+          "wt_rank": 15.654,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "SYLDSGIHF",
+          "pep_wt": "SYLDSGIHS",
+          "strong": true
+        },
+        "HLA-C*05:01": {
+          "tier": "clean",
+          "len": 8,
+          "p_in_pep": 8,
+          "anchor": true,
+          "mut_rank": 0.088,
+          "wt_rank": 2.197,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "YLDSGIHF",
+          "pep_wt": "YLDSGIHS",
+          "strong": true
+        }
+      }
+    },
+    "CTNNB1 S45P": {
+      "gene": "CTNNB1",
+      "mutation": "S45P",
+      "cancer_prev": {
+        "HCC": 0.04
+      },
+      "by_allele": {
+        "HLA-A*03:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 0.027,
+          "wt_rank": 0.064,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "TTAPPLSGK",
+          "pep_wt": "TTAPSLSGK",
+          "strong": true
+        },
+        "HLA-A*11:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 0.009,
+          "wt_rank": 0.011,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "TTAPPLSGK",
+          "pep_wt": "TTAPSLSGK",
+          "strong": true
+        },
+        "HLA-A*26:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 0.48,
+          "wt_rank": 0.696,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "TTAPPLSGK",
+          "pep_wt": "TTAPSLSGK",
+          "strong": true
+        },
+        "HLA-A*68:01": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 0.012,
+          "wt_rank": 0.022,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "TTAPPLSGK",
+          "pep_wt": "TTAPSLSGK",
+          "strong": true
+        },
+        "HLA-B*07:02": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 1.404,
+          "wt_rank": 1.171,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GATTTAPPL",
+          "pep_wt": "GATTTAPSL",
+          "strong": false
+        },
+        "HLA-C*08:02": {
+          "tier": "tcr_dependent",
+          "len": 9,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 1.349,
+          "wt_rank": 0.841,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "GATTTAPPL",
+          "pep_wt": "GATTTAPSL",
+          "strong": false
+        },
+        "HLA-C*06:02": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 5,
+          "anchor": false,
+          "mut_rank": 1.68,
+          "wt_rank": 2.168,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "TTAPPLSGK",
+          "pep_wt": "TTAPSLSGK",
+          "strong": false
+        }
+      }
+    },
+    "NRAS Q61R": {
+      "gene": "NRAS",
+      "mutation": "Q61R",
+      "cancer_prev": {
+        "MELANOMA": 0.13
+      },
+      "by_allele": {
+        "HLA-A*01:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.022,
+          "wt_rank": 0.014,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ILDTAGREEY",
+          "pep_wt": "ILDTAGQEEY",
+          "strong": true
+        },
+        "HLA-A*03:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 1.922,
+          "wt_rank": 12.205,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "CLLDILDTAGR",
+          "pep_wt": "CLLDILDTAGQ",
+          "strong": false
+        },
+        "HLA-A*11:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 1.985,
+          "wt_rank": 13.12,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "CLLDILDTAGR",
+          "pep_wt": "CLLDILDTAGQ",
+          "strong": false
+        },
+        "HLA-A*26:01": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 0.061,
+          "wt_rank": 0.054,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "DILDTAGREEY",
+          "pep_wt": "DILDTAGQEEY",
+          "strong": true
+        },
+        "HLA-A*68:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 1.214,
+          "wt_rank": 12.703,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "CLLDILDTAGR",
+          "pep_wt": "CLLDILDTAGQ",
+          "strong": false
+        },
+        "HLA-B*07:02": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 1.034,
+          "wt_rank": 2.945,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "AGREEYSAM",
+          "pep_wt": "AGQEEYSAM",
+          "strong": false
+        },
+        "HLA-B*08:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 1.038,
+          "wt_rank": 3.31,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "AGREEYSAM",
+          "pep_wt": "AGQEEYSAM",
+          "strong": false
+        },
+        "HLA-B*35:01": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 0.848,
+          "wt_rank": 0.619,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "DILDTAGREEY",
+          "pep_wt": "DILDTAGQEEY",
+          "strong": false
+        },
+        "HLA-B*44:02": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 1,
+          "anchor": false,
+          "mut_rank": 0.203,
+          "wt_rank": 0.243,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "REEYSAMRDQY",
+          "pep_wt": "QEEYSAMRDQY",
+          "strong": true
+        },
+        "HLA-B*44:03": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 1,
+          "anchor": false,
+          "mut_rank": 0.329,
+          "wt_rank": 0.322,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "REEYSAMRDQY",
+          "pep_wt": "QEEYSAMRDQY",
+          "strong": true
+        },
+        "HLA-B*15:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.706,
+          "wt_rank": 0.73,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ILDTAGREEY",
+          "pep_wt": "ILDTAGQEEY",
+          "strong": false
+        },
+        "HLA-B*40:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 1,
+          "anchor": false,
+          "mut_rank": 1.942,
+          "wt_rank": 4.294,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "REEYSAMRDQY",
+          "pep_wt": "QEEYSAMRDQY",
+          "strong": false
+        },
+        "HLA-C*07:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 2,
+          "anchor": true,
+          "mut_rank": 1.797,
+          "wt_rank": 8.082,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "GREEYSAMR",
+          "pep_wt": "GQEEYSAMR",
+          "strong": false
+        },
+        "HLA-C*08:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.644,
+          "wt_rank": 0.558,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ILDTAGREEY",
+          "pep_wt": "ILDTAGQEEY",
+          "strong": false
+        },
+        "HLA-C*05:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.551,
+          "wt_rank": 0.496,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ILDTAGREEY",
+          "pep_wt": "ILDTAGQEEY",
+          "strong": false
+        }
+      }
+    },
+    "NRAS Q61K": {
+      "gene": "NRAS",
+      "mutation": "Q61K",
+      "cancer_prev": {
+        "MELANOMA": 0.07
+      },
+      "by_allele": {
+        "HLA-A*02:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 1.964,
+          "wt_rank": 1.86,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ILDTAGKEEY",
+          "pep_wt": "ILDTAGQEEY",
+          "strong": false
+        },
+        "HLA-A*01:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.018,
+          "wt_rank": 0.014,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ILDTAGKEEY",
+          "pep_wt": "ILDTAGQEEY",
+          "strong": true
+        },
+        "HLA-A*03:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 0.682,
+          "wt_rank": 12.205,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "CLLDILDTAGK",
+          "pep_wt": "CLLDILDTAGQ",
+          "strong": false
+        },
+        "HLA-A*11:01": {
+          "tier": "clean",
+          "len": 11,
+          "p_in_pep": 11,
+          "anchor": true,
+          "mut_rank": 0.794,
+          "wt_rank": 13.12,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "CLLDILDTAGK",
+          "pep_wt": "CLLDILDTAGQ",
+          "strong": false
+        },
+        "HLA-A*26:01": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 0.054,
+          "wt_rank": 0.054,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "DILDTAGKEEY",
+          "pep_wt": "DILDTAGQEEY",
+          "strong": true
+        },
+        "HLA-A*68:01": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 4,
+          "anchor": false,
+          "mut_rank": 1.383,
+          "wt_rank": 0.926,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "TAGKEEYSAMR",
+          "pep_wt": "TAGQEEYSAMR",
+          "strong": false
+        },
+        "HLA-B*07:02": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 1.363,
+          "wt_rank": 2.945,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "AGKEEYSAM",
+          "pep_wt": "AGQEEYSAM",
+          "strong": false
+        },
+        "HLA-B*08:01": {
+          "tier": "clean",
+          "len": 9,
+          "p_in_pep": 3,
+          "anchor": false,
+          "mut_rank": 1.014,
+          "wt_rank": 3.31,
+          "mut_presented": true,
+          "wt_presented": false,
+          "pep_mut": "AGKEEYSAM",
+          "pep_wt": "AGQEEYSAM",
+          "strong": false
+        },
+        "HLA-B*35:01": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 8,
+          "anchor": false,
+          "mut_rank": 0.702,
+          "wt_rank": 0.619,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "DILDTAGKEEY",
+          "pep_wt": "DILDTAGQEEY",
+          "strong": false
+        },
+        "HLA-B*44:02": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 1,
+          "anchor": false,
+          "mut_rank": 0.21,
+          "wt_rank": 0.243,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KEEYSAMRDQY",
+          "pep_wt": "QEEYSAMRDQY",
+          "strong": true
+        },
+        "HLA-B*44:03": {
+          "tier": "tcr_dependent",
+          "len": 11,
+          "p_in_pep": 1,
+          "anchor": false,
+          "mut_rank": 0.357,
+          "wt_rank": 0.322,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "KEEYSAMRDQY",
+          "pep_wt": "QEEYSAMRDQY",
+          "strong": true
+        },
+        "HLA-B*15:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.696,
+          "wt_rank": 0.73,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ILDTAGKEEY",
+          "pep_wt": "ILDTAGQEEY",
+          "strong": false
+        },
+        "HLA-C*08:02": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.569,
+          "wt_rank": 0.558,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ILDTAGKEEY",
+          "pep_wt": "ILDTAGQEEY",
+          "strong": false
+        },
+        "HLA-C*05:01": {
+          "tier": "tcr_dependent",
+          "len": 10,
+          "p_in_pep": 7,
+          "anchor": false,
+          "mut_rank": 0.496,
+          "wt_rank": 0.496,
+          "mut_presented": true,
+          "wt_presented": true,
+          "pep_mut": "ILDTAGKEEY",
+          "pep_wt": "ILDTAGQEEY",
+          "strong": true
+        }
+      }
+    }
+  },
+  "CAVEATS": "PREDICTED not measured (MHCflurry != immunopeptidomics); processing modelled coarsely; TCR-existence is the wet-lab residual (tcr_dependent tier = where it dominates, -> RUNG-12 AlphaFold/ESM); mutation & HLA frequencies are population-dependent literature estimates joining independent datasets (not a same-patient cohort); class-I/CD8 only.",
+  "INTERPRETATION_MAP": {
+    "A_positive": "neoantigen SAFE addressability > HLA-LOH ceiling -> a tumour-exclusive handle that generalises; the positive we hunted.",
+    "B_safer": "comparable addressability but cleaner discrimination (clean/anchor tiers dominate) -> same reach, fewer cross-reactivity fatalities.",
+    "C_tcr_bound": "most public neoantigens fall in tcr_dependent -> decisive map of WHERE TCR engineering (RUNG-12) must focus; the WT pMHC is on healthy cells."
+  }
+}
