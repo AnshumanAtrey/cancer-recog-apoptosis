@@ -15,8 +15,18 @@ Probabilistic-OR of independent discrimination mechanisms (D high if *any* fires
 Then `q_n = presentation_factor(wt_rank) · β` → **per-cell-safe** (q_n ≤ 0.02) / **relay-safe** (q_n ≤ 0.17,
 the RUNG-12P/B 3D ceiling). Re-running coverage with the measured β gives the certified usable target set.
 
-## How to run (Colab, **T4 GPU**, ~1–2 h, resumable)
-Open `notebooks/rung12_pmhc_colab.ipynb`, **Runtime → Run all**, same Google account as before. Stages:
+## STRUCTURAL REDO — ColabFold (`notebooks/rung12_structure_colab.ipynb`)
+After the ESMFold attempt failed (below), the structural arm was redone with **ColabFold / AlphaFold2-multimer**
+(MSA-guided → actually docks the peptide; license-free; GPU). It folds the HLA α1α2 groove + peptide for the
+**non-`clean` handles only** (clean → β=0 regardless of structure; 24 of 32 here), measures the mutated
+residue's **TCR-facing exposure (RSA)**, and feeds the measured `E` into the β scoring. The RSA analysis was
+**validated against a real HLA-A\*02:01 crystal (1HHK)**: it correctly reads buried anchors (P2/P9 ≈ 0.02) vs
+TCR-facing residues (P4–6 ≈ 0.5). Run that notebook on **T4 GPU**, Run all; ~1.5–2.5 h, resumable.
+
+---
+
+## (Superseded) first attempt — `notebooks/rung12_pmhc_colab.ipynb` (ESMFold)
+Open it, **Runtime → Run all**, same Google account as before. Stages:
 1. **prep** — selects the top ~32 handles by prevalence (surfaces IDH1 R132H/glioma, KRAS, BRAF V600E),
    fetches HLA α1α2 grooves from IPD-IMGT/HLA, writes `groove:peptide` ESMFold inputs. *(validated locally)*
 2. **ESM-2 embeddings** → per-handle Z. *(robust core — no MSA server)*
