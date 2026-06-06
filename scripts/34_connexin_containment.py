@@ -161,10 +161,15 @@ def _fetch_chunked(census, d4, tissue, ti, ntis, genes, ci_conn, ci_hk, r30, r32
     for c in range(nch):
         HB.set(f"[{ti+1}/{ntis}] {tissue}: chunk {c+1}/{nch} ({len(joinids):,} vital cells x {len(genes)} genes)")
         chunk = joinids[c * CH:(c + 1) * CH]
-        ad = cellxgene_census.get_anndata(
-            census, organism="Homo sapiens", obs_coords=chunk.tolist(),
-            var_value_filter=f"feature_name in {genes}",
-            column_names={"obs": ["cell_type", "donor_id", "dataset_id"]})
+        obs_cols = ["cell_type", "donor_id", "dataset_id"]
+        try:                                                   # new cellxgene-census API (obs_column_names)
+            ad = cellxgene_census.get_anndata(
+                census, organism="Homo sapiens", obs_coords=chunk.tolist(),
+                var_value_filter=f"feature_name in {genes}", obs_column_names=obs_cols)
+        except TypeError:                                      # fallback for older versions (deprecated dict arg)
+            ad = cellxgene_census.get_anndata(
+                census, organism="Homo sapiens", obs_coords=chunk.tolist(),
+                var_value_filter=f"feature_name in {genes}", column_names={"obs": obs_cols})
         vnames = list(ad.var["feature_name"]) if "feature_name" in ad.var else list(ad.var_names)
         X = ad.X
         Xd = np.asarray(X.todense() if hasattr(X, "todense") else X)
