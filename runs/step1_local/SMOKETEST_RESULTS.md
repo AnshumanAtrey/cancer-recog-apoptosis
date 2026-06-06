@@ -42,7 +42,7 @@ Plumbing test → **PASS**. The local development loop works: write a FASTA, run
 The real Step-1 decision still gates on:
 - `scripts/01_boltz_smoketest.py` running on a cloud A10G / A100
 - Boltz-2 producing a ΔG separation ≥ 2 kcal/mol between DR5+TRAIL_loop and DR5+scrambled
-- See [`../../ASSESSMENT.md`](../../ASSESSMENT.md) Day-1 kill criteria for pivot paths if it doesn't.
+- See [`../../docs/ASSESSMENT.md`](../../docs/ASSESSMENT.md) Day-1 kill criteria for pivot paths if it doesn't.
 
 ---
 

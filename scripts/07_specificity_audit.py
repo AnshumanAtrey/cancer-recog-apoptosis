@@ -7,7 +7,7 @@ therapeutic window exists — restricted normal expression AND low expression in
 PARENCHYMA of vital organs — so a binder (that locally clusters DR5 to trigger apoptosis) would
 spare healthy tissue. DR5/TNFRSF10B is the fixed TRIGGER and is NOT audited as an anchor.
 
-WHY THIS DESIGN (hardened by an adversarial critique of the first draft — see STEP3_METHODOLOGY.md):
+WHY THIS DESIGN (hardened by an adversarial critique of the first draft — see docs/methodology/STEP3_METHODOLOGY.md):
   - An absolute "TPM >= 10 in any vital organ -> FAIL" gate fails ALL surface receptors (every one is
     expressed somewhere vital) -> a uniform-FAIL machine with no discriminative power. REJECTED.
   - Bulk GTEx dilutes focal expression and is symmetric: it can false-PASS (miss a vital cell type)

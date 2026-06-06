@@ -104,5 +104,5 @@ express/purify the construct, then hand off. The honest chain that must run rega
   tigatuzumab crosslink-independence label is **contested**, and there is no head-to-head assay to settle it.
 
 **The single most likely and fully acceptable outcome — realized here — is the honest failure report.**
-That is the result surviving scrutiny instead of overclaiming. See `EVIDENCE_AND_HANDOFF.md` for the
+That is the result surviving scrutiny instead of overclaiming. See `../EVIDENCE_AND_HANDOFF.md` for the
 project-wide evidence ceiling and the wet-lab handoff.

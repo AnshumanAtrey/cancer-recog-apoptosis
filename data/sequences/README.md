@@ -21,7 +21,7 @@ more confident interface — the same metric AlphaFold-Multimer uses):
 - `DR5_ECD + Scrambled`   (negative, non-binder)
 
 **PASS if `ipTM(positive) − ipTM(negative) ≥ 0.15`** → oracle discriminates → Step 2.
-Otherwise → see [ASSESSMENT.md](../../ASSESSMENT.md) Day-1 kill criteria.
+Otherwise → see [ASSESSMENT.md](../../docs/ASSESSMENT.md) Day-1 kill criteria.
 
 ### Why not affinity / not the 20-mer loop?
 

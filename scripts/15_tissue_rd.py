@@ -19,7 +19,7 @@ This de-rigs the abstract ABM's tautological safety (adversary-caught: the conta
 
 HONEST CEILING: establishes DYNAMICAL VIABILITY + SAFETY-UNDER-ASSUMED-PHYSICS as a regime map — NOT
 patient efficacy. It ASSUMES ignition is possible; it does NOT prove a Trop2-anchored DR5 binder fires
-caspase-8 (the agonism crux is wet-lab, EVIDENCE_AND_HANDOFF.md). RUNG-1 enters ONLY as a per-cell death
+caspase-8 (the agonism crux is wet-lab, docs/EVIDENCE_AND_HANDOFF.md). RUNG-1 enters ONLY as a per-cell death
 LATENCY + threshold; its value is NEVER multiplied by the RUNG-2 (refuted) clustering score.
 
 USAGE:  python scripts/15_tissue_rd.py

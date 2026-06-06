@@ -50,7 +50,7 @@ that recognises cancer badges on neighbours and triggers their apoptosis).
 
 ## Anchor locked (2026-05-29, after Step 3): Trop2 (TACSTD2)
 
-Step 3's specificity audit (STEP3_METHODOLOGY.md) FAILed all 10 Step-2 over-expressed
+Step 3's specificity audit (docs/methodology/STEP3_METHODOLOGY.md) FAILed all 10 Step-2 over-expressed
 candidates on safety (broad expression and/or vital parenchyma) — a real, benchmark-
 calibrated finding that cancer over-expression ≠ therapeutic window. The anchor therefore
 pivots to a **tissue-restricted, audit-PASSing, clinically-validated** antigen:

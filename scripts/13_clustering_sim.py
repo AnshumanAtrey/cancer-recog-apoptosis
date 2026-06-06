@@ -18,7 +18,7 @@ epitope_proximity, geometry_match) from scripts/14. NO potency rank is read here
 CEILING (honest, printed): firing-competent CLUSTER GEOMETRY != caspase-8 firing. The cooperative
 enzymatic threshold at the DISC (procaspase-8 dimerization/auto-cleavage vs cFLIP/FADD stoichiometry,
 membrane context, cortical-actin corralling) is NOT modelled and is the irreducible wet-lab crux
-(EVIDENCE_AND_HANDOFF.md). Sim parameters (density, r_arm, FIRE_THR, p_bind) are literature-anchored
+(docs/EVIDENCE_AND_HANDOFF.md). Sim parameters (density, r_arm, FIRE_THR, p_bind) are literature-anchored
 PROXIES; the sim tests ORDERING/logic, not absolute kinetics. NEVER multiply these outputs by the
 RUNG-1 EARM gate-strength.
 

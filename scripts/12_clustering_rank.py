@@ -22,7 +22,7 @@ HARD RULE (asserted + printed): the RUNG-2 score is NEVER multiplied/combined wi
 gate-strength into a pseudo-efficacy number. Two axes, two ceilings, no measured map between them.
 
 CEILING: RUNG 2 does NOT prove agonism. binding->caspase-8 (cooperative DISC threshold) is the
-irreducible wet-lab crux (Caspase-Glo 8; EVIDENCE_AND_HANDOFF.md). No out-of-class validation exists
+irreducible wet-lab crux (Caspase-Glo 8; docs/EVIDENCE_AND_HANDOFF.md). No out-of-class validation exists
 (every molecule is in the calibration set) -> no generalization claim is permitted.
 
 USAGE:  python scripts/12_clustering_rank.py   (run scripts/14 then scripts/13 first)

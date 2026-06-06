@@ -16,7 +16,7 @@ The bystander apoptosis cascade is one engineerable mechanism we use; the broade
 - [ ] Step 1 — Boltz-2 oracle smoke test (this week)
 - [ ] Step 2 — CellChat cancer-restricted target shortlist
 - [ ] Step 3 — Specificity differential audit
-- [ ] (rest of 19-step plan — see [PLAN.md](PLAN.md))
+- [ ] (rest of 19-step plan — see [PLAN.md](docs/PLAN.md))
 
 ---
 
@@ -25,10 +25,10 @@ The bystander apoptosis cascade is one engineerable mechanism we use; the broade
 ```
 cancer-treatment/
 ├── README.md                       this file
-├── PLAN.md                         the 19-step roadmap with tech + layman steps
-├── ASSESSMENT.md                   honest success odds + risk audit
+├── CLAUDE.md                       project working rules
+├── THESIS.md                       core thesis / running synthesis
 ├── Conceptual Research(1).pdf      Shriya's source paper
-├── docs/                           supplementary planning docs
+├── docs/                           PLAN, ASSESSMENT, EVIDENCE_AND_HANDOFF, RELATED_WORK + methodology/
 ├── src/
 │   ├── oracles/                    Boltz-2, ESM, composite reward
 │   ├── env/                        OpenEnv-spec environment (Phase 2)
@@ -75,15 +75,15 @@ pip install -r requirements-cloud.txt
 python scripts/01_boltz_smoketest.py
 ```
 
-Expected output: ΔG(DR5+DR5-B) − ΔG(DR5+scrambled) ≥ 2 kcal/mol. If not, see ASSESSMENT.md kill criteria.
+Expected output: ΔG(DR5+DR5-B) − ΔG(DR5+scrambled) ≥ 2 kcal/mol. If not, see docs/ASSESSMENT.md kill criteria.
 
 ---
 
 ## Reading order if joining the project
 
 1. [Conceptual Research(1).pdf](Conceptual%20Research(1).pdf) — Shriya's idea, 8 pages
-2. [PLAN.md](PLAN.md) — 19 steps, what we're building, why
-3. [ASSESSMENT.md](ASSESSMENT.md) — honest odds, risks, day-1 kill criteria
+2. [PLAN.md](docs/PLAN.md) — 19 steps, what we're building, why
+3. [ASSESSMENT.md](docs/ASSESSMENT.md) — honest odds, risks, day-1 kill criteria
 4. [docs/RELATED_WORK.md](docs/RELATED_WORK.md) — 16 papers we cite
 5. [scripts/01_local_smoketest.py](scripts/01_local_smoketest.py) — runs today
 
@@ -101,4 +101,4 @@ Expected output: ΔG(DR5+DR5-B) − ΔG(DR5+scrambled) ≥ 2 kcal/mol. If not, s
 
 This is an infrastructure + methods paper. We design molecules computationally and predict their behavior through cascaded simulators. We do **not** synthesize, test in cells, or claim therapeutic outcomes. Wet-lab validation is the follow-up paper.
 
-See ASSESSMENT.md for explicit success-tier odds.
+See docs/ASSESSMENT.md for explicit success-tier odds.

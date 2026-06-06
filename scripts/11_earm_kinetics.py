@@ -21,7 +21,7 @@ THE HARD CEILING (stated in every output): EARM takes ACTIVATED caspase-8 / boun
 It says "IF this much caspase-8 is activated THEN the cell commits to death." It has NO representation
 of DR5 receptor clustering/valency/geometry, so it CANNOT say whether a Trop2-anchored DR5 binder
 actually achieves that activation — that is the AGONISM crux and an intrinsically WET-LAB experiment
-(EVIDENCE_AND_HANDOFF.md). The input knobs (L_0 dose, caspase-8 activation-rate multiplier g) are
+(docs/EVIDENCE_AND_HANDOFF.md). The input knobs (L_0 dose, caspase-8 activation-rate multiplier g) are
 PROXIES and are NEVER to be multiplied by the Rung-2 clustering score into a pseudo-efficacy number.
 
 CALIBRATION GATE (Albeck 2008): variable delay Td on the order of hours; switch Ts much faster than

@@ -119,4 +119,4 @@ helps and where it doesn't:
 - **2-D primary.** A 3-D slab would leak more (surface-to-volume); the Trop2+ leak finding is conservative in 2-D.
 - The RUNG-1 latency is **never** multiplied by the RUNG-2 clustering score — separate axes, separate ceilings.
 
-See `EVIDENCE_AND_HANDOFF.md` for the project-wide evidence ceiling.
+See `../EVIDENCE_AND_HANDOFF.md` for the project-wide evidence ceiling.
