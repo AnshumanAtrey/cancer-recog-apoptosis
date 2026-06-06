@@ -1,0 +1,76 @@
+# cancer-recon-apoptosis — run log
+# step          : rung12_structure
+# utc           : 20260606T163413Z
+# commit_short  : b416b0b
+# commit_full   : b416b0b1ce27eda93d613c1b0835c93424d32ed4
+# branch        : main
+# python        : 3.12.13
+# platform      : Linux-6.6.122+-x86_64-with-glibc2.35
+#================================================================
+
+$ /usr/bin/python3 -u scripts/37_pmhc_discriminability.py prep
+[rung12] prepped 32/32 handles -> /content/drive/MyDrive/cancer-recon/rung12_work (mut+WT FASTAs) | manifest /content/cancer-recon-apoptosis/runs/rung12_pmhc/rung12_manifest.json
+[rung12] next (Colab GPU): ESMFold each *.fasta -> <id>_{mut,wt}.pdb; ESM-2 embed peptides; then `analyze`
+[exit 0]
+
+$ /usr/bin/python3 -u scripts/37_pmhc_discriminability.py selftest
+  [PASS] G->D (adds charge+volume) P large
+  [PASS] I->L (conservative) P small
+  [PASS] charge flip detected E->K
+  [PASS] clean tier -> M=1
+  [PASS] WT much weaker -> M high
+  [PASS] WT ~ mut -> M~0
+  [PASS] exposed+big-change -> high D (low beta)
+  [PASS] exposed+tiny-change -> low D (high beta)
+  [PASS] MHC discrimination alone rescues D
+  [PASS] ESM-2 Z ALONE cannot force beta=0 (capped)
+  [PASS] clean (wt_rank>2) -> pf=0 -> qn=0
+  [PASS] qn = pf*beta
+  [PASS] fasta parse keys allele name
+  [PASS] mature motif at idx 24
+  [PASS] groove length 182
+  [PASS] handle selection orders by max prevalence (IDH1 glioma first)
+  [PASS] handle carries mutated residue indices
+
+selftest: 17/17 checks passed
+[exit 0]
+
+$ /usr/bin/python3 -u scripts/37_pmhc_discriminability.py analyze
+[rung12] wrote /content/cancer-recon-apoptosis/runs/rung12_pmhc/rung12_pmhc.json  (0/32 with ESMFold structure)
+  per-cell-safe 9 | relay-safe 11 | unlocked-by-relay 2
+
+  top targets (relay-safe first, by discriminability D):
+    IDH1_R132H_A0101                   clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.25 -> PERCELL
+    IDH1_R132H_B1501                   clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.25 -> PERCELL
+    BRAF_V600E_A0101                   clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.86 -> PERCELL
+    KRAS_G12D_A0101                    clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.50 -> PERCELL
+    KRAS_G12D_B0801                    clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.50 -> PERCELL
+    KRAS_G12D_B3501                    clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.50 -> PERCELL
+    KRAS_G12D_B4001                    clean         D=1.00 beta=0.00 qn=0.000 E=0.20 P=0.50 -> PERCELL
+    KRAS_G12D_C0702                    clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.50 -> PERCELL
+    KRAS_G12D_C0501                    tcr_dependent D=0.91 beta=0.09 qn=0.012 E=0.70 P=0.50 -> PERCELL
+    BRAF_V600E_A6801                   tcr_dependent D=0.78 beta=0.23 qn=0.070 E=0.70 P=0.86 -> RELAY
+    BRAF_V600E_C0602                   tcr_dependent D=0.64 beta=0.36 qn=0.100 E=0.70 P=0.86 -> RELAY
+    BRAF_V600E_A0301                   tcr_dependent D=0.76 beta=0.24 qn=0.239 E=0.70 P=0.86 -> risky
+[rung12] wrote /content/cancer-recon-apoptosis/runs/rung12_pmhc/rung12_pmhc.png
+[exit 0]
+
+$ /usr/bin/python3 -u scripts/37_pmhc_discriminability.py analyze
+[rung12] wrote /content/cancer-recon-apoptosis/runs/rung12_pmhc/rung12_pmhc.json  (24/32 with ESMFold structure)
+  per-cell-safe 9 | relay-safe 11 | unlocked-by-relay 2
+
+  top targets (relay-safe first, by discriminability D):
+    IDH1_R132H_A0101                   clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.25 -> PERCELL
+    IDH1_R132H_B1501                   clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.25 -> PERCELL
+    BRAF_V600E_A0101                   clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.86 -> PERCELL
+    KRAS_G12D_A0101                    clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.50 -> PERCELL
+    KRAS_G12D_B0801                    clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.50 -> PERCELL
+    KRAS_G12D_B3501                    clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.50 -> PERCELL
+    KRAS_G12D_B4001                    clean         D=1.00 beta=0.00 qn=0.000 E=0.20 P=0.50 -> PERCELL
+    KRAS_G12D_C0702                    clean         D=1.00 beta=0.00 qn=0.000 E=0.70 P=0.50 -> PERCELL
+    KRAS_G12D_C0501                    tcr_dependent D=0.86 beta=0.14 qn=0.018 E=0.04 P=0.50 -> PERCELL
+    BRAF_V600E_A6801                   tcr_dependent D=0.58 beta=0.42 qn=0.131 E=0.29 P=0.86 -> RELAY
+    BRAF_V600E_C0602                   tcr_dependent D=0.45 beta=0.55 qn=0.151 E=0.46 P=0.86 -> RELAY
+    BRAF_V600E_A0301                   tcr_dependent D=0.57 beta=0.43 qn=0.434 E=0.32 P=0.86 -> risky
+[rung12] wrote /content/cancer-recon-apoptosis/runs/rung12_pmhc/rung12_pmhc.png
+[exit 0]
