@@ -1,4 +1,4 @@
-# cancer-recon-apoptosis — working rules
+# cancer-recog-apoptosis — working rules
 
 This project INVENTS something not yet in the literature. Online research and spawned subagents can only
 summarise already-published work — they cannot judge whether an un-invented thing will work. The data is

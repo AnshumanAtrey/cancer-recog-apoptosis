@@ -57,7 +57,7 @@ def new_log(step: str, repo_dir: str | Path = ".", logs_dir: str | Path | None =
     path = logs / f"{step}_{ts}_{short}.log"
 
     header = [
-        "# cancer-recon-apoptosis — run log",
+        "# cancer-recog-apoptosis — run log",
         f"# step          : {step}",
         f"# utc           : {ts}",
         f"# commit_short  : {short}{'  (+uncommitted changes)' if dirty else ''}",

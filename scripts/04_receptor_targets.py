@@ -192,7 +192,7 @@ def differential_for_tissue(tissue: str, receptors: set[str]):
 
 
 def main() -> int:
-    log.info("cancer-recon-apoptosis — Step 2b — cancer-enriched receptor shortlist")
+    log.info("cancer-recog-apoptosis — Step 2b — cancer-enriched receptor shortlist")
     try:
         import scanpy  # noqa: F401
         import pandas as pd  # noqa: F401

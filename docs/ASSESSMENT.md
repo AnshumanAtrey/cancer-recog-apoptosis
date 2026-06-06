@@ -1,4 +1,4 @@
-# cancer-recon-apoptosis — Honest Project Assessment
+# cancer-recog-apoptosis — Honest Project Assessment
 
 ## Will it succeed?
 

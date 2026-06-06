@@ -1,4 +1,4 @@
-# cancer-recon-apoptosis — Cancer-Cell Recognition-Triggered Apoptosis
+# cancer-recog-apoptosis — Cancer-Cell Recognition-Triggered Apoptosis
 
 Computational design pipeline for cancer-specific signaling ligands that make cancer cells recognize their cancer neighbors as abnormal and trigger apoptosis — operationalizing Shriya Rai's conceptual proposal.
 

@@ -99,7 +99,7 @@ def get_surface_genes() -> tuple[set[str], str]:
 
 
 def main() -> int:
-    log.info("cancer-recon-apoptosis — Step 2b.2 — surfaceome filter")
+    log.info("cancer-recog-apoptosis — Step 2b.2 — surfaceome filter")
     try:
         import pandas as pd
     except ImportError as e:

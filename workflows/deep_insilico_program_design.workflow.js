@@ -8,7 +8,7 @@ export const meta = {
   ],
 }
 
-const CTX = `PROJECT: cancer-recon-apoptosis (Anshuman Atrey). Hypothesis: a RECOGNITION-GATED, SELF-
+const CTX = `PROJECT: cancer-recog-apoptosis (Anshuman Atrey). Hypothesis: a RECOGNITION-GATED, SELF-
 PROPAGATING apoptosis wave makes cancer destroy itself from within (Shriya Rai's concept), gated by a
 cancer antigen (anchor = Trop2/TACSTD2) and triggered by clustering the death receptor DR5 (TNFRSF10B).
 We have abstract agent-based sims (recognition-gating is the safe+lethal regime; grow-then-reverse;

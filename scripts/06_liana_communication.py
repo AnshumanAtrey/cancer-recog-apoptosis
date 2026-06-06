@@ -156,7 +156,7 @@ def annotate(res, targets: set[str], cancer_cts: list[str]):
 
 
 def main() -> int:
-    log.info("cancer-recon-apoptosis — Step 2c — LIANA communication annotation")
+    log.info("cancer-recog-apoptosis — Step 2c — LIANA communication annotation")
     try:
         import scanpy as sc
         import pandas as pd

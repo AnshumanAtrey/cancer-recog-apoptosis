@@ -8,7 +8,7 @@ export const meta = {
   ],
 }
 
-const CTX = `CONTEXT: cancer-recon-apoptosis — a COMPUTATIONAL cancer-therapy research project (Anshuman Atrey).
+const CTX = `CONTEXT: cancer-recog-apoptosis — a COMPUTATIONAL cancer-therapy research project (Anshuman Atrey).
 We design a recognition-gated self-propagating apoptosis mechanism (operationalising Shriya Rai's
 "cancer destroys itself from within"). We have abstract simulations; we are deciding how far in-silico
 work can take us toward a REAL discovery.
@@ -119,7 +119,7 @@ const SYNTH_SCHEMA = {
 const synthesis = await agent(CTX + `
 
 Synthesise the four research outputs into an HONEST, cited answer to the user's question, plus concrete
-implications for cancer-recon-apoptosis. Be direct about whether wet-lab can be skipped (it cannot, but
+implications for cancer-recog-apoptosis. Be direct about whether wet-lab can be skipped (it cannot, but
 say why and what in-silico DOES buy us), the virtual-cell reality (aspirational vs existing), the real
 track record with the key fact (is any AI-designed-from-scratch drug APPROVED yet?), what WE can/can't
 trust, our realistic contribution ceiling, and the recommended path. Include headline numbers/examples.

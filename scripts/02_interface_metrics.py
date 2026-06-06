@@ -225,7 +225,7 @@ def _fmt(v):
 
 
 def main() -> int:
-    log.info("cancer-recon-apoptosis — Step 1b — interface metrics + decision")
+    log.info("cancer-recog-apoptosis — Step 1b — interface metrics + decision")
     try:
         import numpy  # noqa: F401
         from Bio.PDB import MMCIFParser  # noqa: F401

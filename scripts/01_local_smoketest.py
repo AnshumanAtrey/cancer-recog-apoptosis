@@ -66,7 +66,7 @@ def cosine(a: torch.Tensor, b: torch.Tensor) -> float:
 
 def main() -> int:
     print("=" * 72)
-    print("cancer-recon-apoptosis — Step 1 (LOCAL PROXY) — ESM-2 plumbing test (M2/CPU)")
+    print("cancer-recog-apoptosis — Step 1 (LOCAL PROXY) — ESM-2 plumbing test (M2/CPU)")
     print("=" * 72)
     print("\nThis is a plumbing test, NOT a real binding oracle.")
     print("Real Step-1 decision must come from scripts/01_boltz_smoketest.py on a cloud GPU.\n")

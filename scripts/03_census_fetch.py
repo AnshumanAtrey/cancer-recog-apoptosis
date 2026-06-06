@@ -190,7 +190,7 @@ def main() -> int:
     except ImportError:
         log.error("missing dependency — run: pip install -q cellxgene-census scanpy"); return 2
 
-    log.info("cancer-recon-apoptosis — Step 2a — CELLxGENE Census data layer (mode=%s)", mode)
+    log.info("cancer-recog-apoptosis — Step 2a — CELLxGENE Census data layer (mode=%s)", mode)
     try:
         census = cellxgene_census.open_soma(census_version=CENSUS_VERSION)
     except Exception as e:

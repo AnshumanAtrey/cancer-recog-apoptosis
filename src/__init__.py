@@ -1,4 +1,4 @@
-"""cancer-recon-apoptosis — cancer-cell recognition-triggered apoptosis design pipeline.
+"""cancer-recog-apoptosis — cancer-cell recognition-triggered apoptosis design pipeline.
 
 Package layout:
   oracles/    Boltz-2, ESM, composite reward (Phase 1)

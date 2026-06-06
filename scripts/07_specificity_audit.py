@@ -202,7 +202,7 @@ def main() -> int:
     args = ap.parse_args()
     cache = Path(args.cache)
 
-    log.info("cancer-recon-apoptosis — Step 3 — anchor specificity/safety audit")
+    log.info("cancer-recog-apoptosis — Step 3 — anchor specificity/safety audit")
     log.info("thresholds (frozen): TAU_PASS=%.2f TAU_FAIL=%.2f PARENCHYMA_FAIL=%d (Medium/High)",
              TAU_PASS, TAU_FAIL, PARENCHYMA_FAIL)
     try:

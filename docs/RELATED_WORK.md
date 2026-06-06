@@ -1,4 +1,4 @@
-# cancer-recon-apoptosis — Related Work
+# cancer-recog-apoptosis — Related Work
 
 The 16 papers that justify, ground, or constrain this project. Grouped by role.
 

@@ -1,4 +1,4 @@
-# cancer-recon-apoptosis — 19-Step Project Plan
+# cancer-recog-apoptosis — 19-Step Project Plan
 
 Builds on Shriya Rai's *"Inducing Self-Destruction in Cancer Cells Through Altered Cellular Communication Signaling"* (conceptual paper, Apr 2026). Operationalises the hypothesis as a computational design pipeline.
 

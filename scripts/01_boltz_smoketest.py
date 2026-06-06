@@ -187,7 +187,7 @@ def process_complex(name: str, desc: str, receptor: str, binder: str, out_dir: P
 
 
 def main() -> int:
-    log.info("cancer-recon-apoptosis — Step 1a — Boltz-2 PREDICTION (decision in script 02)")
+    log.info("cancer-recog-apoptosis — Step 1a — Boltz-2 PREDICTION (decision in script 02)")
     if not have_boltz():
         log.error("`boltz` not in PATH. Install: pip install boltz")
         return 2

@@ -8,7 +8,7 @@ export const meta = {
   ],
 }
 
-const CTX = `PROJECT: cancer-recon-apoptosis (github.com/AnshumanAtrey/cancer-recon-apoptosis).
+const CTX = `PROJECT: cancer-recog-apoptosis (github.com/AnshumanAtrey/cancer-recog-apoptosis).
 We are designing a HYBRID bispecific "recognition ligand": one end binds a cancer-OVER-EXPRESSED
 cell-surface receptor (the ANCHOR = specificity), the other end clusters the death receptor DR5
 (TNFRSF10B) to trigger apoptosis. Operationalises Shriya Rai's "recognise cancer -> self-destruct".
