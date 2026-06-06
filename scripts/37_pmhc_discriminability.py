@@ -108,13 +108,20 @@ def mhc_level_discrimination(tier: str, mut_rank: float, wt_rank: float) -> floa
     return float(np.clip((wt_rank - mut_rank) / 2.0, 0.0, 1.0))
 
 
+Z_WEIGHT = 0.4   # ESM-2 embedding distance is a SOFT, relative sequence hint (correlated with P) — it must
+                 # NOT by itself declare a handle perfectly discriminable. Cap its OR-contribution.
+
+
 def combine_discriminability(M: float, E: float, P: float, Z: float) -> dict:
-    """Probabilistic-OR of independent discrimination mechanisms. Returns D and beta=1-D."""
+    """Probabilistic-OR of independent discrimination mechanisms. Returns D and beta=1-D.
+    M (MHC-binding differential) and E*P (exposure x physicochemistry) are the load-bearing signals; Z (ESM-2)
+    is capped (Z_WEIGHT) so a relative-max embedding distance can't single-handedly force beta=0."""
     tcr = E * P
-    D = 1.0 - (1.0 - M) * (1.0 - tcr) * (1.0 - Z)
+    z_eff = Z_WEIGHT * float(np.clip(Z, 0.0, 1.0))
+    D = 1.0 - (1.0 - M) * (1.0 - tcr) * (1.0 - z_eff)
     D = float(np.clip(D, 0.0, 1.0))
-    return {"M": round(M, 3), "E": round(E, 3), "P": round(P, 3), "tcr_EP": round(tcr, 3), "Z": round(Z, 3),
-            "D": round(D, 3), "beta": round(1.0 - D, 3)}
+    return {"M": round(M, 3), "E": round(E, 3), "P": round(P, 3), "tcr_EP": round(tcr, 3),
+            "Z": round(Z, 3), "Z_eff": round(z_eff, 3), "D": round(D, 3), "beta": round(1.0 - D, 3)}
 
 
 def qn_measured(wt_rank: float, beta: float) -> float:
@@ -416,6 +423,7 @@ def selftest() -> int:
     check("exposed+big-change -> high D (low beta)", dhi["beta"] < 0.2)
     check("exposed+tiny-change -> low D (high beta)", dlo["beta"] > 0.6)
     check("MHC discrimination alone rescues D", combine_discriminability(1.0, 0.0, 0.0, 0.0)["D"] == 1.0)
+    check("ESM-2 Z ALONE cannot force beta=0 (capped)", combine_discriminability(0.0, 0.0, 0.0, 1.0)["beta"] > 0.4)
 
     # presentation_factor + qn
     check("clean (wt_rank>2) -> pf=0 -> qn=0", qn_measured(2.5, 0.9) == 0.0)

@@ -26,6 +26,30 @@ Open `notebooks/rung12_pmhc_colab.ipynb`, **Runtime → Run all**, same Google a
 4. **analyze** → `rung12_pmhc.json` + `rung12_pmhc.png` (ranked targets + measured-β bridge coverage).
 Bundle with `python scripts/archive_colab_run.py --commit`.
 
+## Result (real T4 run `89c7dfb`, 32 handles) — with two honest corrections
+**The structural arm did NOT execute.** ESMFold's `openfold` extras failed to build on Colab (the fragility
+flagged up front) → **0/32 structures**; exposure `E` fell back to a position prior throughout. And the ESM-2
+`Z` signal, min-max normalized, initially over-claimed (the single biggest-change handle got `Z=1 → β=0`); the
+scoring now **caps `Z`** (commit fix) so a relative-max embedding can't alone declare a handle perfectly
+discriminable. So this result is a **binding (M) + physicochemical (P) + ESM-2 (Z, capped)** per-handle β —
+**structural exposure is unmeasured.** (The raw run is preserved bit-for-bit in `colab_runs/`; the mirror here
+is the Z-corrected re-derivation on the run's own signals.)
+
+**With per-handle β (not swept), the picture is more sober than the bridge's optimistic swept-β estimate:**
+- **9 per-cell-safe, 11 relay-safe, 2 unlocked by the relay** (vs the bridge's broad +5–30% at a uniform β=0.5).
+- Most safe coverage sits in **`clean` handles** (WT not presented → genuinely safe today): PDAC 26%, glioma
+  22% (IDH1 R132H), melanoma 11%.
+- The relay still gives a **real melanoma unlock: 10.8% → 19.1%** (BRAF V600E handles that are relay-safe but
+  not per-cell-safe). Elsewhere the marginal unlock is small.
+- Notable: **KRAS-G12D/C\*08:02** (the proven clinical TCR target) sits at q_n ≈ 0.19, just *above* the relay
+  ceiling → flagged borderline-risky. This is exactly where real structure (not available here) or the known
+  exquisite clinical TCR would correct the generic estimate — an honest "we can't certify it from sequence alone."
+
+**Takeaway:** the robust, fold-independent signals (binding + physicochemistry) already tier the targets and
+temper the bridge's optimism. True *structural* discriminability needs heavier tooling than a robust 4h run
+allows (ColabFold-multimer with MSAs, or PANDORA homology modelling) — single-sequence ESMFold can't reliably
+dock a 9-mer into the groove even when it builds.
+
 ## Honest ceiling
 ESMFold is a single-sequence **model** — short-peptide docking into the MHC groove is unreliable, so **E is
 the softest signal**; pLDDT is reported and the β estimate leans on the fold-independent M + P + Z. **β is a
