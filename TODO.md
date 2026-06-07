@@ -57,6 +57,15 @@ Single surface windows leak (proven). Inside windows are richer/more specific. P
       addressability vs false-positive on vital tissue. *Answers:* does stacking windows push normal-cell
       false-positives toward zero while keeping tumour coverage? (the precision multiplier).
 
+- [ ] **CROSS-KILL CLEARANCE — T-cell + NK + bystander combined** (RUNG-19's required 2nd mechanism). 💻 M2,
+      extend the escape-race lattice. Real tumours already carry MHC-dark "escapee" cells (RUNG-18/18b), so a
+      T-cell-only therapy *cannot* clear them — RUNG-19 proved the bare wave needs a **resistance-agnostic
+      cross-kill**. Model two killers together: **T-cells** kill MHC+ cells (recognition-gated) + **NK cells**
+      (*Natural Killer = immune cells that attack cells with LOW/missing MHC — the opposite trigger to T-cells*)
+      kill the MHC-dark escapees + bystander death wave. *Answers:* does T-cell + NK + wave together clear the
+      tumour INCLUDING the MHC-loss escapees, where T-cell-alone fails? Quantify the cross-kill strength needed
+      vs the measured escapee fraction (RUNG-18/18b). **This is the operational answer to "the immune route's ~4–13% blind spot."**
+
 ---
 
 ## P1 — soon
@@ -79,6 +88,47 @@ Single surface windows leak (proven). Inside windows are richer/more specific. P
       in ONE cancer (e.g. PSMA/prostate) could win per-cancer. Test 2-marker AND-NOT pairs per cancer type.
 
 ---
+
+## P1 — the 4 immunotherapy escape obstacles → a runnable test for each
+
+Real tumours fight back four ways. Each maps to an in-silico test with our tools. (No single fix beats all
+four — the answer is a LAYERED, multi-target, personalised system; that layered design is the capstone target.)
+
+- [ ] **Obstacle 1 — Tumour turns DOWN its MHC window** (T-cells go blind). *Approaches:* interferon to
+      re-light the window; NK cells (kill low-MHC); restore antigen presentation.
+      **Our test:** ✅ partly done — RUNG-9 (IFN re-induction in tissue) + RUNG-18/18b (how often dark). **Add:**
+      **forced-presentation / re-induction in TUMOUR cells** — does IFN / epigenetic de-repression recover the
+      transcriptionally-silenced (reversible) escapees from RUNG-18b? ☁️ Census + model. Plus the **NK arm**
+      (see Cross-Kill, P0) for the permanently-dark core.
+- [ ] **Obstacle 2 — Tumour stops displaying the target neoantigen** (the flag disappears). *Approaches:*
+      target MULTIPLE neoantigens at once; target ESSENTIAL (driver/clonal) mutations that can't be dropped
+      without killing the cell; monitor evolution.
+      **Our test:** **MULTI-TARGET escape simulation** 💻 — extend RUNG-16/19: P(escape) when targeting 1 vs 3
+      vs 5 handles simultaneously (each independent target the tumour must lose ALL of to escape). **+
+      ESSENTIALITY ranking** — rank our clean handles by driver-status × clonality (RUNG-16 clonal burden) →
+      the "can't-be-lost" targets. *Answers:* how many independent essential targets drive escape probability to ~0?
+- [ ] **Obstacle 3 — Immunosuppressive microenvironment** (T-cells arrive but get exhausted/switched off).
+      *Approaches:* checkpoint inhibitors (pembrolizumab/nivolumab — *drugs that release the brakes on
+      exhausted T-cells*); engineer T-cells to resist suppression; fix the microenvironment.
+      **Our test:** 💻 model as a **kill-efficiency / T-cell-exhaustion parameter** in the escape-race & arena —
+      how much does suppression have to drop clearance before the wave/cross-kill fails? (bounds how much
+      checkpoint-release is "enough"). Microenvironment biology is largely beyond our atlas tools → note honestly.
+- [ ] **Obstacle 4 — Tumour evolves NEW escape mutations under pressure** (moving target). *Approaches:*
+      attack several independent targets; combine therapies; adaptive/personalised therapy that updates.
+      **Our test:** **ADAPTIVE-THERAPY simulation** 💻 — extend RUNG-19: does re-targeting as the tumour evolves
+      (vs a fixed single target) beat escape? Compare fixed-1-target vs adaptive-multi-target clearance.
+
+- [ ] **IMMUNOPEPTIDOMICS CONFIRMATION** (is the peptide REALLY on the surface?). ☁️ data lookup. The honest
+      gap in RUNG-11/16/17 is *predicted* presentation. Cross-check our top clean handles against **real
+      mass-spec-detected peptides** (*immunopeptidomics = directly measuring which peptides sit on MHC*) in the
+      public **HLA Ligand Atlas / IEDB**. *Answers:* are any of our predicted handles actually observed on MHC
+      in real samples? (turns a prediction into a measurement where data exists).
+
+- [ ] **THE "IDEAL LAYERED SYSTEM"** (the multi-layer defence, as a synthesis) — fold into the **Capstone**:
+      sequence tumour → multiple ESSENTIAL neoantigens → multi-target T-cells → **NK cross-kill for MHC-loss
+      escapees** → block suppression → monitor evolution & update. Each layer covers another's blind spot;
+      our rungs supply the quantitative bound for each layer. *(Cancer is not one disease — solid vs blood differ;
+      keep results per-cancer, not "one universal cure".)*
 
 ## P2 — catalog tiers not yet tested (from README hypothesis catalog)
 
