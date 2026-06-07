@@ -103,7 +103,7 @@ four — the answer is a LAYERED, multi-target, personalised system; that layere
 - [ ] **Obstacle 2 — Tumour stops displaying the target neoantigen** (the flag disappears). *Approaches:*
       target MULTIPLE neoantigens at once; target ESSENTIAL (driver/clonal) mutations that can't be dropped
       without killing the cell; monitor evolution.
-      **Our test:** **MULTI-TARGET escape simulation** 💻 — extend RUNG-16/19: P(escape) when targeting 1 vs 3
+      **Our test:** ✅ RUNG-22 DONE — **MULTI-TARGET escape simulation** 💻 — extend RUNG-16/19: P(escape) when targeting 1 vs 3
       vs 5 handles simultaneously (each independent target the tumour must lose ALL of to escape). **+
       ESSENTIALITY ranking** — rank our clean handles by driver-status × clonality (RUNG-16 clonal burden) →
       the "can't-be-lost" targets. *Answers:* how many independent essential targets drive escape probability to ~0?

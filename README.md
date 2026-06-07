@@ -174,6 +174,18 @@ axis (instant, from RUNG-12 handles) + surface axis (CELLxGENE Census).
 > vs regrowth at this scale — higher p_T/p_NK might let T+NK clear without it); the mechanism-robust finding is **NK ⟂ T on the MHC-dark
 > subpopulation**, not "the wave is the only thing that matters". Ceiling: 2D CA, effective kill probs not measured rates, NK reduced to
 > "kills MHC-low". Net: a layered T+NK+wave defence clears the measured escapee range; each layer covers another's blind spot.
+>
+> **RUNG-22 (multi-target — does hitting SEVERAL neoantigens, or one ESSENTIAL one, crush escape?, multistage
+> Luria-Delbrück + lattice):** the cell only fully escapes if it loses ALL K independent targets → expected
+> escaped founders ~ N·(μ·lnN)^K/K! → **P(escape) collapses EXPONENTIALLY with K.** At a 1 cm tumour (~1e9 cells,
+> μ~1e-6): **K=1 → escape ~certain (RUNG-19) · K=2 → ~19% · K=3 → ~1e-6 (~0) · ≥4 → 0**; and **ONE essential
+> (un-losable, losing it kills the cell) target → escape-proof regardless of size.** Actionable rule: **target
+> ≥3 independent neoantigens OR ≥1 essential clonal driver.** Lattice validates the direction (cure rises with
+> K: K=3 0.31 > K=1 0.19; essential → 1.0) — K=1-vs-2 separation is compressed at small lattice N (multi-hit
+> separation needs large N; the clinical numbers are the analytic). Ties: RUNG-16 (high-TMB tumours HAVE ≥3
+> clean handles → multi-target is feasible there) + RUNG-12 drivers (KRAS/TP53/IDH1 = the essential targets).
+> HONEST ceiling: assumes INDEPENDENT targets — correlated loss (HLA-LOH dropping several peptides at once, or
+> whole-MHC silencing from RUNG-18) lowers the EFFECTIVE K → for that MHC-loss case, combine with RUNG-21 cross-kill.
 **Status legend** — ✅ built + tested · 🟢 testable now with our tools · 🔮 future (physics/delivery, kept safe)
 **The one rule:** every "kill" claim is a HYPOTHESIS with a stated wet-lab residual. β / kill% are proxies, never verdicts.
 
@@ -187,6 +199,7 @@ axis (instant, from RUNG-12 handles) + surface axis (CELLxGENE Census).
 ### Tier B — Self-recognition & propagation: *one cell tells its neighbour* (Shriya's core + my idea)
 - **B1 Bystander death wave** — seed a few, let death spread cell→cell; per-hop recognition-gated. *Basis: HSV-TK bystander, synNotch.* `Test:` coupled-EARM lattice. **Status: ✅ RUNG-13 — bounded wave, confirms percolation, resistance-resistant *up to L≈0.1 alone*.**
 - **B3 Evolutionary escape race** — does the wave clear before resistance mutates & sweeps? `Test:` stochastic lattice vs Luria-Delbrück. **Status: ✅ RUNG-19 — cure collapses at L=μ·N₀≈1; bystander cross-kill (B1+ferroptosis/quorum) shifts curable size ~10×; clinical tumours (L≫1) NEED a resistance-agnostic 2nd mechanism — the bare recognition-gated wave can't cure established disease.**
+- **B5 Multi-target / essentiality** — hit ≥3 independent neoantigens OR ≥1 essential (un-losable) driver. `Test:` multistage Luria-Delbrück + lattice. **Status: ✅ RUNG-22 — P(escape) ~ μ^K: K=3 → ~0 at 1cm, 1 essential target → escape-proof. Rule: ≥3 independent OR ≥1 essential. (assumes independent targets; correlated MHC-loss → combine w/ RUNG-21.)**
 - **B4 Cross-kill — layered T + NK + wave** — close the MHC blind spot: T-cells kill MHC+, NK kill MHC-lost (missing-self), wave is agnostic. `Test:` stochastic lattice, 3 arms × escapee fraction × NK-evasion. **Status: ✅ RUNG-21 — full T+NK+wave layer cures 100% across measured escapee fractions (4–13%); ALL THREE layers load-bearing (remove the wave → fail; remove NK → cure collapses 1.00→0.07 on the dark escapees). NK necessity demonstrated. Honest: wave-dominance partly parameter-dependent.**
 - **B2 Quorum / density gate** — die only where the *local density* of recognised cells is high (cancer is clonal & dense; scattered normal false-positives lack quorum). *Basis: bacterial quorum sensing ported to mammalian synthetic circuits.* `Test:` arena `quorum`. **Status: 🟢 arena — currently the LEADER (spares isolated false-positives entirely).**
 - **B3 Diffusible-factor relay (GDEPT)** — dying cell releases a *diffusing* death factor (HSV-TK/GCV, cytosine-deaminase/5-FC). *Basis: the bystander route that does NOT need gap junctions — relevant because tumours barely gap-couple (RUNG-12P/A, Cx43 in ~6%).* `Test:` arena `diffusible` (reaction-diffusion). **Status: 🟢 arena — leaks at high q_n unless gated tighter.**

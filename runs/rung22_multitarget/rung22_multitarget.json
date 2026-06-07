@@ -1,0 +1,51 @@
+{
+  "tag": "rung22_multitarget",
+  "question": "Does hitting MULTIPLE neoantigens (or one ESSENTIAL one) crush escape? Two levers: number of independent targets K (escape ~ \u03bc^K) and essentiality (un-losable -> escape-proof).",
+  "analytic_model": "multistage Luria-Delbr\u00fcck, expected K-fold mutants ~ N\u00b7(\u03bc\u00b7lnN)^K / K!",
+  "p_escape_vs_K_clinical": {
+    "micromet_1e5": {
+      "K=1": 0.683772,
+      "K=2": 7e-06,
+      "K=3": 0.0,
+      "K=4": 0.0,
+      "K=5": 0.0,
+      "K=1_but_essential": 0.0
+    },
+    "small_1e7": {
+      "K=1": 1.0,
+      "K=2": 0.001298,
+      "K=3": 0.0,
+      "K=4": 0.0,
+      "K=5": 0.0,
+      "K=1_but_essential": 0.0
+    },
+    "1cm_1e9": {
+      "K=1": 1.0,
+      "K=2": 0.193238,
+      "K=3": 1e-06,
+      "K=4": 0.0,
+      "K=5": 0.0,
+      "K=1_but_essential": 0.0
+    }
+  },
+  "lattice_validation_p_cure": {
+    "grid": 64,
+    "N0": 655,
+    "reps": 16,
+    "mu": 0.006,
+    "K=1": 0.188,
+    "K=2": 0.188,
+    "K=3": 0.312,
+    "K=1_essential": 1.0
+  },
+  "HEADLINE": {
+    "plain": "P(escape) collapses EXPONENTIALLY with the number of independent targets. At a 1cm tumour (~1e9 cells, \u03bc~1e-6): K=1 \u2192 escape ~certain (RUNG-19); K=2 \u2192 ~19%; K=3 \u2192 ~1.0e-06; and ONE essential (un-losable) target \u2192 escape ~0 regardless of size. Actionable rule: target \u22653 independent neoantigens OR \u22651 essential clonal driver.",
+    "rule": "\u22653 independent neoantigens OR \u22651 essential (clonal driver) target = escape-proof at clinical size.",
+    "ties": "RUNG-16 says high-TMB tumours HAVE \u22653 clean handles \u2192 multi-target is feasible there; RUNG-12 drivers (KRAS/TP53/IDH1) are the essential, un-losable targets."
+  },
+  "INTERPRETATION_MAP": {
+    "lattice P(cure) rises with K": "validates the \u03bc^K escape-suppression scaling on tractable sizes.",
+    "essential target \u2192 cure even at K=1": "confirms one un-losable target is escape-proof (the strongest lever)."
+  },
+  "CEILING": "Multistage LD assumes INDEPENDENT targets \u2014 correlated loss (HLA-LOH dropping several peptides at once, or whole-MHC silencing from RUNG-18) reduces the EFFECTIVE K and defeats independence (the honest weak point \u2014 combine with RUNG-21 cross-kill for the MHC-loss case). \u03bc lumped; 'essential' assumes loss is truly lethal. Lattice validates scaling; clinical = analytic extrapolation. BOUNDS escape suppression; not a cure claim."
+}
