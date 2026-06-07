@@ -45,6 +45,15 @@ Single surface windows leak (proven). Inside windows are richer/more specific. P
 
 ## P0 — do next (runnable now)
 
+- [ ] **AUTONOMOUS INTRACELLULAR AND-GATE** (RUNG-23 — the groundbreaking swing, Shriya's original concept). ☁️ Colab Census.
+      `scripts/49_autonomous_andgate.py` (selftest 10/10), `notebooks/autonomous_andgate_colab.ipynb`. A synthetic
+      gene circuit *inside* the cell — signal A AND signal B → self-destruct, NO MHC — for the MHC-dark core the
+      immune route can't reach. Tests all pairs of 8 intracellular programs for a tumour-firing, vital-sparing
+      (worst-donor) AND-gate. **KEY INSIGHT (operator-goal): AND = specificity (leaky inputs), OR = escape-resistance
+      (clean inputs). AND onto the already-clean MHC window is dominated; AND of two INTRACELLULAR signals for the
+      MHC-free route is the novel move.** Positive → buildable autonomous gate; negative → bounds the route.
+
+
 - [ ] **NEW-WINDOW LEAK TEST** (the table → atlas). ☁️ Colab Census. For the top new candidate windows —
       **glycan-synthesis genes (#4)**, **CD47 / "don't eat me" (#7)**, **phosphatidylserine-flip / metabolic
       genes (#11/#5)** — measure normal-organ leakage exactly like RUNG-15 did for surface markers
