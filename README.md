@@ -150,6 +150,18 @@ axis (instant, from RUNG-12 handles) + surface axis (CELLxGENE Census).
 > stays broadly viable; this added layer is the *reversible* kind (IFN/epi-drugs = RUNG-9). Worst-donor 82% → strong tumour-to-tumour
 > heterogeneity (some lung tumours heavily silenced). CRC weak/noisier (n=1,170, delta≈floor); melanoma/bladder absent in Census
 > 2024-07-01. Caveat: mRNA≠surface protein; HLA-I is IFN-inducible so resting atlas OVER-states silencing → 12.6% is an UPPER bound.
+>
+> **RUNG-19 (evolutionary escape race — does the death wave clear the tumour before resistance arises & sweeps?, stochastic lattice,
+> validated vs Luria-Delbrück):** RUNG-13 showed the wave overpowers *pre-seeded* resistance; this asks the harder evolutionary question
+> (resistance keeps *arising* during treatment). **P(cure) collapses as the expected resistant founders L = μ·N₀ cross ~1** — pure
+> recognition-gated wave: P(cure) 0.86 at L=0.035 → **0.00 by L≈1** (critical L\* = 0.11). **Bystander cross-kill** (resistance-AGNOSTIC,
+> = RUNG-14 ferroptosis_wave/quorum) shifts the cliff **~10× right** (L\* 0.11 → 1.12; at L=0.35 it lifts cure 0.11 → 0.83). The lattice
+> reproduces the Luria-Delbrück trend (sim standing-R tracks μ·N·lnN, running ~2–4× higher from spatial clonal *jackpot* expansion —
+> honest). **Decisive consequence: a clinical tumour (~10⁸–10⁹ cells) sits at L≫1 for ANY realistic μ → the recognition-gated wave ALONE
+> cannot cure an established tumour → a resistance-agnostic bystander / combination is REQUIRED.** And RUNG-18/18b pin it: measured standing
+> escape (~4–8% genetic + ~13% transcriptional in lung) means real tumours already carry escapees → the bare wave is insufficient; the
+> ferroptosis_wave/quorum cross-kill (or a 2nd orthogonal handle) is the lever that beats evolutionary escape. Ceiling: 2D lattice CA, μ is
+> a lumped effective escape rate, clinical extrapolation assumes LD scaling holds past simulated sizes — BOUNDS the curable size, not a cure.
 
 **Status legend** — ✅ built + tested · 🟢 testable now with our tools · 🔮 future (physics/delivery, kept safe)
 **The one rule:** every "kill" claim is a HYPOTHESIS with a stated wet-lab residual. β / kill% are proxies, never verdicts.
@@ -161,7 +173,8 @@ axis (instant, from RUNG-12 handles) + surface axis (CELLxGENE Census).
 - **A4 Multi-input AND-NOT / HLA-LOH NOT-gate** — fire only on (markerX AND NOT markerY); use tumour's own MHC loss as a NOT signal. `Test:` atlas addressability. **Status: ✅ RUNG-6.**
 
 ### Tier B — Self-recognition & propagation: *one cell tells its neighbour* (Shriya's core + my idea)
-- **B1 Bystander death wave** — seed a few, let death spread cell→cell; per-hop recognition-gated. *Basis: HSV-TK bystander, synNotch.* `Test:` coupled-EARM lattice. **Status: ✅ RUNG-13 — bounded wave, confirms percolation, resistance-resistant.**
+- **B1 Bystander death wave** — seed a few, let death spread cell→cell; per-hop recognition-gated. *Basis: HSV-TK bystander, synNotch.* `Test:` coupled-EARM lattice. **Status: ✅ RUNG-13 — bounded wave, confirms percolation, resistance-resistant *up to L≈0.1 alone*.**
+- **B3 Evolutionary escape race** — does the wave clear before resistance mutates & sweeps? `Test:` stochastic lattice vs Luria-Delbrück. **Status: ✅ RUNG-19 — cure collapses at L=μ·N₀≈1; bystander cross-kill (B1+ferroptosis/quorum) shifts curable size ~10×; clinical tumours (L≫1) NEED a resistance-agnostic 2nd mechanism — the bare recognition-gated wave can't cure established disease.**
 - **B2 Quorum / density gate** — die only where the *local density* of recognised cells is high (cancer is clonal & dense; scattered normal false-positives lack quorum). *Basis: bacterial quorum sensing ported to mammalian synthetic circuits.* `Test:` arena `quorum`. **Status: 🟢 arena — currently the LEADER (spares isolated false-positives entirely).**
 - **B3 Diffusible-factor relay (GDEPT)** — dying cell releases a *diffusing* death factor (HSV-TK/GCV, cytosine-deaminase/5-FC). *Basis: the bystander route that does NOT need gap junctions — relevant because tumours barely gap-couple (RUNG-12P/A, Cx43 in ~6%).* `Test:` arena `diffusible` (reaction-diffusion). **Status: 🟢 arena — leaks at high q_n unless gated tighter.**
 - **B4 Oncolytic self-amplifying signal** — the death trigger *replicates* in tumour cells before firing (oncolytic-virus / self-amplifying-RNA analogue) → super-critical spread in tumour, dies out in normal. `Test:` arena `oncolytic`. **Status: 🟢 arena.**
