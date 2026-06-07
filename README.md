@@ -103,7 +103,14 @@ The running arsenal. We do **not** marry one mechanism — we sweep many and let
 entry: the idea (one line), the biological basis, how we test it **with the tools we already have** (atlas /
 sequence / structure / simulation — no wet lab), and status. Many of the dynamical ones run head-to-head in the
 **mechanism arena** (`scripts/39_mechanism_arena.py`, `notebooks/mechanism_arena_colab.ipynb`) which ranks them
-by *safe & effective across regimes* (clears tumour ≥80%, spares normal ≤1%).
+by *safe & effective across regimes* (clears tumour ≥80%, spares normal ≤1%). **RUNG-15**
+(`scripts/40_atlas_mechanism_map.py`) then maps the winners onto **real per-cancer addressability** — neoantigen
+axis (instant, from RUNG-12 handles) + surface axis (CELLxGENE Census).
+
+> **Leaderboard (RUNG-14, 9 strategies × 12 regimes):** `quorum` HITS (8/12) · `wave`/`alt_death`/`combo`/`ferroptosis_wave`
+> CLOSE (4/12) · `synthetic_lethal` SAFE-but-coverage-limited (12/12 safe, <80% kill alone) · `per_cell`/`diffusible`/`oncolytic`
+> FAR (leak at high q_n). **RUNG-15 map:** propagation unlocks melanoma (+8%) & CRC; clean neoantigens (PDAC 26%, glioma 22%)
+> need no propagation; quorum's headroom needs surface markers (→ the Census arm).
 
 **Status legend** — ✅ built + tested · 🟢 testable now with our tools · 🔮 future (physics/delivery, kept safe)
 **The one rule:** every "kill" claim is a HYPOTHESIS with a stated wet-lab residual. β / kill% are proxies, never verdicts.
@@ -122,7 +129,7 @@ by *safe & effective across regimes* (clears tumour ≥80%, spares normal ≤1%)
 - **B5 Contact synNotch relay chain** — juxtacrine hand-off: cell fires only on direct contact with a recognised neighbour. `Test:` arena (wave variant). **Status: 🟢.**
 
 ### Tier C — Alternative death modalities: *beat apoptosis-resistance* (Shriya §6.3, JJK "Domain that ignores your cursed technique")
-- **C1 Ferroptosis** — force iron-dependent lipid peroxidation (GPX4 inhibition). *Basis: apoptosis-resistant cancers stay ferroptosis-sensitive.* `Test:` atlas GPX4/SLC7A11/ACSL4 differential + arena `alt_death`. **Status: 🟢.**
+- **C1 Ferroptosis** — force iron-dependent lipid peroxidation (GPX4 inhibition). *Basis: apoptosis-resistant cancers stay ferroptosis-sensitive; ferroptosis propagates cell-to-cell (Riegman 2020).* `Test:` arena `ferroptosis_wave` + atlas GPX4/SLC7A11/ACSL4. **Status: ✅ arena `ferroptosis_wave` (brake-independent propagating death, immune to apoptotic resistance — CLOSE, 4/12) + 🟢 atlas.**
 - **C2 Pyroptosis** — gasdermin pore (GSDMD/GSDME), inflammatory, converts "cold" tumours. `Test:` atlas + arena `alt_death`. **Status: 🟢.**
 - **C3 Necroptosis** — RIPK3/MLKL route for caspase-8-deficient tumours. `Test:` atlas. **Status: 🟢.**
 - **C4 Cuproptosis** — copper-driven death via lipoylated TCA enzymes (FDX1). `Test:` atlas FDX1/lipoylation. **Status: 🟢.**
@@ -134,7 +141,7 @@ by *safe & effective across regimes* (clears tumour ≥80%, spares normal ≤1%)
 - **D2 In-silico dynamic BH3 profiling** — rank which cells sit closest to the apoptotic threshold. `Test:` RUNG-13 single-cell model + atlas priming signature. **Status: 🟢.**
 
 ### Tier E — Synthetic lethality / collateral vulnerability (kill what the tumour *lost*)
-- **E1 Synthetic-lethal paralog pairs** — tumour lost gene A → addicted to paralog B (MTAP-del → PRMT5; BRCA → PARP). `Test:` atlas co-loss/dependence. **Status: 🟢.**
+- **E1 Synthetic-lethal paralog pairs** — tumour lost gene A → addicted to paralog B (MTAP-del → PRMT5; BRCA → PARP). `Test:` arena `synthetic_lethal` + atlas co-loss/dependence. **Status: ✅ arena `synthetic_lethal` (SAFE-by-construction q_n≈0, but coverage-limited → combine with a propagation arm) + 🟢 atlas.**
 - **E2 Collateral passenger-deletion dependence** — deletions next to tumour suppressors create unique dependence (ENO1-del → ENO2). `Test:` atlas. **Status: 🟢.**
 - **E3 Non-oncogene addiction** — stress/proteostasis dependencies unique to the transformed state. `Test:` atlas. **Status: 🟢.**
 

@@ -65,7 +65,8 @@ COMMIT = 0.5
 SAFE_TUMOUR = 0.80     # cleared
 SAFE_NORMAL = 0.01     # spared
 
-RIGOROUS = ["per_cell", "wave", "quorum", "diffusible", "oncolytic", "alt_death", "combo"]
+RIGOROUS = ["per_cell", "wave", "quorum", "diffusible", "oncolytic", "alt_death", "combo",
+            "ferroptosis_wave", "synthetic_lethal"]
 TOY = ["oncotripsy", "ttfields"]
 
 
@@ -109,7 +110,15 @@ def sim_spatial(mech, L=61, r=17, T=80.0, dt=0.02, q_t=0.95, q_n=0.10, strength=
     yy, xx = np.mgrid[0:L, 0:L]
     cx = L // 2
     is_t = ((xx - cx) ** 2 + (yy - cx) ** 2) <= r * r
-    g = np.where(rng.random((L, L)) < np.where(is_t, q_t, q_n), 1.0, 0.0)
+    if mech == "synthetic_lethal":
+        # SAFE-BY-CONSTRUCTION recognition: normal cells keep gene A -> not B-dependent -> q_n is STRUCTURAL ~0
+        # (ignores the regime's q_n). Only the vulnerable (A-deficient) tumour subclone is targetable -> coverage-limited.
+        vuln_frac = 0.6
+        vulnerable = is_t & (rng.random((L, L)) < vuln_frac)
+        gate_prob = np.where(vulnerable, q_t, np.where(is_t, 0.0, 0.005))
+        g = np.where(rng.random((L, L)) < gate_prob, 1.0, 0.0)
+    else:
+        g = np.where(rng.random((L, L)) < np.where(is_t, q_t, q_n), 1.0, 0.0)
     deg = _deg(L)
 
     # priming / threshold modulation per mechanism
@@ -120,6 +129,7 @@ def sim_spatial(mech, L=61, r=17, T=80.0, dt=0.02, q_t=0.95, q_n=0.10, strength=
 
     C8a = np.zeros((L, L)); C3a = np.zeros((L, L)); IAP = IAP0.copy(); CP = np.zeros((L, L))
     CPa = np.zeros((L, L))                     # second (brake-independent) effector for alt_death
+    CPf = np.zeros((L, L))                     # brake-INDEPENDENT ferroptotic damage (ferroptosis_wave)
     D = np.zeros((L, L))                       # diffusible death factor
     V = np.zeros((L, L))                       # self-amplifying agent
 
@@ -135,6 +145,9 @@ def sim_spatial(mech, L=61, r=17, T=80.0, dt=0.02, q_t=0.95, q_n=0.10, strength=
         CP[seed] = 0.9
         if mech == "oncolytic":
             V[seed] = 0.5
+    if mech == "ferroptosis_wave":
+        seed = is_t & (rng.random((L, L)) < seed_frac) & (g > 0)
+        CPf[seed] = 0.9
 
     ai, kfb, d8, kc, ki, d3, kIon, kseq, kp = (p["ai"], p["kfb"], p["d8"], p["kc"], p["ki"],
                                                p["d3"], p["kIon"], p["kseq"], p["kp"])
@@ -155,7 +168,9 @@ def sim_spatial(mech, L=61, r=17, T=80.0, dt=0.02, q_t=0.95, q_n=0.10, strength=
             return strength * g * V
         if mech == "alt_death":
             return strength * g * _neigh_mean(np.maximum(CP, CPa))
-        return strength * g
+        if mech == "ferroptosis_wave":
+            return 0.0 * g                     # EARM channel unused; ferroptosis uses its own brake-free ratchet
+        return strength * g                    # per_cell + synthetic_lethal
 
     def cell_deriv(C8a, C3a, IAP, CP, S):
         return ((ai * S + kfb * C3a) * (1 - C8a) - d8 * C8a,
@@ -184,10 +199,16 @@ def sim_spatial(mech, L=61, r=17, T=80.0, dt=0.02, q_t=0.95, q_n=0.10, strength=
             # brake-independent effector: reroutes cells reached by the wave, ignores IAP (ferroptosis/pyroptosis)
             S_alt = strength * g * _neigh_mean(np.maximum(CP, CPa))
             CPa = np.clip(CPa + dt * (3.0 * np.minimum(S_alt, 1.0) * (1 - CPa)), 0.0, None)
+        elif mech == "ferroptosis_wave":
+            # brake-INDEPENDENT propagating ferroptosis (no IAP/caspase) -> immune to apoptotic resistance/priming
+            S_f = strength * g * _neigh_mean(CPf)
+            CPf = np.clip(CPf + dt * (3.0 * np.minimum(S_f, 1.0) * (1 - CPf)), 0.0, None)
 
     dead = CP >= COMMIT
     if mech == "alt_death":
         dead = dead | (CPa >= COMMIT)
+    if mech == "ferroptosis_wave":
+        dead = CPf >= COMMIT
     return {"tumour_killed": float((dead & is_t).sum() / is_t.sum()),
             "normal_killed": float((dead & ~is_t).sum() / (~is_t).sum()) if (~is_t).any() else 0.0}
 
@@ -251,9 +272,12 @@ def run_arena(quick=False) -> int:
             rows.append({**reg, "tumour_killed": round(o["tumour_killed"], 4),
                          "normal_killed": round(o["normal_killed"], 4), "safe_effective": bool(safe)})
         nsafe = sum(r["safe_effective"] for r in rows)
+        ncontain = sum(r["normal_killed"] <= SAFE_NORMAL for r in rows)   # SAFE (spares normal) regardless of efficacy
         results[mech] = {"kind": "rigorous", "regimes": rows, "safe_fraction": round(nsafe / len(rows), 3),
+                         "containment_safe_fraction": round(ncontain / len(rows), 3),
                          "best": max(rows, key=lambda r: (r["safe_effective"], r["tumour_killed"] - 5 * r["normal_killed"]))}
-        print(f"  [{mech:11}] safe&effective in {nsafe}/{len(rows)} regimes "
+        flag = "" if nsafe else (" [SAFE but coverage-limited]" if ncontain >= len(rows) * 0.8 else " [leaks]")
+        print(f"  [{mech:11}] safe&effective {nsafe}/{len(rows)} | containment-safe {ncontain}/{len(rows)}{flag} "
               f"(best: tumour {results[mech]['best']['tumour_killed']:.2f} / normal {results[mech]['best']['normal_killed']:.3f})")
 
     # toy physics (single representative each)
@@ -290,12 +314,16 @@ def run_arena(quick=False) -> int:
                    "in-silico containment robustness, NOT clinical efficacy.",
     }
     winners = [m for m, f in board if f >= 0.5]
+    safe_limited = [m for m in RIGOROUS if results[m]["safe_fraction"] == 0
+                    and results[m]["containment_safe_fraction"] >= 0.8]
     out["DECISIVE"] = (f"In-silico containment leaderboard (safe&effective fraction): "
                        + ", ".join(f"{m}={f:.2f}" for m, f in board)
                        + f". Strategies that HIT across >=50% of regimes: {winners or 'none -- all need tuning'}. "
-                       f"per_cell (no propagation) is the baseline whose normal-leak scales LINEARLY with q_n; "
-                       f"propagation/quorum/gated arms that beat it convert that into bounded leak. Toy physics "
-                       f"arms reported separately (future). Coupling/delivery efficiency is the wet-lab residual.")
+                       + (f"SAFE-by-construction but coverage-limited (spares normal, but <80% tumour alone -> "
+                          f"combine with a propagation arm): {safe_limited}. " if safe_limited else "")
+                       + f"per_cell (no propagation) is the baseline whose normal-leak scales LINEARLY with q_n; "
+                       + f"propagation/quorum/gated arms that beat it convert that into bounded leak. Toy physics "
+                       + f"arms reported separately (future). Coupling/delivery efficiency is the wet-lab residual.")
 
     def _jd(o):
         if isinstance(o, np.bool_):
@@ -392,6 +420,16 @@ def selftest() -> int:
     # alt_death rescues clearance vs apoptosis-only when tumour is half-resistant
     a = sim_spatial("alt_death", q_t=0.95, q_n=0.05, strength=1.0, **kw)["tumour_killed"]
     check("alt_death achieves tumour clearance with resistant fraction (>0.4)", a > 0.4)
+
+    # ferroptosis_wave: brake-independent propagating death clears tumour at low q_n
+    fw = sim_spatial("ferroptosis_wave", q_t=0.95, q_n=0.05, strength=1.0, **kw)
+    check("ferroptosis_wave clears tumour at low q_n (>0.5)", fw["tumour_killed"] > 0.5)
+    check("ferroptosis_wave spares normal at low q_n (<0.05)", fw["normal_killed"] < 0.05)
+
+    # synthetic_lethal: SAFE even at high regime q_n (structural q_n), coverage-limited (<= vuln fraction)
+    sl_hi = sim_spatial("synthetic_lethal", q_t=0.95, q_n=0.50, strength=1.0, **kw)
+    check("synthetic_lethal stays SAFE even at high regime q_n (<0.05)", sl_hi["normal_killed"] < 0.05)
+    check("synthetic_lethal is coverage-limited (tumour_killed < 0.8)", sl_hi["tumour_killed"] < 0.8)
 
     # toy arms run
     onc = sim_oncotripsy(n=4000, rng=np.random.default_rng(1)); tt = sim_ttfields()
