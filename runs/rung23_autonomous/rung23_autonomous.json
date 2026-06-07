@@ -1,0 +1,425 @@
+{
+  "tag": "rung23_autonomous_andgate",
+  "question": "Is there an intracellular AND-pair (A high AND B high) firing in tumour cells but ~zero vital normal cells (worst-donor) -> an MHC-independent autonomous self-destruct gate?",
+  "programs": {
+    "PROLIF": [
+      "MKI67",
+      "TOP2A",
+      "PCNA",
+      "CCNB1",
+      "CDK1",
+      "BIRC5"
+    ],
+    "MYC": [
+      "MYC",
+      "NPM1",
+      "ODC1",
+      "NCL",
+      "SRM"
+    ],
+    "E2F": [
+      "E2F1",
+      "MCM2",
+      "MCM6",
+      "CDC6",
+      "CCNE1"
+    ],
+    "GLYCOLYSIS": [
+      "SLC2A1",
+      "LDHA",
+      "HK2",
+      "PKM",
+      "PGK1",
+      "ENO1"
+    ],
+    "HYPOXIA": [
+      "VEGFA",
+      "CA9",
+      "SLC2A1",
+      "NDRG1",
+      "BNIP3"
+    ],
+    "WNT": [
+      "AXIN2",
+      "LGR5",
+      "ASCL2",
+      "NKD1",
+      "RNF43"
+    ],
+    "STEMNESS": [
+      "SOX2",
+      "PROM1",
+      "ALDH1A1",
+      "POU5F1"
+    ],
+    "TELOMERASE": [
+      "TERT",
+      "TERC",
+      "DKC1"
+    ]
+  },
+  "fire_frac": 0.5,
+  "leak_safe": 0.01,
+  "cover_min": 0.3,
+  "meta": {
+    "n_datasets_measuring": 204,
+    "n_vital_cells": 309497,
+    "n_tumour_cells": 152773
+  },
+  "all_gates_ranked": [
+    {
+      "gate": "WNT AND TELOMERASE",
+      "op": "AND",
+      "a": "WNT",
+      "b": "TELOMERASE",
+      "coverage": 0.0003,
+      "worst_leak": 0.0025,
+      "safe_effective": false
+    },
+    {
+      "gate": "E2F AND TELOMERASE",
+      "op": "AND",
+      "a": "E2F",
+      "b": "TELOMERASE",
+      "coverage": 0.0018,
+      "worst_leak": 0.008,
+      "safe_effective": false
+    },
+    {
+      "gate": "HYPOXIA AND TELOMERASE",
+      "op": "AND",
+      "a": "HYPOXIA",
+      "b": "TELOMERASE",
+      "coverage": 0.0015,
+      "worst_leak": 0.0175,
+      "safe_effective": false
+    },
+    {
+      "gate": "PROLIF AND TELOMERASE",
+      "op": "AND",
+      "a": "PROLIF",
+      "b": "TELOMERASE",
+      "coverage": 0.0029,
+      "worst_leak": 0.0185,
+      "safe_effective": false
+    },
+    {
+      "gate": "E2F AND WNT",
+      "op": "AND",
+      "a": "E2F",
+      "b": "WNT",
+      "coverage": 0.0011,
+      "worst_leak": 0.0185,
+      "safe_effective": false
+    },
+    {
+      "gate": "WNT AND STEMNESS",
+      "op": "AND",
+      "a": "WNT",
+      "b": "STEMNESS",
+      "coverage": 0.0051,
+      "worst_leak": 0.0204,
+      "safe_effective": false
+    },
+    {
+      "gate": "E2F AND STEMNESS",
+      "op": "AND",
+      "a": "E2F",
+      "b": "STEMNESS",
+      "coverage": 0.0117,
+      "worst_leak": 0.0217,
+      "safe_effective": false
+    },
+    {
+      "gate": "PROLIF AND STEMNESS",
+      "op": "AND",
+      "a": "PROLIF",
+      "b": "STEMNESS",
+      "coverage": 0.0281,
+      "worst_leak": 0.0303,
+      "safe_effective": false
+    },
+    {
+      "gate": "STEMNESS AND TELOMERASE",
+      "op": "AND",
+      "a": "STEMNESS",
+      "b": "TELOMERASE",
+      "coverage": 0.0015,
+      "worst_leak": 0.0323,
+      "safe_effective": false
+    },
+    {
+      "gate": "PROLIF AND WNT",
+      "op": "AND",
+      "a": "PROLIF",
+      "b": "WNT",
+      "coverage": 0.003,
+      "worst_leak": 0.0333,
+      "safe_effective": false
+    },
+    {
+      "gate": "MYC AND TELOMERASE",
+      "op": "AND",
+      "a": "MYC",
+      "b": "TELOMERASE",
+      "coverage": 0.0046,
+      "worst_leak": 0.0538,
+      "safe_effective": false
+    },
+    {
+      "gate": "E2F AND HYPOXIA",
+      "op": "AND",
+      "a": "E2F",
+      "b": "HYPOXIA",
+      "coverage": 0.0132,
+      "worst_leak": 0.0585,
+      "safe_effective": false
+    },
+    {
+      "gate": "GLYCOLYSIS AND TELOMERASE",
+      "op": "AND",
+      "a": "GLYCOLYSIS",
+      "b": "TELOMERASE",
+      "coverage": 0.005,
+      "worst_leak": 0.0593,
+      "safe_effective": false
+    },
+    {
+      "gate": "TELOMERASE",
+      "op": "single",
+      "coverage": 0.0054,
+      "worst_leak": 0.0828,
+      "safe_effective": false
+    },
+    {
+      "gate": "PROLIF AND HYPOXIA",
+      "op": "AND",
+      "a": "PROLIF",
+      "b": "HYPOXIA",
+      "coverage": 0.0339,
+      "worst_leak": 0.096,
+      "safe_effective": false
+    },
+    {
+      "gate": "HYPOXIA AND WNT",
+      "op": "AND",
+      "a": "HYPOXIA",
+      "b": "WNT",
+      "coverage": 0.0027,
+      "worst_leak": 0.0983,
+      "safe_effective": false
+    },
+    {
+      "gate": "MYC AND WNT",
+      "op": "AND",
+      "a": "MYC",
+      "b": "WNT",
+      "coverage": 0.01,
+      "worst_leak": 0.125,
+      "safe_effective": false
+    },
+    {
+      "gate": "PROLIF AND E2F",
+      "op": "AND",
+      "a": "PROLIF",
+      "b": "E2F",
+      "coverage": 0.0292,
+      "worst_leak": 0.144,
+      "safe_effective": false
+    },
+    {
+      "gate": "MYC AND E2F",
+      "op": "AND",
+      "a": "MYC",
+      "b": "E2F",
+      "coverage": 0.0376,
+      "worst_leak": 0.152,
+      "safe_effective": false
+    },
+    {
+      "gate": "E2F OR TELOMERASE",
+      "op": "OR",
+      "a": "E2F",
+      "b": "TELOMERASE",
+      "coverage": 0.0456,
+      "worst_leak": 0.16,
+      "safe_effective": false
+    },
+    {
+      "gate": "E2F",
+      "op": "single",
+      "coverage": 0.042,
+      "worst_leak": 0.16,
+      "safe_effective": false
+    },
+    {
+      "gate": "E2F AND GLYCOLYSIS",
+      "op": "AND",
+      "a": "E2F",
+      "b": "GLYCOLYSIS",
+      "coverage": 0.0405,
+      "worst_leak": 0.16,
+      "safe_effective": false
+    },
+    {
+      "gate": "GLYCOLYSIS AND WNT",
+      "op": "AND",
+      "a": "GLYCOLYSIS",
+      "b": "WNT",
+      "coverage": 0.0135,
+      "worst_leak": 0.2217,
+      "safe_effective": false
+    },
+    {
+      "gate": "WNT",
+      "op": "single",
+      "coverage": 0.0254,
+      "worst_leak": 0.2333,
+      "safe_effective": false
+    },
+    {
+      "gate": "WNT OR TELOMERASE",
+      "op": "OR",
+      "a": "WNT",
+      "b": "TELOMERASE",
+      "coverage": 0.0305,
+      "worst_leak": 0.235,
+      "safe_effective": false
+    },
+    {
+      "gate": "HYPOXIA AND STEMNESS",
+      "op": "AND",
+      "a": "HYPOXIA",
+      "b": "STEMNESS",
+      "coverage": 0.0351,
+      "worst_leak": 0.2376,
+      "safe_effective": false
+    },
+    {
+      "gate": "E2F OR WNT",
+      "op": "OR",
+      "a": "E2F",
+      "b": "WNT",
+      "coverage": 0.0662,
+      "worst_leak": 0.2383,
+      "safe_effective": false
+    },
+    {
+      "gate": "PROLIF AND MYC",
+      "op": "AND",
+      "a": "PROLIF",
+      "b": "MYC",
+      "coverage": 0.1065,
+      "worst_leak": 0.544,
+      "safe_effective": false
+    },
+    {
+      "gate": "GLYCOLYSIS AND STEMNESS",
+      "op": "AND",
+      "a": "GLYCOLYSIS",
+      "b": "STEMNESS",
+      "coverage": 0.0917,
+      "worst_leak": 0.5914,
+      "safe_effective": false
+    },
+    {
+      "gate": "MYC AND STEMNESS",
+      "op": "AND",
+      "a": "MYC",
+      "b": "STEMNESS",
+      "coverage": 0.0745,
+      "worst_leak": 0.5914,
+      "safe_effective": false
+    },
+    {
+      "gate": "MYC AND HYPOXIA",
+      "op": "AND",
+      "a": "MYC",
+      "b": "HYPOXIA",
+      "coverage": 0.1319,
+      "worst_leak": 0.5967,
+      "safe_effective": false
+    },
+    {
+      "gate": "PROLIF AND GLYCOLYSIS",
+      "op": "AND",
+      "a": "PROLIF",
+      "b": "GLYCOLYSIS",
+      "coverage": 0.1272,
+      "worst_leak": 0.6,
+      "safe_effective": false
+    },
+    {
+      "gate": "E2F OR STEMNESS",
+      "op": "OR",
+      "a": "E2F",
+      "b": "STEMNESS",
+      "coverage": 0.1352,
+      "worst_leak": 0.6237,
+      "safe_effective": false
+    },
+    {
+      "gate": "WNT OR STEMNESS",
+      "op": "OR",
+      "a": "WNT",
+      "b": "STEMNESS",
+      "coverage": 0.1252,
+      "worst_leak": 0.6237,
+      "safe_effective": false
+    },
+    {
+      "gate": "STEMNESS",
+      "op": "single",
+      "coverage": 0.105,
+      "worst_leak": 0.6237,
+      "safe_effective": false
+    },
+    {
+      "gate": "PROLIF OR WNT",
+      "op": "OR",
+      "a": "PROLIF",
+      "b": "WNT",
+      "coverage": 0.1644,
+      "worst_leak": 0.624,
+      "safe_effective": false
+    },
+    {
+      "gate": "PROLIF OR TELOMERASE",
+      "op": "OR",
+      "a": "PROLIF",
+      "b": "TELOMERASE",
+      "coverage": 0.1445,
+      "worst_leak": 0.624,
+      "safe_effective": false
+    },
+    {
+      "gate": "PROLIF",
+      "op": "single",
+      "coverage": 0.142,
+      "worst_leak": 0.624,
+      "safe_effective": false
+    },
+    {
+      "gate": "PROLIF OR STEMNESS",
+      "op": "OR",
+      "a": "PROLIF",
+      "b": "STEMNESS",
+      "coverage": 0.2189,
+      "worst_leak": 0.6344,
+      "safe_effective": false
+    },
+    {
+      "gate": "PROLIF OR E2F",
+      "op": "OR",
+      "a": "PROLIF",
+      "b": "E2F",
+      "coverage": 0.1548,
+      "worst_leak": 0.64,
+      "safe_effective": false
+    }
+  ],
+  "safe_effective_gates": [],
+  "best_AND_gate": null,
+  "HEADLINE": "0 safe&effective gates (worst-donor vital leak \u22640.01, tumour coverage \u22650.3). Best AND: NONE (cov -, leak -). If an AND beats its single programs on leak -> autonomous MHC-free gate is buildable for the dark core.",
+  "CEILING": "mRNA != protein/activity (program score is a PROXY for the state a circuit senses); scRNA dropout deflates fire (read the tumour-vs-vital CONTRAST, not absolutes); 'buildable' assumes a sensor per program (synthetic-biology + delivery = wet-lab residual). BOUNDS whether a clean intracellular AND-pair exists; not a built circuit."
+}

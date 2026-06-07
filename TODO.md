@@ -45,7 +45,7 @@ Single surface windows leak (proven). Inside windows are richer/more specific. P
 
 ## P0 — do next (runnable now)
 
-- [ ] **AUTONOMOUS INTRACELLULAR AND-GATE** (RUNG-23 — the groundbreaking swing, Shriya's original concept). ☁️ Colab Census.
+- [x] **AUTONOMOUS INTRACELLULAR AND-GATE** ✅ RUNG-23 — DECISIVE NEGATIVE (0 clean gates; expression leaks like surface; mutation is the only clean signal). The groundbreaking swing, Shriya's original concept. ☁️ Colab Census.
       `scripts/49_autonomous_andgate.py` (selftest 10/10), `notebooks/autonomous_andgate_colab.ipynb`. A synthetic
       gene circuit *inside* the cell — signal A AND signal B → self-destruct, NO MHC — for the MHC-dark core the
       immune route can't reach. Tests all pairs of 8 intracellular programs for a tumour-firing, vital-sparing
@@ -76,6 +76,12 @@ Single surface windows leak (proven). Inside windows are richer/more specific. P
       vs the measured escapee fraction (RUNG-18/18b). **This is the operational answer to "the immune route's ~4–13% blind spot."**
 
 ---
+
+- [ ] **AUTONOMOUS MUTATION-SENSING circuit** (the corrected direction RUNG-23 points to). The negative says
+      expression-program AND-gates leak → an autonomous MHC-free self-destruct must sense the MUTATION itself
+      (toehold switch / CRISPR-based mutant-mRNA sensor), AND-gating two clonal driver mutations → apoptosis.
+      Combines the ONLY clean signal (mutation) with MHC-independence (covers the dark core). `Test:` model the
+      mutant-sensing specificity + the AND of two clonal mutations (ties RUNG-16 clonal burden + RUNG-22 essentiality).
 
 ## P1 — soon
 
