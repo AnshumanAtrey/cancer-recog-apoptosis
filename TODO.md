@@ -144,10 +144,32 @@ four — the answer is a LAYERED, multi-target, personalised system; that layere
 
 ---
 
-## FUT — future-safe (physics / delivery; kept, not now)
-- [ ] Oncotripsy (sound/ultrasound resonance at the cancer cell's natural frequency) — toy model in RUNG-14
-- [ ] TTFields (electric-field disruption of division) — toy model in RUNG-14
-- [ ] Photothermal / magnetic hyperthermia; nanorobotic nm-precision delivery; hybrids (wave + robotic injection)
+## P2 — DELIVERY & "the medicine" (the BIO half of the syringe / injection / wave-as-medicine ideas — RUNNABLE)
+
+These are the bio-deliverable parts of Anshuman's earlier syringe / AI-injection / "wave in a one-time shot"
+hypotheses. The *physics* of delivery (robot, sound, EM) is future-safe below; the *biology* is testable now.
+
+- [ ] **WAVE-AS-A-ONE-TIME-INJECTION — delivery threshold**. 💻 M2, extend RUNG-13/19 wave sim. Anshuman's idea:
+      put the death-wave trigger in a single injection (mRNA-LNP / oncolytic virus / peptide) that seeds a few
+      cells and lets the wave do the rest. RUNG-13 showed *one* seed can suffice in principle — **quantify it:**
+      sweep the SEED FRACTION (what % of tumour cells the injection actually reaches) and find the minimum
+      delivery needed for the wave to take over and clear the tumour, vs tumour size & q_n. *Answers:* how good
+      does the injection have to be? (decouples "kill mechanism" from "delivery", as Anshuman framed it).
+- [ ] **DESIGN THE MEDICINE — personalised neoantigen vaccine construct (in-silico)**. 💻/☁️. For one cancer
+      (melanoma), output the actual ranked peptide/mRNA SEQUENCES a lab would synthesise (the thing you'd order
+      from Twist/GenScript), built from RUNG-16/17 clean handles + RUNG-20 presentation. *Answers:* produces a
+      synthesis-ready blueprint + a publishable proof-of-concept — the closest legitimate "make the medicine"
+      step without a wet lab. (NOT synthesize-and-inject — that's the clinical ladder, MAGE-A3 = the warning.)
+- [ ] **HYBRID: delivery + wave** (the bio part of "combine wave apoptosis with robotic injection"). 💻. Model
+      delivery that UNDER-reaches (robot/injection hits only part of the tumour) → does the self-propagating
+      wave close the gap the delivery missed? Quantifies how wave + partial-delivery beat either alone.
+
+## FUT — future-safe (pure PHYSICS / hardware; need lab, kept — full list in README Tier Z, Z1–Z6)
+- [ ] **Soundwave at the cancer cell's frequency** (oncotripsy, Z1) — ultrasound resonance; toy arm in RUNG-14
+- [ ] **Electromagnetic-wave attack** (TTFields, Z2) — alternating field disrupts division; toy arm in RUNG-14
+- [ ] **Photothermal (gold+laser, Z3) · Magnetic hyperthermia (Z4)** — local heat ablation
+- [ ] **Nanorobotic nm-precision delivery** (Z5) — robot carries any payload exactly to each cancer cell
+- [ ] **Hybrids** (Z6) — sound/EM softening + bio payload · prime + push + reroute-resistant combos
 
 ---
 
