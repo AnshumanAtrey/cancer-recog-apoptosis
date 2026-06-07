@@ -11,3 +11,4 @@ the oracle.
    or do SOTA research — they burn tokens guessing at things that exist nowhere. Run the experiment instead.
 3. **Honest negatives are first-class.** Never overclaim. Every predicted result is a HYPOTHESIS with a
    stated wet-lab residual; report threshold-sensitive numbers as ranges; let the atlas say no when it says no.
+4. **Census API (recurring fix):** `cellxgene_census.get_anndata(...)` — use `obs_column_names=[...]` (and `var_column_names=[...]`), NOT the deprecated `column_names={"obs": [...]}` (FutureWarning). Same for `obs_value_filter`/`var_value_filter`.
