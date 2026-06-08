@@ -229,6 +229,7 @@ def main_run() -> int:
         ad = cellxgene_census.get_anndata(census, organism="Homo sapiens", obs_coords=sel.tolist(),
                                           var_value_filter=f"feature_name in {ALL_GENES}",
                                           obs_column_names=["cell_type", "donor_id", "dataset_id"])
+        ad.obs_names = ad.obs_names.astype(str); ad.var_names = ad.var_names.astype(str)   # avoid anndata ImplicitModificationWarning (CLAUDE.md rule 4)
         vn = list(ad.var["feature_name"]) if "feature_name" in ad.var else list(ad.var_names)
         X = np.asarray(ad.X.todense() if hasattr(ad.X, "todense") else ad.X)
         counts = np.zeros((X.shape[0], len(ALL_GENES)), np.int32)

@@ -281,7 +281,8 @@ def pull_disease(census, disease, di, nd, r04, _q):
     ad = cellxgene_census.get_anndata(
         census, organism="Homo sapiens", obs_coords=sel_jid.tolist(),
         var_value_filter=f"feature_name in {ALL_FETCH}",
-        column_names={"obs": ["cell_type", "donor_id", "dataset_id"]})
+        obs_column_names=["cell_type", "donor_id", "dataset_id"])           # CLAUDE.md rule 4 (not deprecated column_names=)
+    ad.obs_names = ad.obs_names.astype(str); ad.var_names = ad.var_names.astype(str)   # avoid ImplicitModificationWarning
     vnames = list(ad.var["feature_name"]) if "feature_name" in ad.var else list(ad.var_names)
     X = ad.X.todense() if hasattr(ad.X, "todense") else ad.X
     X = np.asarray(X)
