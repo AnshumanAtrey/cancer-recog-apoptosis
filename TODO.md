@@ -45,7 +45,7 @@ Single surface windows leak (proven). Inside windows are richer/more specific. P
 
 ## P0 — do next (runnable now)
 
-- [~] **AUTONOMOUS INTRACELLULAR AND-GATE** ⚠️ RUNG-23 v1 negative SUSPECT (no depth-gate + single-worst-donor artifact: 62% PROLIF 'leak' into post-mitotic cells). v2 HARDENED (selftest 11/11) — RE-RUN on Colab before concluding. The groundbreaking swing, Shriya's original concept. ☁️ Colab Census.
+- [x] **AUTONOMOUS INTRACELLULAR AND-GATE** ✅ RUNG-23 v2 CONFIRMED NEGATIVE (trustworthy): depth-gate lifts coverage (GLYCOLYSIS 69%) but metabolic programs genuinely leak into kidney/endothelium; clean programs cover ~0. v1 artifact (post-mitotic leak) fixed. → expression leaks; mutation is the only clean signal. The groundbreaking swing, Shriya's original concept. ☁️ Colab Census.
       `scripts/49_autonomous_andgate.py` (selftest 10/10), `notebooks/autonomous_andgate_colab.ipynb`. A synthetic
       gene circuit *inside* the cell — signal A AND signal B → self-destruct, NO MHC — for the MHC-dark core the
       immune route can't reach. Tests all pairs of 8 intracellular programs for a tumour-firing, vital-sparing
