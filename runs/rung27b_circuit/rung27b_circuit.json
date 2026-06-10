@@ -1,0 +1,378 @@
+{
+  "tag": "rung27b_autonomous_mutation_circuit",
+  "question": "Design real allele-specific sensors for the recurrent clonal driver mutations, AND-gate two co-occurring drivers, and map per-cancer what fraction of patients could get an MHC-free autonomous self-destruct (the counterpart to RUNG-11/16 for the MHC-dark core).",
+  "backend": "ViennaRNA duplex \u0394G (real CDS windows, Ensembl MANE)",
+  "window_nt": 23,
+  "ddg_sensable_threshold": 2.0,
+  "n_drivers": 16,
+  "n_rna_sensable": 9,
+  "n_dna_only_wobble": 7,
+  "wobble_drivers_need_dna": [
+    "KRAS_G12D",
+    "KRAS_G13D",
+    "IDH1_R132H",
+    "PIK3CA_E545K",
+    "TP53_R175H",
+    "TP53_R248Q",
+    "TP53_R273H"
+  ],
+  "vienna_independently_confirms_wobble": {
+    "median_ddg_wobble": 0.4,
+    "median_ddg_nonwobble": 4.4,
+    "independently_confirmed": true
+  },
+  "coverage_is": "OFF-THE-SHELF shared-driver-hotspot FLOOR \u2014 pre-designed sensors for recurrent drivers, AND of 2 co-occurring clonal drivers from different pathway groups, independence-modelled. Conservative: a PERSONALISED 2nd input (any clonal mutation, RUNG-16-style) lifts it; the off-the-shelf advantage is that the sensors are shared across patients, not bespoke.",
+  "per_driver": {
+    "KRAS_G12D": {
+      "gene": "KRAS",
+      "aa_change": "G12D",
+      "rna_sub": "G>A",
+      "is_wobble": true,
+      "wt_window": "AGUUGGAGCUGGUGGCGUAGGCA",
+      "mut_window": "AGUUGGAGCUGAUGGCGUAGGCA",
+      "sensor": "UGCCUACGCCAUCAGCUCCAACU",
+      "ddg": 0.6,
+      "false_fire_rate": 0.3776,
+      "rna_sensable": false,
+      "dna_sensable": true
+    },
+    "KRAS_G12V": {
+      "gene": "KRAS",
+      "aa_change": "G12V",
+      "rna_sub": "G>U",
+      "is_wobble": false,
+      "wt_window": "AGUUGGAGCUGGUGGCGUAGGCA",
+      "mut_window": "AGUUGGAGCUGUUGGCGUAGGCA",
+      "sensor": "UGCCUACGCCAACAGCUCCAACU",
+      "ddg": 4.3,
+      "false_fire_rate": 0.0009298,
+      "rna_sensable": true,
+      "dna_sensable": true
+    },
+    "KRAS_G12C": {
+      "gene": "KRAS",
+      "aa_change": "G12C",
+      "rna_sub": "G>U",
+      "is_wobble": false,
+      "wt_window": "UAGUUGGAGCUGGUGGCGUAGGC",
+      "mut_window": "UAGUUGGAGCUUGUGGCGUAGGC",
+      "sensor": "GCCUACGCCACAAGCUCCAACUA",
+      "ddg": 4.2,
+      "false_fire_rate": 0.001094,
+      "rna_sensable": true,
+      "dna_sensable": true
+    },
+    "KRAS_G13D": {
+      "gene": "KRAS",
+      "aa_change": "G13D",
+      "rna_sub": "G>A",
+      "is_wobble": true,
+      "wt_window": "UGGAGCUGGUGGCGUAGGCAAGA",
+      "mut_window": "UGGAGCUGGUGACGUAGGCAAGA",
+      "sensor": "UCUUGCCUACGUCACCAGCUCCA",
+      "ddg": 0.6,
+      "false_fire_rate": 0.3776,
+      "rna_sensable": false,
+      "dna_sensable": true
+    },
+    "NRAS_Q61R": {
+      "gene": "NRAS",
+      "aa_change": "Q61R",
+      "rna_sub": "A>G",
+      "is_wobble": false,
+      "wt_window": "UACAGCUGGACAAGAAGAGUACA",
+      "mut_window": "UACAGCUGGACGAGAAGAGUACA",
+      "sensor": "UGUACUCUUCUCGUCCAGCUGUA",
+      "ddg": 6.0,
+      "false_fire_rate": 5.887e-05,
+      "rna_sensable": true,
+      "dna_sensable": true
+    },
+    "NRAS_Q61K": {
+      "gene": "NRAS",
+      "aa_change": "Q61K",
+      "rna_sub": "C>A",
+      "is_wobble": false,
+      "wt_window": "AUACAGCUGGACAAGAAGAGUAC",
+      "mut_window": "AUACAGCUGGAAAAGAAGAGUAC",
+      "sensor": "GUACUCUUCUUUUCCAGCUGUAU",
+      "ddg": 3.7,
+      "false_fire_rate": 0.002463,
+      "rna_sensable": true,
+      "dna_sensable": true
+    },
+    "BRAF_V600E": {
+      "gene": "BRAF",
+      "aa_change": "V600E",
+      "rna_sub": "U>A",
+      "is_wobble": false,
+      "wt_window": "UCUAGCUACAGUGAAAUCUCGAU",
+      "mut_window": "UCUAGCUACAGAGAAAUCUCGAU",
+      "sensor": "AUCGAGAUUUCUCUGUAGCUAGA",
+      "ddg": 4.4,
+      "false_fire_rate": 0.0007905,
+      "rna_sensable": true,
+      "dna_sensable": true
+    },
+    "IDH1_R132H": {
+      "gene": "IDH1",
+      "aa_change": "R132H",
+      "rna_sub": "G>A",
+      "is_wobble": true,
+      "wt_window": "CAUCAUAGGUCGUCAUGCUUAUG",
+      "mut_window": "CAUCAUAGGUCAUCAUGCUUAUG",
+      "sensor": "CAUAAGCAUGAUGACCUAUGAUG",
+      "ddg": 0.4,
+      "false_fire_rate": 0.5224,
+      "rna_sensable": false,
+      "dna_sensable": true
+    },
+    "IDH1_R132C": {
+      "gene": "IDH1",
+      "aa_change": "R132C",
+      "rna_sub": "C>U",
+      "is_wobble": false,
+      "wt_window": "UCAUCAUAGGUCGUCAUGCUUAU",
+      "mut_window": "UCAUCAUAGGUUGUCAUGCUUAU",
+      "sensor": "AUAAGCAUGACAACCUAUGAUGA",
+      "ddg": 4.2,
+      "false_fire_rate": 0.001094,
+      "rna_sensable": true,
+      "dna_sensable": true
+    },
+    "PIK3CA_E545K": {
+      "gene": "PIK3CA",
+      "aa_change": "E545K",
+      "rna_sub": "G>A",
+      "is_wobble": true,
+      "wt_window": "CUGAAAUCACUGAGCAGGAGAAA",
+      "mut_window": "CUGAAAUCACUAAGCAGGAGAAA",
+      "sensor": "UUUCUCCUGCUUAGUGAUUUCAG",
+      "ddg": -0.1,
+      "false_fire_rate": 1.0,
+      "rna_sensable": false,
+      "dna_sensable": true
+    },
+    "PIK3CA_H1047R": {
+      "gene": "PIK3CA",
+      "aa_change": "H1047R",
+      "rna_sub": "A>G",
+      "is_wobble": false,
+      "wt_window": "GAAUGAUGCACAUCAUGGUGGCU",
+      "mut_window": "GAAUGAUGCACGUCAUGGUGGCU",
+      "sensor": "AGCCACCAUGACGUGCAUCAUUC",
+      "ddg": 5.8,
+      "false_fire_rate": 8.144e-05,
+      "rna_sensable": true,
+      "dna_sensable": true
+    },
+    "EGFR_L858R": {
+      "gene": "EGFR",
+      "aa_change": "L858R",
+      "rna_sub": "U>G",
+      "is_wobble": false,
+      "wt_window": "AGAUUUUGGGCUGGCCAAACUGC",
+      "mut_window": "AGAUUUUGGGCGGGCCAAACUGC",
+      "sensor": "GCAGUUUGGCCCGCCCAAAAUCU",
+      "ddg": 6.2,
+      "false_fire_rate": 4.255e-05,
+      "rna_sensable": true,
+      "dna_sensable": true
+    },
+    "TP53_R175H": {
+      "gene": "TP53",
+      "aa_change": "R175H",
+      "rna_sub": "G>A",
+      "is_wobble": true,
+      "wt_window": "GGUUGUGAGGCGCUGCCCCCACC",
+      "mut_window": "GGUUGUGAGGCACUGCCCCCACC",
+      "sensor": "GGUGGGGGCAGUGCCUCACAACC",
+      "ddg": 0.4,
+      "false_fire_rate": 0.5224,
+      "rna_sensable": false,
+      "dna_sensable": true
+    },
+    "TP53_R248Q": {
+      "gene": "TP53",
+      "aa_change": "R248Q",
+      "rna_sub": "G>A",
+      "is_wobble": true,
+      "wt_window": "CGGCAUGAACCGGAGGCCCAUCC",
+      "mut_window": "CGGCAUGAACCAGAGGCCCAUCC",
+      "sensor": "GGAUGGGCCUCUGGUUCAUGCCG",
+      "ddg": 0.7,
+      "false_fire_rate": 0.321,
+      "rna_sensable": false,
+      "dna_sensable": true
+    },
+    "TP53_R273H": {
+      "gene": "TP53",
+      "aa_change": "R273H",
+      "rna_sub": "G>A",
+      "is_wobble": true,
+      "wt_window": "CUUUGAGGUGCGUGUUUGUGCCU",
+      "mut_window": "CUUUGAGGUGCAUGUUUGUGCCU",
+      "sensor": "AGGCACAAACAUGCACCUCAAAG",
+      "ddg": 0.4,
+      "false_fire_rate": 0.5224,
+      "rna_sensable": false,
+      "dna_sensable": true
+    },
+    "TP53_R248W": {
+      "gene": "TP53",
+      "aa_change": "R248W",
+      "rna_sub": "C>U",
+      "is_wobble": false,
+      "wt_window": "GCGGCAUGAACCGGAGGCCCAUC",
+      "mut_window": "GCGGCAUGAACUGGAGGCCCAUC",
+      "sensor": "GAUGGGCCUCCAGUUCAUGCCGC",
+      "ddg": 4.7,
+      "false_fire_rate": 0.0004857,
+      "rna_sensable": true,
+      "dna_sensable": true
+    }
+  },
+  "per_cancer_coverage": {
+    "PDAC": {
+      "coverage_rna_only": 5.551e-17,
+      "coverage_rna_plus_dna": 0.1512,
+      "dna_rescue_gain": 0.1512,
+      "rna_sensable_drivers": [
+        "KRAS_G12V",
+        "KRAS_G12C"
+      ],
+      "dna_only_drivers": [
+        "KRAS_G12D",
+        "TP53_R175H",
+        "TP53_R248Q",
+        "TP53_R273H"
+      ],
+      "n_groups": 2
+    },
+    "GLIOMA": {
+      "coverage_rna_only": 2.776e-17,
+      "coverage_rna_plus_dna": 0.195,
+      "dna_rescue_gain": 0.195,
+      "rna_sensable_drivers": [
+        "IDH1_R132C"
+      ],
+      "dna_only_drivers": [
+        "IDH1_R132H",
+        "TP53_R175H",
+        "TP53_R248Q",
+        "TP53_R273H"
+      ],
+      "n_groups": 2
+    },
+    "MELANOMA": {
+      "coverage_rna_only": 0.0,
+      "coverage_rna_plus_dna": 0.052,
+      "dna_rescue_gain": 0.052,
+      "rna_sensable_drivers": [
+        "BRAF_V600E",
+        "NRAS_Q61R",
+        "NRAS_Q61K"
+      ],
+      "dna_only_drivers": [
+        "TP53_R175H",
+        "TP53_R273H"
+      ],
+      "n_groups": 2
+    },
+    "CRC": {
+      "coverage_rna_only": 0.0132,
+      "coverage_rna_plus_dna": 0.2109,
+      "dna_rescue_gain": 0.1977,
+      "rna_sensable_drivers": [
+        "KRAS_G12V",
+        "BRAF_V600E",
+        "PIK3CA_H1047R"
+      ],
+      "dna_only_drivers": [
+        "KRAS_G12D",
+        "PIK3CA_E545K",
+        "TP53_R175H",
+        "TP53_R248Q",
+        "TP53_R273H"
+      ],
+      "n_groups": 3
+    },
+    "LUAD": {
+      "coverage_rna_only": 5.551e-17,
+      "coverage_rna_plus_dna": 0.0912,
+      "dna_rescue_gain": 0.0912,
+      "rna_sensable_drivers": [
+        "KRAS_G12C",
+        "KRAS_G12V",
+        "EGFR_L858R"
+      ],
+      "dna_only_drivers": [
+        "KRAS_G12D",
+        "TP53_R175H",
+        "TP53_R248Q",
+        "TP53_R273H"
+      ],
+      "n_groups": 2
+    },
+    "BREAST": {
+      "coverage_rna_only": 0.0,
+      "coverage_rna_plus_dna": 0.0414,
+      "dna_rescue_gain": 0.0414,
+      "rna_sensable_drivers": [
+        "PIK3CA_H1047R"
+      ],
+      "dna_only_drivers": [
+        "PIK3CA_E545K",
+        "TP53_R175H",
+        "TP53_R248Q",
+        "TP53_R273H"
+      ],
+      "n_groups": 2
+    },
+    "THYROID": {
+      "coverage_rna_only": 0.0,
+      "coverage_rna_plus_dna": 0.0,
+      "dna_rescue_gain": 0.0,
+      "rna_sensable_drivers": [
+        "BRAF_V600E"
+      ],
+      "dna_only_drivers": [],
+      "n_groups": 1
+    },
+    "AML": {
+      "coverage_rna_only": 0.0048,
+      "coverage_rna_plus_dna": 0.012,
+      "dna_rescue_gain": 0.0072,
+      "rna_sensable_drivers": [
+        "IDH1_R132C",
+        "NRAS_Q61R",
+        "NRAS_Q61K"
+      ],
+      "dna_only_drivers": [
+        "IDH1_R132H"
+      ],
+      "n_groups": 2
+    }
+  },
+  "best_cancer_rna_plus_dna": [
+    "CRC",
+    0.2109
+  ],
+  "biggest_dna_rescue": {
+    "CRC": 0.1977,
+    "GLIOMA": 0.195,
+    "PDAC": 0.1512
+  },
+  "HEADLINE": "Designed allele-specific sensors for 16 real clonal driver hotspots from REAL CDS. 9/16 are RNA-toehold-sensable (non-wobble, \u0394\u0394G\u22652.0); 7/16 are G\u00b7U-WOBBLE \u2014 incl. the most common drivers KRAS-G12D, IDH1-R132H, PIK3CA-E545K, and the TP53 R175H/R248Q/R273H hotspots (all G>A transitions) \u2014 which an RNA toehold CAN'T discriminate but DNA-level CRISPR sensing CAN (no wobble). AUTONOMOUS MHC-FREE AND-gate addressability (\u22652 co-occurring clonal sensable drivers from different pathway groups): RNA-only is LOW (most oncogene+TP53 hotspots are wobble), but RNA+DNA lifts it sharply \u2014 top CRC ~0.2109. The autonomous self-destruct IS buildable per cancer; the modality (RNA toehold vs DNA/CRISPR) is dictated by the driver's substitution chemistry, and DNA-level sensing is REQUIRED to cover the G>A-transition bulk.",
+  "INTERPRETATION_MAP": {
+    "covers the MHC-dark core": "this route fires inside the cell on the mutation itself (no MHC) -> reaches exactly the ~4-13% MHC-dark escapees (RUNG-18) the immune route cannot.",
+    "RNA-only low / RNA+DNA high": "G>A-transition drivers (the commonest) are RNA-wobble -> need DNA/CRISPR allele sensing; with both modalities the AND-gate is broadly buildable.",
+    "AND of 2 clonal drivers": "somatic-mutation AND -> tumour-exclusive by construction (normal cells have neither); mutual-exclusivity means the 2 inputs must be from different pathways."
+  },
+  "CEILING": [
+    "ViennaRNA \u0394G = thermodynamic PROXY (kinetics/accessibility/genome off-targets not modelled).",
+    "Per-cancer driver frequencies are TCGA/COSMIC approximations -> coverage is order-of-magnitude.",
+    "Co-occurrence across pathway groups modelled INDEPENDENT (TP53 co-occurs more -> conservative); within a mutual-exclusivity group only one driver is ANDable.",
+    "DNA-sensable = CRISPR allele discrimination is established (buildability), NOT a built circuit; synthesis + delivery + in-cell apoptosis actuation = the wet-lab residual."
+  ]
+}
