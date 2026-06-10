@@ -1,0 +1,35 @@
+# cancer-recog-apoptosis — run log
+# step          : rung26_binder_design
+# utc           : 20260609T225744Z
+# commit_short  : 1c2874a  (+uncommitted changes)
+# commit_full   : 1c2874a3b10ad1f57e7efe821e50d156d577cd4e
+# branch        : main
+# python        : 3.12.13
+# platform      : Linux-6.6.122+-x86_64-with-glibc2.35
+#================================================================
+
+$ /usr/bin/python3 -u scripts/52_binder_design.py selftest
+  [PASS] targets load (clean, presentation-confirmed)
+  [PASS] hotspot includes the mutated residue
+  [PASS] spec carries mut+WT peptides
+  [PASS] good binder, WT weak => mutant-specific
+  [PASS] binds both => binder but NOT specific
+  [PASS] high mut pae => not a binder
+  [PASS] low binder pLDDT => not a binder
+  [PASS] WT not folded yet => binder True, specific False, disc None
+  [PASS] rank: specific design ranks first
+  [PASS] rank: failure ranks last
+  [PASS] resume: done design detected
+
+  selftest: 11/11 passed
+[exit 0]
+
+$ /usr/bin/python3 -u scripts/52_binder_design.py rank runs/rung26_binder_design
+"6 designs evaluated \u2192 0 credible binders to the MUT pMHC \u2192 0 MUTANT-SPECIFIC (bind mut, not WT). Top = the candidate recognition molecule for the clean neoantigen (in-silico; wet-lab validation = the residual)."
+  design_0002              binder=False specific=False disc=None mut_pae=14.175 plddt=68.2
+  design_0005              binder=False specific=False disc=None mut_pae=15.076 plddt=57.4
+  design_0001              binder=False specific=False disc=None mut_pae=17.067 plddt=51.2
+  design_0000              binder=False specific=False disc=None mut_pae=22.348 plddt=48.3
+  design_0003              binder=False specific=False disc=None mut_pae=22.857 plddt=48.5
+  design_0004              binder=False specific=False disc=None mut_pae=25.669 plddt=57.4
+[exit 0]

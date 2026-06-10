@@ -1,0 +1,81 @@
+{
+  "tag": "rung26_binder_design",
+  "n_designs": 6,
+  "n_binders": 0,
+  "n_mutant_specific": 0,
+  "filters": {
+    "pae_bind": 10.0,
+    "binder_plddt_min": 80.0,
+    "discrimination_min": 3.0
+  },
+  "top_designs": [
+    {
+      "design": "design_0002",
+      "target": "IDH1_R132H_A0101",
+      "sequence": "DHHHPHEPEEPMEEDPEVRAYLIRHDAHCRAQQRTFYPKIIAEIRAEEGAAEAAGPPPEEEEPKPGKGGD",
+      "is_binder": false,
+      "is_mutant_specific": false,
+      "discrimination_pae_wt_minus_mut": null,
+      "mut_pae_interaction": 14.175,
+      "binder_plddt": 68.2,
+      "wt_pae_interaction": null
+    },
+    {
+      "design": "design_0005",
+      "target": "IDH1_R132H_A0101",
+      "sequence": "HKLLLLLLLLLLLLLLLALAAEARAARRRLWTRPNIERMHECFEAVIRRYEDERIEPDPAPPAVLCASDD",
+      "is_binder": false,
+      "is_mutant_specific": false,
+      "discrimination_pae_wt_minus_mut": null,
+      "mut_pae_interaction": 15.076,
+      "binder_plddt": 57.4,
+      "wt_pae_interaction": null
+    },
+    {
+      "design": "design_0001",
+      "target": "IDH1_R132H_A0101",
+      "sequence": "DDPMGPLELDYEVVRAYHERRYRAMWANHLAYGERCYREEDGPYGFPGGPCGPPGPGPGGGGGLLCGDDG",
+      "is_binder": false,
+      "is_mutant_specific": false,
+      "discrimination_pae_wt_minus_mut": null,
+      "mut_pae_interaction": 17.067,
+      "binder_plddt": 51.2,
+      "wt_pae_interaction": null
+    },
+    {
+      "design": "design_0000",
+      "target": "IDH1_R132H_A0101",
+      "sequence": "DPPPPEPMPPVLRPVHDRPIWFWMKEQILRNMRSDPPPPCCCCCCCAAAPAAFPLAAPLLAALLLLLDDG",
+      "is_binder": false,
+      "is_mutant_specific": false,
+      "discrimination_pae_wt_minus_mut": null,
+      "mut_pae_interaction": 22.348,
+      "binder_plddt": 48.3,
+      "wt_pae_interaction": null
+    },
+    {
+      "design": "design_0003",
+      "target": "IDH1_R132H_A0101",
+      "sequence": "HAAALLLLLLAARAPRPRRIDDFHDRTRWFEYRFWCYFQEQHYDIYDYGGVGPPPGGPGGVVLLLLLLLG",
+      "is_binder": false,
+      "is_mutant_specific": false,
+      "discrimination_pae_wt_minus_mut": null,
+      "mut_pae_interaction": 22.857,
+      "binder_plddt": 48.5,
+      "wt_pae_interaction": null
+    },
+    {
+      "design": "design_0004",
+      "target": "IDH1_R132H_A0101",
+      "sequence": "GRALAVLLLLLLLLLLVAVPGAVPDGGWLLYCDDFEWQPRFPEWQDRYPDRTPDPPTPPGDPPPPPPPDD",
+      "is_binder": false,
+      "is_mutant_specific": false,
+      "discrimination_pae_wt_minus_mut": null,
+      "mut_pae_interaction": 25.669,
+      "binder_plddt": 57.4,
+      "wt_pae_interaction": null
+    }
+  ],
+  "HEADLINE": "6 designs evaluated \u2192 0 credible binders to the MUT pMHC \u2192 0 MUTANT-SPECIFIC (bind mut, not WT). Top = the candidate recognition molecule for the clean neoantigen (in-silico; wet-lab validation = the residual).",
+  "CEILING": "AF2 pae_interaction is the field-standard de novo binder filter (good, not truth); pMHC epitopes are small/flat (most designs fail \u2014 expected); wet-lab expression + SPR + on-cell pMHC context required. NOT a validated molecule."
+}
