@@ -1,0 +1,13 @@
+{
+  "design": "rank_1",
+  "binder_len": 80,
+  "target": "IDH1_R132H_A0101 (HLA-A*01:01 + IIGHHAYGDQY)",
+  "af2_iptm": 0.81, "af2_interface_pAE": 5.75, "af2_plddt": 0.93, "af2_monomer_plddt": 0.98,
+  "bound_unbound_RMSD": 0.25,
+  "contacts_cutoff_A": 4.5,
+  "binder_residues_contacting_peptide": 13,
+  "binder_residues_contacting_MHC": 16,
+  "peptide_position_contacts": {"p4_H_MUTATED": 1, "p5_H": 2, "p6_A": 4, "p7_Y": 9, "p8_G": 1, "p9_D": 1, "p10_Q": 1},
+  "closest_approach_to_mutated_His_p4_A": 2.81,
+  "note": "binder arches over pMHC; touches mutated His(p4) but footprint centers on conserved p5-p7 -> discrimination plausible-not-proven -> WT specificity test pending (Protenix jobs rank1_MUT/rank1_WT, 2026-06-17)"
+}
