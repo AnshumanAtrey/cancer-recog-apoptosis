@@ -1,0 +1,37 @@
+{
+ "tag": "rung26c_pxdesign_specificity_protenix",
+ "target": "IDH1_R132H_A0101 (binder=chain0, MHC=chain1, peptide=chain2), seed 4626, 5 samples",
+ "MUT": {
+  "n_samples": 5,
+  "iptm_mean": 0.9339,
+  "iptm_all": [
+   0.9345,
+   0.9341,
+   0.9338,
+   0.9335,
+   0.9334
+  ],
+  "binder_vs_MHC_iptm": 0.9274,
+  "binder_vs_peptide_iptm": 0.868,
+  "MHC_vs_peptide_iptm": 0.9619,
+  "ranking_score_max": 0.9377
+ },
+ "WT": {
+  "n_samples": 5,
+  "iptm_mean": 0.9337,
+  "iptm_all": [
+   0.9342,
+   0.9338,
+   0.9337,
+   0.9337,
+   0.9332
+  ],
+  "binder_vs_MHC_iptm": 0.9269,
+  "binder_vs_peptide_iptm": 0.8705,
+  "MHC_vs_peptide_iptm": 0.9636,
+  "ranking_score_max": 0.9374
+ },
+ "delta_iptm_mut_minus_wt": 0.0002,
+ "delta_binder_peptide_iptm": -0.0025,
+ "VERDICT": "NOT mutation-specific \u2014 MUT and WT complexes essentially IDENTICAL (iptm 0.934 vs 0.934; binder-peptide iptm 0.868 vs 0.870). The H->R(p4) change makes no difference => binder reads the conserved peptide core, not the mutation (matches the contact-map prediction)."
+}

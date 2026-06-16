@@ -1,0 +1,63 @@
+{
+ "tag": "rung26c_pxdesign_specificity_af2",
+ "target": "IDH1_R132H_A0101",
+ "hotspot": "B4",
+ "thresholds": {
+  "pae_bind": 10.0,
+  "plddt_min": 80.0,
+  "discrimination_min": 3.0
+ },
+ "designs": [
+  {
+   "rank": "1",
+   "len": 80,
+   "mut": {
+    "pae_interaction": 23.337,
+    "binder_plddt": 95.7
+   },
+   "wt": {
+    "pae_interaction": 18.114,
+    "binder_plddt": 94.4
+   },
+   "discrimination_pae_wt_minus_mut": -5.223,
+   "is_binder": false,
+   "mutant_specific": false,
+   "pxdesign_af2ig_iptm": "0.81",
+   "pxdesign_af2ig_ipAE": "5.75"
+  },
+  {
+   "rank": "2",
+   "len": 80,
+   "mut": {
+    "pae_interaction": 23.859,
+    "binder_plddt": 94.9
+   },
+   "wt": {
+    "pae_interaction": 22.352,
+    "binder_plddt": 94.9
+   },
+   "discrimination_pae_wt_minus_mut": -1.507,
+   "is_binder": false,
+   "mutant_specific": false,
+   "pxdesign_af2ig_iptm": "0.74",
+   "pxdesign_af2ig_ipAE": "9.27"
+  },
+  {
+   "rank": "3",
+   "len": 80,
+   "mut": {
+    "pae_interaction": 24.124,
+    "binder_plddt": 93.4
+   },
+   "wt": {
+    "pae_interaction": 23.126,
+    "binder_plddt": 93.6
+   },
+   "discrimination_pae_wt_minus_mut": -0.998,
+   "is_binder": false,
+   "mutant_specific": false,
+   "pxdesign_af2ig_iptm": "0.69",
+   "pxdesign_af2ig_ipAE": "10.18"
+  }
+ ]
+}
