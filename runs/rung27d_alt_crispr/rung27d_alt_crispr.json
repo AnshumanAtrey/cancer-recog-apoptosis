@@ -1,0 +1,331 @@
+{
+  "tag": "rung27d_alt_crispr",
+  "question": "Do SpCas9-NG (NG) and Cas12a (TTTV) rescue the wobble drivers SpCas9-NGG missed (TP53-R175H, R273H)?",
+  "enzymes": {
+    "SpCas9-NG": "PAM 5'-NG-3', 20-nt guide, seed=PAM-proximal 10",
+    "Cas12a": "PAM 5'-TTTV-3' (5' of spacer), 20-nt guide, seed=PAM-proximal 6"
+  },
+  "context": "CDS-local (Ensembl MANE)",
+  "n_wobble": 7,
+  "ngg_missed": [
+    "TP53_R175H",
+    "TP53_R273H"
+  ],
+  "now_rescued_by_alt_enzyme": [
+    "TP53_R175H",
+    "TP53_R273H"
+  ],
+  "still_unrescued": [],
+  "n_wobble_addressable_any_enzyme": 7,
+  "wobble_addressable_any": [
+    "KRAS_G12D",
+    "KRAS_G13D",
+    "IDH1_R132H",
+    "PIK3CA_E545K",
+    "TP53_R175H",
+    "TP53_R248Q",
+    "TP53_R273H"
+  ],
+  "per_driver": {
+    "KRAS_G12D": {
+      "gene": "KRAS",
+      "aa_change": "G12D",
+      "ngg_addressable": true,
+      "addressable_any": true,
+      "first_rescuer": "SpCas9_NGG",
+      "by_enzyme": {
+        "SpCas9_NGG": {
+          "addressable": true,
+          "mech": "SEED",
+          "seed_pos_from_PAM": 1,
+          "guide": "CTTGTGGTAGTTGGAGCTGA",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "TGG",
+            "TGG"
+          ]
+        },
+        "SpCas9_NG": {
+          "addressable": true,
+          "mech": "SEED",
+          "seed_pos_from_PAM": 1,
+          "guide": "CTTGTGGTAGTTGGAGCTGA",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "TG",
+            "TG"
+          ]
+        },
+        "Cas12a_TTTV": {
+          "addressable": false,
+          "mech": "NONE",
+          "seed_pos_from_PAM": null,
+          "guide": null,
+          "strand": null,
+          "pam_mut_vs_wt": [
+            null,
+            null
+          ]
+        }
+      }
+    },
+    "KRAS_G13D": {
+      "gene": "KRAS",
+      "aa_change": "G13D",
+      "ngg_addressable": true,
+      "addressable_any": true,
+      "first_rescuer": "SpCas9_NGG",
+      "by_enzyme": {
+        "SpCas9_NGG": {
+          "addressable": true,
+          "mech": "SEED",
+          "seed_pos_from_PAM": 4,
+          "guide": "GTAGTTGGAGCTGGTGACGT",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "AGG",
+            "AGG"
+          ]
+        },
+        "SpCas9_NG": {
+          "addressable": true,
+          "mech": "SEED",
+          "seed_pos_from_PAM": 1,
+          "guide": "GTGGTAGTTGGAGCTGGTGA",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "CG",
+            "CG"
+          ]
+        },
+        "Cas12a_TTTV": {
+          "addressable": false,
+          "mech": "NONE",
+          "seed_pos_from_PAM": null,
+          "guide": null,
+          "strand": null,
+          "pam_mut_vs_wt": [
+            null,
+            null
+          ]
+        }
+      }
+    },
+    "IDH1_R132H": {
+      "gene": "IDH1",
+      "aa_change": "R132H",
+      "ngg_addressable": true,
+      "addressable_any": true,
+      "first_rescuer": "SpCas9_NGG",
+      "by_enzyme": {
+        "SpCas9_NGG": {
+          "addressable": true,
+          "mech": "SEED",
+          "seed_pos_from_PAM": 10,
+          "guide": "ATCATAGGTCATCATGCTTA",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "TGG",
+            "TGG"
+          ]
+        },
+        "SpCas9_NG": {
+          "addressable": true,
+          "mech": "SEED",
+          "seed_pos_from_PAM": 4,
+          "guide": "CCTATCATCATAGGTCATCA",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "TG",
+            "TG"
+          ]
+        },
+        "Cas12a_TTTV": {
+          "addressable": false,
+          "mech": "NONE",
+          "seed_pos_from_PAM": null,
+          "guide": null,
+          "strand": null,
+          "pam_mut_vs_wt": [
+            null,
+            null
+          ]
+        }
+      }
+    },
+    "PIK3CA_E545K": {
+      "gene": "PIK3CA",
+      "aa_change": "E545K",
+      "ngg_addressable": true,
+      "addressable_any": true,
+      "first_rescuer": "SpCas9_NGG",
+      "by_enzyme": {
+        "SpCas9_NGG": {
+          "addressable": true,
+          "mech": "SEED",
+          "seed_pos_from_PAM": 4,
+          "guide": "TCTCTCTGAAATCACTAAGC",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "AGG",
+            "AGG"
+          ]
+        },
+        "SpCas9_NG": {
+          "addressable": true,
+          "mech": "SEED",
+          "seed_pos_from_PAM": 1,
+          "guide": "TCCTCTCTCTGAAATCACTA",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "AG",
+            "AG"
+          ]
+        },
+        "Cas12a_TTTV": {
+          "addressable": false,
+          "mech": "MID",
+          "seed_pos_from_PAM": 8,
+          "guide": "TCCTGCTTAGTGATTTCAGA",
+          "strand": "-",
+          "pam_mut_vs_wt": [
+            "TTTC",
+            "TTTC"
+          ]
+        }
+      }
+    },
+    "TP53_R175H": {
+      "gene": "TP53",
+      "aa_change": "R175H",
+      "ngg_addressable": false,
+      "addressable_any": true,
+      "first_rescuer": "SpCas9_NG",
+      "by_enzyme": {
+        "SpCas9_NGG": {
+          "addressable": false,
+          "mech": "NONE",
+          "seed_pos_from_PAM": null,
+          "guide": null,
+          "strand": null,
+          "pam_mut_vs_wt": [
+            null,
+            null
+          ]
+        },
+        "SpCas9_NG": {
+          "addressable": true,
+          "mech": "SEED",
+          "seed_pos_from_PAM": 2,
+          "guide": "TGACGGAGGTTGTGAGGCAC",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "TG",
+            "TG"
+          ]
+        },
+        "Cas12a_TTTV": {
+          "addressable": false,
+          "mech": "NONE",
+          "seed_pos_from_PAM": null,
+          "guide": null,
+          "strand": null,
+          "pam_mut_vs_wt": [
+            null,
+            null
+          ]
+        }
+      }
+    },
+    "TP53_R248Q": {
+      "gene": "TP53",
+      "aa_change": "R248Q",
+      "ngg_addressable": true,
+      "addressable_any": true,
+      "first_rescuer": "SpCas9_NGG",
+      "by_enzyme": {
+        "SpCas9_NGG": {
+          "addressable": true,
+          "mech": "SEED",
+          "seed_pos_from_PAM": 2,
+          "guide": "GCATGGGCGGCATGAACCAG",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "AGG",
+            "AGG"
+          ]
+        },
+        "SpCas9_NG": {
+          "addressable": true,
+          "mech": "SEED",
+          "seed_pos_from_PAM": 1,
+          "guide": "GATGGTGAGGATGGGCCTCT",
+          "strand": "-",
+          "pam_mut_vs_wt": [
+            "GG",
+            "GG"
+          ]
+        },
+        "Cas12a_TTTV": {
+          "addressable": false,
+          "mech": "NONE",
+          "seed_pos_from_PAM": null,
+          "guide": null,
+          "strand": null,
+          "pam_mut_vs_wt": [
+            null,
+            null
+          ]
+        }
+      }
+    },
+    "TP53_R273H": {
+      "gene": "TP53",
+      "aa_change": "R273H",
+      "ngg_addressable": false,
+      "addressable_any": true,
+      "first_rescuer": "SpCas9_NG",
+      "by_enzyme": {
+        "SpCas9_NGG": {
+          "addressable": false,
+          "mech": "DISTAL",
+          "seed_pos_from_PAM": 16,
+          "guide": "GTGCATGTTTGTGCCTGTCC",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "TGG",
+            "TGG"
+          ]
+        },
+        "SpCas9_NG": {
+          "addressable": true,
+          "mech": "SEED",
+          "seed_pos_from_PAM": 1,
+          "guide": "CGGAACAGCTTTGAGGTGCA",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "TG",
+            "TG"
+          ]
+        },
+        "Cas12a_TTTV": {
+          "addressable": false,
+          "mech": "MID",
+          "seed_pos_from_PAM": 7,
+          "guide": "AGGTGCATGTTTGTGCCTGT",
+          "strand": "+",
+          "pam_mut_vs_wt": [
+            "TTTG",
+            "TTTG"
+          ]
+        }
+      }
+    }
+  },
+  "HEADLINE": "Of the 2 wobble driver(s) SpCas9-NGG missed (['TP53_R175H', 'TP53_R273H']), 2 are rescued by an alt enzyme (['TP53_R175H', 'TP53_R273H']); none left unrescued. Combining SpCas9-NGG + NG + Cas12a, 7/7 wobble drivers are DNA-addressable with a designed allele-specific guide. Rescues come via SEED (G>A destroys a G / makes an A, so it rarely CREATES an NG or TTTV PAM) \u2014 the wider NG PAM density supplies a nearby PAM that puts the SNV in the seed, exactly the engineered purpose of SpCas9-NG.",
+  "CEILING": [
+    "CDS-local; SEED near exon edges needs intron-aware genomic confirmation; PAM_CREATED codon-local-robust.",
+    "Relaxed PAMs (NG esp.) raise genome-wide OFF-target liability -> PAM+seed available is necessary NOT sufficient; real allele-specific cutting + off-target profile = wet-lab residual; NG/Cas12a on-target efficiency is context-dependent and generally below NGG.",
+    "enAsCas12a (TTYN) / SpRY (near-PAMless) relax further but worsen the off-target trade -> not scanned."
+  ]
+}
