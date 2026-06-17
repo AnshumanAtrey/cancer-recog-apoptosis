@@ -16,10 +16,19 @@ The discrimination-forced redesign that RUNG-26c's specificity NULL pointed to. 
 
 **Difficulty (`difficulty_gauge.png`): still ≤5% (hardest tier)** on both AF2-IG and Protenix passing rates even with the hotspot set — so 1 dual-passer out of 65 is a genuine result, not noise.
 
-## OPEN TEST — specificity (the whole point), NOT yet done
-The B4 hotspot **biases** every design to contact the mutated His, but passing the binder filters ≠ discriminating MUT from WT — a binder can contact B4 *and* the conserved core and still bind both. **Pending (next, GPU):** score rank_1 (and the other dual/Protenix passers) vs **MUT and WT** pMHC on AF2 (`binder_specificity_rank1_colab`, repoint to this summary.csv) **and** Protenix webserver (rank_1 + MUT/WT, seed-matched), compute Δiptm / Δ-ipAE.
-- **WIN** = WT clearly worse than MUT (the B4 hotspot worked → first mutation-specific de novo binder for a no-natural-TCR neoantigen).
-- **NULL** = MUT≈WT again → the binder reads B4 *plus* conserved residues; tighten further (hotspot B4 only + crop tighter, or shorter binder, or penalize conserved-core contact).
+## SPECIFICITY VERDICT (2026-06-17) — NULL again: binds, doesn't discriminate (forcing the hotspot on the mutation did NOT solve it)
+
+AF2 cross-check (`specificity_af2.json`) of the 13 Protenix-passers vs MUT & WT pMHC:
+- **2/13 are AF2 binders** (MUT pae ≤10): **rank_1** (MUT pae **5.12**, plddt 93, ptx_iptm 0.939) and rank_11 (MUT 8.56).
+- **0/13 mutant-specific.** Both binders bind **WT as well or slightly better**: rank_1 DISC = **−0.87** (WT 4.25 < MUT 5.12), rank_11 DISC −0.53. Non-binders' DISC is noise (incl. rank_4 which prefers WT, −12.7).
+
+**This is a robust negative, not an AF2 blind spot:** AF2 *confidently* binds rank_1 to BOTH MUT (5.12) and WT (4.25) — it's not "can't resolve the difference," it's "clearly binds both." And it converges with RUNG-26c (Protenix MUT≈WT, Δiptm 0.0002). So across **two design strategies** (free footprint vs hotspot-forced-on-B4) and **three models** (PXDesign AF2-IG, ColabDesign AF2, Protenix): de novo binders to IDH1-R132H/A*01:01 **bind the pMHC but do not discriminate the His↔Arg substitution.**
+
+**Why:** His→Arg are both bulky; a pocket that fits one tends to tolerate the other. **Positive design (PXDesign + a hotspot) only makes the binder *contact* the residue — it does not make the contact *His-specific*.** Discrimination needs **explicit negative design** (design vs MUT *and against* WT — e.g. Baker's ProteinMPNN off-target-penalty pipeline, or two-state AF2), which neither PXDesign nor a hotspot provides. At generate-and-filter scale (65 designs → 2 binders → 0 specific), the discriminating fraction for this subtle swap is ~0.
+
+**Consequence for the arc:** the EXTERNAL key (de novo binder) is **bounded for subtle substitutions** like R132H. The route that *does* discriminate IDH1-R132H is the INTERNAL key — RUNG-27c's allele-specific **CRISPR/DNA** sensor (no His↔Arg ambiguity at the DNA level). This sharpens, not breaks, the thesis: subtle-substitution neoantigens → internal mutation-sensing; the external binder needs negative design or a chemically-bigger substitution (e.g. BRAF V600E, V→E).
+
+**NEXT options (Anshuman's call):** (a) explicit **negative design** (ProteinMPNN off-target / two-state) — the principled fix, more engineering; (b) re-target **BRAF-V600E** (V→E = far bigger chemical change → easier to discriminate; RUNG-27a: real epitope, no natural TCR); (c) accept the honest bound and lean on the internal CRISPR key for IDH1-R132H.
 
 ## Ceiling
 In-silico; AF2-IG (permissive, initial-guess) + Protenix (stricter) confidence = structural plausibility, NOT measured affinity or specificity; hotspot biases contact, doesn't prove discrimination; mut-vs-WT + proteome off-target + expression/SPR = wet-lab residual. A prioritized candidate pending the specificity gate.
