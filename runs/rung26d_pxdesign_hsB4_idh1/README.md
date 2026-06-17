@@ -28,7 +28,15 @@ AF2 cross-check (`specificity_af2.json`) of the 13 Protenix-passers vs MUT & WT 
 
 **Consequence for the arc:** the EXTERNAL key (de novo binder) is **bounded for subtle substitutions** like R132H. The route that *does* discriminate IDH1-R132H is the INTERNAL key — RUNG-27c's allele-specific **CRISPR/DNA** sensor (no His↔Arg ambiguity at the DNA level). This sharpens, not breaks, the thesis: subtle-substitution neoantigens → internal mutation-sensing; the external binder needs negative design or a chemically-bigger substitution (e.g. BRAF V600E, V→E).
 
-**NEXT options (Anshuman's call):** (a) explicit **negative design** (ProteinMPNN off-target / two-state) — the principled fix, more engineering; (b) re-target **BRAF-V600E** (V→E = far bigger chemical change → easier to discriminate; RUNG-27a: real epitope, no natural TCR); (c) accept the honest bound and lean on the internal CRISPR key for IDH1-R132H.
+## MECHANISTIC AUTOPSY of rank_1 (why the hotspot didn't help) — from `top_designs/rank_1.cif`
+The B4 hotspot **worked** (binder contacts p4, 3.56 Å) — but the binder **wraps the ENTIRE peptide**: min binder-distance per peptide position = p1 2.55 / p2 2.40 / p3 2.93 / **p4 3.56** / p5 3.44 / p6 3.14 / p7 2.49 / p8 2.23 / p9 2.81 / p10 3.04 / p11 2.52 Å. The mutated p4 is the **loosest** contact among 10 conserved residues gripped at 2.2–3.1 Å. So binding energy is dominated by the conserved peptide+MHC surface; the single His↔Arg is energetically marginal → MUT≈WT. **A hotspot ADDS a contact; it cannot make binding DEPEND on the mutation.** Discrimination requires **negative design** — explicitly penalizing WT binding so the binder *cannot* succeed via the conserved core alone (positive design has no term for "fail on WT"). This is the structural proof behind the NULL.
+
+## DECISION (2026-06-17) — not Anshuman's call, the data's call
+- **IDH1-R132H external binder: STOP.** His↔Arg is beyond positive design (proven). IDH1-R132H is **already covered by the internal key** (RUNG-27c allele-specific CRISPR/DNA sensor — perfect discrimination at the DNA level). Right tool, not defeat.
+- **De novo specific-binder artifact → pursue BRAF-V600E/HLA-A\*01:01** (`pep_mut ATEKSRWSGSH`, `pep_wt ATVKSRWSGSH`, mutation at **p3**, V→E). V→E is a small-hydrophobic→charged-carboxylate swap — a binder optimized for the Glu (e.g. a salt-bridging Lys/Arg) leaves a buried *unsatisfied charge* on WT-Val → real destabilization → genuine discrimination handle, unlike His↔Arg. Same HLA-A\*01:01 groove we already have. RUNG-27a: real epitope, no natural TCR → de novo is the route; melanoma ~50% driver.
+- **In parallel, build the principled fix:** negative design (ProteinMPNN off-target penalty / two-state AF2) — the only method that *can* discriminate the hard substitutions.
+
+Pipeline for BRAF = the one we just proved: fold BRAF-V600E pMHC → pre-crop (peptide + 10 Å groove) → PXDesign Extended, hotspot on **p3** → score MUT vs WT (AF2 + Protenix). See `runs/rung26e_braf_v600e/`.
 
 ## Ceiling
 In-silico; AF2-IG (permissive, initial-guess) + Protenix (stricter) confidence = structural plausibility, NOT measured affinity or specificity; hotspot biases contact, doesn't prove discrimination; mut-vs-WT + proteome off-target + expression/SPR = wet-lab residual. A prioritized candidate pending the specificity gate.
