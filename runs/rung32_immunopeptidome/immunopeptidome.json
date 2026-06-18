@@ -1,0 +1,68 @@
+{
+  "tag": "rung32_immunopeptidome_benign",
+  "source": "HLA Ligand Atlas rel 2020.12 (benign, 227 samples, 90k HLA-I ligands)",
+  "donor_coverage": {
+    "A*03:01": 4,
+    "A*11:01": 6,
+    "total_donors": 21
+  },
+  "detection_capability_A03_A11_9to11mers": 43670,
+  "interpretation": "MUT absent = correct (tumour-only). PIK3CA WT ABSENT (with A*03/11 donors present) = real-data support for the presentation flip. KRAS WT PRESENT = no flip -> the binder must read the G12D mutation (validates hotspot-on-p6).",
+  "results": [
+    {
+      "label": "PIK3CA_E545K_MUT",
+      "peptide": "STRDPLSEITK",
+      "expectation": "absent (tumour-only)",
+      "found": false,
+      "hla_class": null,
+      "alleles": null,
+      "tissues": null
+    },
+    {
+      "label": "PIK3CA_E545K_WT",
+      "peptide": "STRDPLSEITE",
+      "expectation": "ABSENT if flip real (WT unpresented)",
+      "found": false,
+      "hla_class": null,
+      "alleles": null,
+      "tissues": null
+    },
+    {
+      "label": "KRAS_G12D_MUT",
+      "peptide": "VVVGADGVGK",
+      "expectation": "absent (tumour-only)",
+      "found": false,
+      "hla_class": null,
+      "alleles": null,
+      "tissues": null
+    },
+    {
+      "label": "KRAS_G12D_WT",
+      "peptide": "VVVGAGGVGK",
+      "expectation": "PRESENT if no flip (WT is self) -> read-the-mutation needed",
+      "found": true,
+      "hla_class": "HLA-I",
+      "alleles": "n/A*01:01,n/B*07:02,n/B*49:01,n/C*07:01,n/C*07:02,w/A*11:01",
+      "tissues": "Lung,Testis"
+    },
+    {
+      "label": "TP53_R248W_MUT",
+      "peptide": "SSCMGGMNW",
+      "expectation": "absent (tumour-only)",
+      "found": false,
+      "hla_class": null,
+      "alleles": null,
+      "tissues": null
+    },
+    {
+      "label": "TP53_R248W_WT",
+      "peptide": "SSCMGGRNW",
+      "expectation": "flip target on B*57:01",
+      "found": false,
+      "hla_class": null,
+      "alleles": null,
+      "tissues": null
+    }
+  ],
+  "residual": "benign atlas only (21 donors); MUT-in-tumour presentation needs caAtlas/IEDB (next layer)."
+}
