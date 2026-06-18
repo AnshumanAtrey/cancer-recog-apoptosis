@@ -1,0 +1,15 @@
+{
+ "gene": "PIK3CA",
+ "mutation": "E545K",
+ "allele": "HLA-A*03:01",
+ "allele_secondary": "HLA-A*11:01",
+ "pep_mut": "STRDPLSEITK",
+ "pep_wt": "STRDPLSEITE",
+ "p_in_pep": 11,
+ "mutation_role": "C-terminal anchor (p11). MUT Lys = A*03/A*11 basic-C-term anchor; WT Glu = anchor-dead.",
+ "groove_A0301": "SHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDQETRNVKAQSQTDRVDLGTLRGYYNQSEAGSHTIQIMYGCDVGSDGRFLRGYRQDAYDGKDYIALNEDLRSWTAADMAAQITKRKWEAAHEAEQLRAYLDGTCVEWLRRYLENGKETLQRTD",
+ "groove_source": "UniProt P04439 (HLA-A*03:01), mature alpha1-alpha2 platform (res 2-183), 15 polymorphisms vs the A*01:01 groove used in RUNG-26",
+ "mhcflurry": {"mut_affinity_nM": 51.2, "mut_presentation": 0.825, "wt_affinity_nM": 20331.2, "wt_presentation": 0.006, "flip_ratio": 397, "allele_A1101": {"mut_nM": 41.5, "wt_nM": 13227.3, "flip": 318}},
+ "design_note": "NO hotspot on the mutation (p11 is a BURIED C-terminal anchor, not surface). Design a STRONG binder to the up-facing MUT-pMHC surface (free footprint, like RUNG-26c). Selectivity comes from differential PRESENTATION (WT unpresented), NOT from the binder reading the mutation -> sidesteps the IDH1/BRAF wall; no negative design needed.",
+ "pipeline": "Protenix fold MUT pMHC (groove_A0301 + STRDPLSEITK) [+ WT for record] -> pre-crop -> PXDesign Extended (strong binder, no mutation-hotspot) -> confirm binder folds vs MUT pMHC; the strong binder is the artifact."
+}
