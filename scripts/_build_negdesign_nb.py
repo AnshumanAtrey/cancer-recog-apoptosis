@@ -215,7 +215,23 @@ for k, c in enumerate(cand):
               open(f'{OUTDIR}/af2_confirm.json', 'w'), indent=2)
 n_spec = sum(x['mutant_specific'] for x in results)
 print(f"\\n=== {n_spec}/{len(results)} AF2-confirmed mutant-specific ===")
-print(f"[saved] {OUTDIR}/af2_confirm.json  — git add/commit from the repo to persist")
+
+# PERSIST: the repo clone is on the EPHEMERAL Colab VM (no push creds) -> results vanish on disconnect.
+# Copy both JSONs to Drive (persistent) AND trigger a browser download.
+import shutil
+DRIVE_OUT = f"/content/drive/MyDrive/cancer-recon/{CFG['tag']}"
+os.makedirs(DRIVE_OUT, exist_ok=True)
+for f in ['candidates.json', 'af2_confirm.json']:
+    src = f'{OUTDIR}/{f}'
+    if os.path.exists(src):
+        shutil.copy(src, f'{DRIVE_OUT}/{f}')
+print(f"[persisted to Drive] {DRIVE_OUT}/  (candidates.json + af2_confirm.json)")
+try:
+    from google.colab import files
+    files.download(f'{OUTDIR}/af2_confirm.json'); files.download(f'{OUTDIR}/candidates.json')
+except Exception as _e:
+    print('download skipped:', _e)
+print("Send me af2_confirm.json (or the console output) and I commit it to the repo from M2.")
 """)
 
 md(r"""## Reading the result (honest bars)

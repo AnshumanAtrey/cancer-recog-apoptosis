@@ -1,0 +1,24 @@
+{
+  "tag": "rung26f_negdesign_idh1_af2_confirm",
+  "source": "reconstructed faithfully from the Colab Cell-3 console output (2026-06-18); the original af2_confirm.json was written to the ephemeral Colab VM and not pushed",
+  "target": "IDH1_R132H_A0101 (pep MUT IIGHHAYGDQY / WT IIGRHAYGDQY, p4)",
+  "backbones": "3 repo PXDesign dual-passers (rank_1/2/3); max_drive=0 (155 weak RFdiffusion backbones excluded)",
+  "bars": {"pae_bind": 10.0, "plddt_min": 80.0, "discrimination_min": 3.0},
+  "n_confirmed_mutant_specific": 0,
+  "n_candidates": 12,
+  "verdict": "NULL — 0/12 mutant-specific. ALL 12 are no-bind in ColabDesign AF2 (MUT pae 22-25 >> 10) and discrimination (pae_WT - pae_MUT) is <=0 for all (several bind WT better, e.g. -4.06). Negative design produced weakly-MUT-preferring MPNN sequences (dscore +0.008..+0.015, at the noise floor) that neither dock confidently nor discriminate. Confirms His<->Arg is intractable for a de novo binder even with the principled two-state method.",
+  "results": [
+    {"rank": 1, "mpnn_dscore": 0.0150, "mut_pae": 25.612, "mut_plddt": 94.7, "wt_pae": 24.939, "af2_disc": -0.673, "verdict": "no-bind", "backbone": "rank_2.cif", "seq": "SAELQTLDAELATLKADLAAFPTRWANWLAQLATLPPAARAAALAAELRGLDGELALLEEFRKRAAEVFDEERRAEADEVIAARTAALRAARAELEALMA"},
+    {"rank": 2, "mpnn_dscore": 0.0137, "mut_pae": 25.510, "mut_plddt": 91.2, "wt_pae": 24.323, "af2_disc": -1.187, "verdict": "no-bind", "backbone": "rank_2.cif", "seq": "SSTLQTLQAEFATLEAELATFPANWANFLANLETLPAAERAAVLAAELAGLDGELAYLDELLEEAKQHLSPEEYAKFEQVVATRRAQLAAARAQLQALAK"},
+    {"rank": 3, "mpnn_dscore": 0.0129, "mut_pae": 23.432, "mut_plddt": 93.9, "wt_pae": 22.422, "af2_disc": -1.010, "verdict": "no-bind", "backbone": "rank_1.cif", "seq": "DETFEEIIKLLEEILKLIKEIAEKEKDPELKAELEAVARSLEGFIKLFKETKDVKLALAELKGLKAWLEKIKPRLNEEQKELADKALKLVDEAIKLLEAQ"},
+    {"rank": 4, "mpnn_dscore": 0.0124, "mut_pae": 22.972, "mut_plddt": 93.2, "wt_pae": 19.708, "af2_disc": -3.264, "verdict": "no-bind", "backbone": "rank_2.cif", "seq": "SAELQTLRAELGTLEAKLAAFDENWAIFLENLERLPPEQRAAVLAAELRGLDGELAYLDEFRAKAKALLGPEEYAHAAKVIDELRAKLEAARAELEALAA"},
+    {"rank": 5, "mpnn_dscore": 0.0121, "mut_pae": 22.376, "mut_plddt": 92.9, "wt_pae": 22.377, "af2_disc": 0.001, "verdict": "no-bind", "backbone": "rank_1.cif", "seq": "DATWERILELLERIAELLQQMADAETDPRLKARLEAEYRSLQGLIALFRETKDVAYLLAEMKGLLAQLAVIQPELDAAQKALAAEAAALVQEAIALLNSL"},
+    {"rank": 6, "mpnn_dscore": 0.0113, "mut_pae": 24.189, "mut_plddt": 92.1, "wt_pae": 20.131, "af2_disc": -4.058, "verdict": "no-bind", "backbone": "rank_2.cif", "seq": "SVLKQTLNAEFNTYKAELARFPENWAIWLENLETLPAAERAAALAAELRSLDGYLKRLEEFEKEAKKVFNEKEYAEAKKVIDELKAKIEAARAELEALMK"},
+    {"rank": 7, "mpnn_dscore": 0.0111, "mut_pae": 23.906, "mut_plddt": 87.9, "wt_pae": 21.893, "af2_disc": -2.013, "verdict": "no-bind", "backbone": "rank_2.cif", "seq": "STRRQTLAAELATLQAELASFPANWALFLENLATLPPAERAAVLAAELRGLDGRLAHLDALRAEAARLLDAEELAQAQRVIDELRAALEAARAELRALAA"},
+    {"rank": 8, "mpnn_dscore": 0.0111, "mut_pae": 24.657, "mut_plddt": 84.8, "wt_pae": 23.136, "af2_disc": -1.521, "verdict": "no-bind", "backbone": "rank_3.cif", "seq": "EEAEVRAEYQVLSDELLAKANAISAAAGAQMLAAGGDYEAKLAIMDQELKELAAVLQANLPLLERLLARAPAGSDLERELRAMLASRDHLAAYVAKLAAE"},
+    {"rank": 9, "mpnn_dscore": 0.0093, "mut_pae": 24.702, "mut_plddt": 89.8, "wt_pae": 23.520, "af2_disc": -1.182, "verdict": "no-bind", "seq": "(not in console printout; ranks 9-12 seqs are in the VM candidates.json)"},
+    {"rank": 10, "mpnn_dscore": 0.0085, "mut_pae": 25.047, "mut_plddt": 95.0, "wt_pae": 24.413, "af2_disc": -0.634, "verdict": "no-bind"},
+    {"rank": 11, "mpnn_dscore": 0.0084, "mut_pae": 25.285, "mut_plddt": 90.8, "wt_pae": 24.503, "af2_disc": -0.782, "verdict": "no-bind"},
+    {"rank": 12, "mpnn_dscore": 0.0083, "mut_pae": 24.844, "mut_plddt": 87.8, "wt_pae": 23.230, "af2_disc": -1.614, "verdict": "no-bind"}
+  ]
+}

@@ -1,5 +1,15 @@
 # RUNG-26f — ProteinMPNN two-state **negative design**: the principled fix RUNG-26d's autopsy demanded
 
+> **FINAL VERDICT (2026-06-18, GPU AF2 confirm, `af2_confirm_idh1.json`): NULL — 0/12 mutant-specific.**
+> Ran the full pipeline on a clean T4: ProteinMPNN two-state generation on the 3 PXDesign dual-passer
+> backbones → 12 top-dscore candidates → AF2 two-state confirm. **All 12 are no-bind (MUT pae 22-25 ≫ 10)
+> and every discrimination is ≤ 0** (several bind WT *better*, e.g. −4.06). So across **positive design
+> (NULL ×3 models)** AND the **principled negative design (NULL)**, IDH1-R132H's His↔Arg is **intractable
+> for a de novo binder** — the substitution is too subtle/buried to grip. IDH1-R132H stays covered by the
+> **internal CRISPR key** (RUNG-27d). This is exactly why the external-binder effort pivoted to a
+> **presentation-flip** target (PIK3CA-E545K, RUNG-28/29) where the binder needn't discriminate at all.
+> The method itself is validated and reusable (the scorer doesn't hallucinate discrimination; see below).
+
 RUNG-26c/d proved de novo binders to IDH1-R132H/HLA-A\*01:01 **bind but don't discriminate** His↔Arg
 (NULL across AF2-IG, ColabDesign-AF2, Protenix). The autopsy showed *why*: positive design + a hotspot
 makes the binder **contact** the mutation but cannot make binding **depend** on it. The only method that
