@@ -76,8 +76,20 @@ print('[CELL 1] done')
 """)
 
 code(r"""#@title Cell 2 — ProteinMPNN two-state GENERATION across backbones -> rank by dscore
-import os, glob, json, importlib.util
+import os, glob, json, importlib.util, gc
 import numpy as np
+import torch
+
+# --- clean-kernel guard: a dirty re-run leaves the GPU full -> cryptic deep OOM. Fail loud instead. ---
+gc.collect()
+if torch.cuda.is_available():
+    torch.cuda.empty_cache()
+    _free, _tot = torch.cuda.mem_get_info()
+    print(f'GPU free {_free/1e9:.1f} / {_tot/1e9:.1f} GB')
+    assert _free / 1e9 > 6.0, (
+        f'Only {_free/1e9:.1f} GB free -> a previous run left the GPU allocated (same kernel). '
+        'Fix: Runtime > Restart runtime (or Disconnect and delete runtime), then run Cell 1 -> 2 -> 3 '
+        'ONCE top-to-bottom. Re-running cells in a dirty kernel cannot reclaim the leaked memory.')
 
 # ====================== CONFIG — edit here to repoint the target ======================
 CFG = dict(
@@ -160,6 +172,7 @@ try:
     if _nd is not None:
         _nd.load_model.__globals__['_MODEL']['m'] = None
     gc.collect(); torch.cuda.empty_cache()
+    _f, _t = torch.cuda.mem_get_info(); print(f'GPU free after torch teardown: {_f/1e9:.1f} / {_t/1e9:.1f} GB')
 except Exception as _e:
     print('torch teardown skipped:', _e)
 from colabdesign import mk_afdesign_model, clear_mem
