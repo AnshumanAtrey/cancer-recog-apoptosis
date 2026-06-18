@@ -44,7 +44,7 @@ synthesis in `CAPSTONE.md`; the live one-page state in `STATUS.md`.
 | C3 | **External key** — de novo pMHC binder can discriminate IDH1-R132H (His↔Arg) | ❌ REFUTED — binds but can't discriminate (NULL ×4: AF2-IG, ColabDesign, Protenix, + negative design) | R26c/d/f |
 | C4 | External key works for BRAF-V600E | ❌ REFUTED — mutation buried (2% exposed) + weakly presented (3971 nM) | R26e |
 | C5 | Pick binder targets by a presentation/exposure SCREEN, not prestige | ✅ CONFIRMED — screen found 3 presentation-flip + 34 up-facing read-the-mutation targets | R28 |
-| C6 | **PIK3CA-E545K/A\*03:01** — presentation flip (WT unpresented) → binder auto-specific | 🔄 IN-FLIGHT — fold queued (~24h) | R29 |
+| C6 | **PIK3CA-E545K/A\*03:01** — presentation flip (WT unpresented) → binder auto-specific | 🔄 IN-FLIGHT — folds LANDED (iptm 0.95/0.97), staged + cropped; PXDesign next | R29 |
 | C7 | **KRAS-G12D/A\*03:01** — read-the-mutation (p6 up-facing, Gly→Asp presence/absence) | 🔄 IN-FLIGHT — fold queued | R30 |
 
 ## D. The 15 conceptual hypotheses (`docs/hypothesis-to-consider.txt`) — cross-referenced & crossed off
