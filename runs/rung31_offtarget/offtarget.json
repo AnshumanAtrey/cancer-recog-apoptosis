@@ -1,0 +1,119 @@
+{
+  "tag": "rung31_offtarget_firstpass",
+  "scope": "Ensembl GRCh38 coding transcriptome; pigeonhole exhaustive <=2 mismatches + PAM, both strands; mm3+ and intronic/intergenic = residual (Cas-OFFinder on GRCh38).",
+  "n_transcripts": 206723,
+  "max_mm": 2,
+  "sanity_all_pass": true,
+  "interpretation": "on_target_min_mm ~1 (guide vs WT reference = designed SNV) = sanity OK. DANGEROUS = a mm0/mm1 off-target in ANOTHER gene (would cut normal cells).",
+  "guides": [
+    {
+      "label": "KRAS_G12D",
+      "gene": "KRAS",
+      "enzyme": "SpCas9-NGG",
+      "on_target_min_mm": 1,
+      "sanity_ok": true,
+      "offtarget_by_mm": {
+        "0": 0,
+        "1": 0,
+        "2": 1
+      },
+      "closest_offtarget_mm": 2,
+      "n_offtarget_genes": 1,
+      "closest_offtarget_genes": {
+        "KRASP1": 2
+      }
+    },
+    {
+      "label": "KRAS_G13D",
+      "gene": "KRAS",
+      "enzyme": "SpCas9-NGG",
+      "on_target_min_mm": 1,
+      "sanity_ok": true,
+      "offtarget_by_mm": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "closest_offtarget_mm": null,
+      "n_offtarget_genes": 0,
+      "closest_offtarget_genes": {}
+    },
+    {
+      "label": "IDH1_R132H",
+      "gene": "IDH1",
+      "enzyme": "SpCas9-NGG",
+      "on_target_min_mm": 1,
+      "sanity_ok": true,
+      "offtarget_by_mm": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "closest_offtarget_mm": null,
+      "n_offtarget_genes": 0,
+      "closest_offtarget_genes": {}
+    },
+    {
+      "label": "PIK3CA_E545K",
+      "gene": "PIK3CA",
+      "enzyme": "SpCas9-NGG",
+      "on_target_min_mm": 1,
+      "sanity_ok": true,
+      "offtarget_by_mm": {
+        "0": 0,
+        "1": 0,
+        "2": 1
+      },
+      "closest_offtarget_mm": 2,
+      "n_offtarget_genes": 1,
+      "closest_offtarget_genes": {
+        "?": 2
+      }
+    },
+    {
+      "label": "TP53_R248Q",
+      "gene": "TP53",
+      "enzyme": "SpCas9-NGG",
+      "on_target_min_mm": 1,
+      "sanity_ok": true,
+      "offtarget_by_mm": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "closest_offtarget_mm": null,
+      "n_offtarget_genes": 0,
+      "closest_offtarget_genes": {}
+    },
+    {
+      "label": "TP53_R175H",
+      "gene": "TP53",
+      "enzyme": "SpCas9-NG",
+      "on_target_min_mm": 1,
+      "sanity_ok": true,
+      "offtarget_by_mm": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "closest_offtarget_mm": null,
+      "n_offtarget_genes": 0,
+      "closest_offtarget_genes": {}
+    },
+    {
+      "label": "TP53_R273H",
+      "gene": "TP53",
+      "enzyme": "SpCas9-NG",
+      "on_target_min_mm": 1,
+      "sanity_ok": true,
+      "offtarget_by_mm": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "closest_offtarget_mm": null,
+      "n_offtarget_genes": 0,
+      "closest_offtarget_genes": {}
+    }
+  ]
+}
