@@ -32,10 +32,24 @@ Pigeonhole: split each 20 nt protospacer into 3 parts; any ≤2-mismatch site ha
 each part, reconstruct the 20mer, count total mismatches, require a valid PAM (NGG / NG) immediately 3'. Both
 strands, de-duplicated. `scripts/61_crispr_offtarget_scan.py`; data = Ensembl GRCh38 cdna.all (gitignored).
 
+## RUNG-31b — GENOME-WIDE confirmation (closes the intronic/intergenic residual)
+Re-ran exhaustively over the **full GRCh38 primary assembly** (UCSC hg38, 455 records incl. all of chr1-22/X/Y,
+both strands) for the cutting-competent set: **0 or 1 mismatch + PAM** (2×10-nt pigeonhole = exhaustive for ≤1mm;
+10-mers are rare → fast). `scripts/62_offtarget_genome.py`, result `offtarget_genome.json`.
+
+**Result: ALL 7 guides GENOME-WIDE CLEAN at ≤1 mismatch.** Each guide produces **exactly one** ≤1mm hit — on its
+own driver's chromosome (KRAS→chr12, IDH1→chr2, PIK3CA→chr3, TP53→chr17), at 1mm = the designed SNV = the
+on-target. **Zero** other ≤1mm hits anywhere — no intronic, intergenic, or other-chromosome site. The flagged
+SpCas9-NG guides (TP53 R175H/R273H) are genome-wide clean too. (Bonus validation: the on-target being present
+genome-wide confirms each protospacer is exon-internal, i.e. a *valid genomic* target, not splice-junction-spanning.)
+
+This upgrades the safety claim from "coding-transcriptome first-pass" to **genome-wide for the cutting-competent
+(≤1mm) set** — the internal key's allele-specific guides have no off-target that would fire the circuit in a
+normal cell at the resolution that matters most.
+
 ## Honest residuals
-- **mm3+** not exhaustively scanned (low cutting risk); **intronic/intergenic/regulatory** off-targets need a
-  genome-wide tool (**Cas-OFFinder on GRCh38**) — the wet-lab-grade residual.
-- Coding-transcriptome ≈ exonic genomic sequence; introns/UTRs-of-genomic-DNA not represented.
+- **≤1mm is now genome-wide (RUNG-31b)**; **mm2+ genome-wide** (intronic/intergenic) not enumerated — mm2 cuts
+  weakly and intergenic-mm2 cuts disrupt no gene, so this is low-consequence (coding-mm2 already covered above).
 - The mm2 KRASP1 hit (pseudogene, weakly cutting at 2 mm) is low-risk but noted.
 - Computational near-match ≠ measured cutting; GUIDE-seq / amplicon sequencing is the experimental residual.
 

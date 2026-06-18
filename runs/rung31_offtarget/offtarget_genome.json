@@ -1,0 +1,86 @@
+{
+  "tag": "rung31b_offtarget_genome_wide",
+  "scope": "Ensembl GRCh38 primary assembly, both strands, exhaustive <=1 mismatch + PAM (2x10nt pigeonhole). mm2+ and measured cutting (GUIDE-seq) = residual.",
+  "max_mm": 1,
+  "all_clean_le1mm": true,
+  "interpretation": "on-target = 1mm hit on the driver's own chromosome (the SNV). Any other <=1mm hit = a real off-target that would cut normal cells.",
+  "guides": [
+    {
+      "label": "KRAS_G12D",
+      "gene": "KRAS",
+      "enzyme": "SpCas9-NGG",
+      "on_chrom": "12",
+      "on_target_1mm_hits": 1,
+      "sanity_ok": true,
+      "offtarget_le1mm": [],
+      "n_offtarget_le1mm": 0,
+      "clean": true
+    },
+    {
+      "label": "KRAS_G13D",
+      "gene": "KRAS",
+      "enzyme": "SpCas9-NGG",
+      "on_chrom": "12",
+      "on_target_1mm_hits": 1,
+      "sanity_ok": true,
+      "offtarget_le1mm": [],
+      "n_offtarget_le1mm": 0,
+      "clean": true
+    },
+    {
+      "label": "IDH1_R132H",
+      "gene": "IDH1",
+      "enzyme": "SpCas9-NGG",
+      "on_chrom": "2",
+      "on_target_1mm_hits": 1,
+      "sanity_ok": true,
+      "offtarget_le1mm": [],
+      "n_offtarget_le1mm": 0,
+      "clean": true
+    },
+    {
+      "label": "PIK3CA_E545K",
+      "gene": "PIK3CA",
+      "enzyme": "SpCas9-NGG",
+      "on_chrom": "3",
+      "on_target_1mm_hits": 1,
+      "sanity_ok": true,
+      "offtarget_le1mm": [],
+      "n_offtarget_le1mm": 0,
+      "clean": true
+    },
+    {
+      "label": "TP53_R248Q",
+      "gene": "TP53",
+      "enzyme": "SpCas9-NGG",
+      "on_chrom": "17",
+      "on_target_1mm_hits": 1,
+      "sanity_ok": true,
+      "offtarget_le1mm": [],
+      "n_offtarget_le1mm": 0,
+      "clean": true
+    },
+    {
+      "label": "TP53_R175H",
+      "gene": "TP53",
+      "enzyme": "SpCas9-NG",
+      "on_chrom": "17",
+      "on_target_1mm_hits": 1,
+      "sanity_ok": true,
+      "offtarget_le1mm": [],
+      "n_offtarget_le1mm": 0,
+      "clean": true
+    },
+    {
+      "label": "TP53_R273H",
+      "gene": "TP53",
+      "enzyme": "SpCas9-NG",
+      "on_chrom": "17",
+      "on_target_1mm_hits": 1,
+      "sanity_ok": true,
+      "offtarget_le1mm": [],
+      "n_offtarget_le1mm": 0,
+      "clean": true
+    }
+  ]
+}

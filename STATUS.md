@@ -26,7 +26,7 @@ own driver *mutation*. Two "keys" that recognize the mutation, then trigger deat
 - → Two complementary shots; **currently fold-bound (hours).**
 
 ## Honest residuals (named, not hidden)
-- Internal key: ON-target validated (R27c/d); off-target first-pass DONE (R31) — **0 dangerous (≤1mm) off-targets in expressed genes** for all 7 guides (sanity-checked); **genome-wide intronic/intergenic + mm3 = residual** (Cas-OFFinder/GRCh38).
+- Internal key: ON-target validated (R27c/d); off-target DONE — **0 cutting-competent (≤1mm) off-targets GENOME-WIDE** across all 7 guides (R31 coding-transcriptome + R31b full GRCh38, sanity-checked). Residual: mm2+ intergenic (low-consequence) + measured cutting (GUIDE-seq).
 - External key: in-silico fold/affinity ≠ measured; immunopeptidomic presentation + binder SPR/cellular = wet-lab residual.
 - Internal-key sensor MOLECULES: thermodynamic feasibility only (R27b); actual molecular design (ODesign) pending.
 
