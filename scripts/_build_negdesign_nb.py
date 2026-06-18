@@ -40,7 +40,11 @@ once the BRAF MUT/WT pMHC folds land. T4-OK.
 
 code(r"""#@title Cell 1 — clone repo + ProteinMPNN + GPU-guard + ColabDesign/AF2 params  [~6 min]
 import os, glob, subprocess
-os.environ.setdefault('PYTORCH_CUDA_ALLOC_CONF', 'expandable_segments:True')  # reduce T4 fragmentation
+# torch (ProteinMPNN, Cell 2) + jax (AF2, Cell 3) must SHARE one T4 -> stop jax pre-grabbing
+# all VRAM, and reduce torch fragmentation. MUST be set before jax/torch import CUDA.
+os.environ.setdefault('PYTORCH_CUDA_ALLOC_CONF', 'expandable_segments:True')
+os.environ.setdefault('XLA_PYTHON_CLIENT_PREALLOCATE', 'false')   # jax allocates on demand
+os.environ.setdefault('XLA_PYTHON_CLIENT_MEM_FRACTION', '.8')
 from pathlib import Path
 REPO = Path('/content/cancer-recog-apoptosis')
 if REPO.exists():
@@ -139,10 +143,25 @@ print(f"\\nTOP negative-design candidates (by MPNN dscore):")
 for c in all_cands[:CFG['top_k']]:
     print(f"  dscore={c['dscore_wt_minus_mut']:+.4f}  {c['backbone']}  {c['seq']}")
 print(f"[saved] {OUTDIR}/candidates.json")
+
+# release ProteinMPNN (torch) GPU memory so Cell 3's jax/AF2 has room on the shared T4
+import gc, torch
+nd.load_model.__globals__['_MODEL']['m'] = None
+gc.collect(); torch.cuda.empty_cache()
+print('freed ProteinMPNN GPU memory; ready for Cell 3 (AF2)')
 """)
 
 code(r"""#@title Cell 3 — AF2 two-state CONFIRMATION of the top candidates (the real gate)
-import os, json
+import os, json, gc, sys
+# defensively free any ProteinMPNN (torch) GPU memory before jax/AF2 grabs the T4
+try:
+    import torch
+    _nd = sys.modules.get('nd57')
+    if _nd is not None:
+        _nd.load_model.__globals__['_MODEL']['m'] = None
+    gc.collect(); torch.cuda.empty_cache()
+except Exception as _e:
+    print('torch teardown skipped:', _e)
 from colabdesign import mk_afdesign_model, clear_mem
 import jax
 assert any(d.platform == 'gpu' for d in jax.devices()), 'NO GPU — switch to T4 and rerun'
