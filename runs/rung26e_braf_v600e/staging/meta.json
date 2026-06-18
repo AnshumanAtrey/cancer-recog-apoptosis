@@ -1,0 +1,12 @@
+{
+  "target": "BRAF_V600E_A0101",
+  "pep_mut": "ATEKSRWSGSH",
+  "pep_wt": "ATVKSRWSGSH",
+  "p_in_pep": 3,
+  "hotspot": 3,
+  "mut_pdb": "/content/cancer-recog-apoptosis/runs/rung26e_braf_v600e/staging/braf_mut_pmhc.pdb",
+  "wt_pdb": "/content/cancer-recog-apoptosis/runs/rung26e_braf_v600e/staging/braf_wt_pmhc.pdb",
+  "cropped_design_target": "/content/cancer-recog-apoptosis/runs/rung26e_braf_v600e/staging/braf_mut_cropped.pdb",
+  "source_folds": "runs/rung26e_braf_v600e/folds/{MUT,WT}/*_sample_0.cif (Protenix seed 19931)",
+  "note": "mut_pdb/wt_pdb are repo-clone paths -> notebooks work straight off git clone."
+}

@@ -1,0 +1,19 @@
+{
+  "groove_ca_superpose_rmsd": 0.18,
+  "peptide_backbone_rmsd_mut_vs_wt": 2.07,
+  "mut": {
+    "label": "MUT_Glu",
+    "p3_resname": "GLU",
+    "up_facing_cos": 0.197,
+    "groove_contacts_5A": 5,
+    "sidechain_sasa_A2": 5.5
+  },
+  "wt": {
+    "label": "WT_Val",
+    "p3_resname": "VAL",
+    "up_facing_cos": 0.178,
+    "groove_contacts_5A": 3,
+    "sidechain_sasa_A2": 2.4
+  },
+  "verdict": "CHECK: p3 may be buried/down-facing or the folds diverge - inspect before committing PXDesign quota."
+}
