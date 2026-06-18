@@ -44,7 +44,7 @@ synthesis in `CAPSTONE.md`; the live one-page state in `STATUS.md`.
 | C3 | **External key** — de novo pMHC binder can discriminate IDH1-R132H (His↔Arg) | ❌ REFUTED — binds but can't discriminate (NULL ×4: AF2-IG, ColabDesign, Protenix, + negative design) | R26c/d/f |
 | C4 | External key works for BRAF-V600E | ❌ REFUTED — mutation buried (2% exposed) + weakly presented (3971 nM) | R26e |
 | C5 | Pick binder targets by a presentation/exposure SCREEN, not prestige | ✅ CONFIRMED — screen found 3 presentation-flip + 34 up-facing read-the-mutation targets | R28 |
-| C6 | **PIK3CA-E545K/A\*03:01** — presentation flip (WT unpresented) → binder auto-specific | 🔄 IN-FLIGHT — folds LANDED (iptm 0.95/0.97), staged + cropped; PXDesign next | R29 |
+| C6 | **PIK3CA-E545K/A\*03:01** — presentation flip (WT unpresented) → binder auto-specific | 🔄 IN-FLIGHT — folds landed; **design v1 0/10** (≤5% tier, under-powered + no-hotspot) → **v2: hotspot B4+B6 (up-facing) + max batch** | R29 |
 | C7 | **KRAS-G12D/A\*03:01** — read-the-mutation (p6 up-facing, Gly→Asp presence/absence) | 🔄 IN-FLIGHT — folds pending; **MS confirms WT IS presented (normal lung/testis) → binder MUST discriminate** | R30/R32 |
 | C8 | Target presentation is real (not just MHCflurry-predicted) | ✅ CONFIRMED (real MS) — benign: PIK3CA WT ABSENT (flip corroborated), KRAS WT PRESENT (no flip). MUT-in-tumour (IEDB): KRAS-G12D = gold-standard (MS-eluted+x-ray+T-cell+ on A\*11/03); PIK3CA-E545K = binding-only (thinner) | R32/32b |
 

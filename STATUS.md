@@ -21,7 +21,7 @@ own driver *mutation*. Two "keys" that recognize the mutation, then trigger deat
 - ❌ **IDH1-R132H** CLOSED — His↔Arg too subtle; binder binds but can't discriminate (NULL ×4 incl. negative design). R26c/d/f.
 - ❌ **BRAF-V600E** CLOSED — mutation buried (2% exposed) + weakly presented. R26e.
 - ✅ **Built the target-selection SCREEN we'd skipped** (R28): 16 drivers × 13 HLA → picks targets by presentation + geometry.
-- 🔄 **PIK3CA-E545K / A\*03:01** (R29) — *presentation flip*: WT not displayed (300-400×) → binder auto-specific. **Folds queued.**
+- 🔄 **PIK3CA-E545K / A\*03:01** (R29) — *presentation flip*. Folds landed; binder design v1 **0/10** (≤5% tier, under-powered+no-hotspot) → **v2: hotspot B4+B6 + max batch**.
 - 🔄 **KRAS-G12D / A\*03:01** (R30) — *read-the-mutation*: p6 up-facing, Gly→Asp = presence-vs-absence (best chemistry). **Fold next.**
 - ✅ **Immunopeptidomics check (R32)** — real mass-spec (HLA Ligand Atlas) corroborates: PIK3CA WT **absent** from normal (flip real); KRAS WT **present** on normal lung/testis (binder must read G12D). MUT-in-tumour = next layer.
 - → Two complementary shots; **currently fold-bound (hours).**
