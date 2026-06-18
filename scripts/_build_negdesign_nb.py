@@ -40,6 +40,7 @@ once the BRAF MUT/WT pMHC folds land. T4-OK.
 
 code(r"""#@title Cell 1 — clone repo + ProteinMPNN + GPU-guard + ColabDesign/AF2 params  [~6 min]
 import os, glob, subprocess
+os.environ.setdefault('PYTORCH_CUDA_ALLOC_CONF', 'expandable_segments:True')  # reduce T4 fragmentation
 from pathlib import Path
 REPO = Path('/content/cancer-recog-apoptosis')
 if REPO.exists():
@@ -80,8 +81,11 @@ CFG = dict(
     pep_mut='IIGHHAYGDQY', pep_wt='IIGRHAYGDQY', p=4,           # IDH1 R132H (His<-Arg) at p4
     mut_resname='HIS', wt_resname='ARG', groove_prefix='SHSMRYF',
     meta='/content/drive/MyDrive/cancer-recon/rung26b_rfdiff/meta.json',  # mut_pdb/wt_pdb/hotspot
-    drive_backbones='/content/drive/MyDrive/cancer-recon/rung26b_rfdiff',  # RFdiffusion PDBs (if present)
-    n=200, temp=0.25, orders=8, top_k=8,                        # GPU-fast; oversample then keep the tail
+    drive_backbones='/content/drive/MyDrive/cancer-recon/rung26b_rfdiff',  # RFdiffusion PDBs (weak; opt-in)
+    n=64, temp=0.25, orders=8, top_k=8, chunk=8,                # chunk bounds GPU mem (T4-safe)
+    max_drive=0,    # 0 = only the 3 good repo PXDesign backbones. The 155 RFdiffusion d_*.pdb never
+                    # scored as binders (pae 25-27) -> AF2-confirming their candidates wastes GPU.
+                    # Raise (e.g. 12) only on a bigger GPU / more compute units.
 )
 # --- BRAF V600E (V->E at p3) — uncomment when the BRAF MUT/WT folds land ---
 # CFG.update(tag='rung26f_negdesign_braf', pep_mut='ATEKSRWSGSH', pep_wt='ATVKSRWSGSH', p=3,
@@ -99,25 +103,32 @@ nd.MUT_RESNAME, nd.WT_RESNAME, nd.GROOVE_PREFIX = CFG['mut_resname'], CFG['wt_re
 _m, _dev = nd.load_model(); print('ProteinMPNN on', _dev)
 
 # discover backbones: repo PXDesign complexes (always present) + Drive RFdiffusion PDBs (if any)
+import torch
 cands_cif = sorted(glob.glob(f'{REPO}/runs/rung26d_pxdesign_hsB4_idh1/top_designs/*.cif'))
-drive_pdb = sorted(glob.glob(f"{CFG['drive_backbones']}/**/*.pdb", recursive=True)) if os.path.isdir(CFG['drive_backbones']) else []
+drive_all = sorted(glob.glob(f"{CFG['drive_backbones']}/**/*.pdb", recursive=True)) if os.path.isdir(CFG['drive_backbones']) else []
+drive_pdb = drive_all[:CFG['max_drive']]
+if len(drive_all) > len(drive_pdb):
+    print(f"NOTE: {len(drive_all)} drive backbones found, using {len(drive_pdb)} (max_drive={CFG['max_drive']}); "
+          f"{len(drive_all) - len(drive_pdb)} weak RFdiffusion backbones DROPPED (raise CFG['max_drive'] to include).")
 backbones, skipped = [], []
 for bb in cands_cif + drive_pdb:
     try:
         nd.read_complex(bb); backbones.append(bb)
     except Exception as e:
         skipped.append((os.path.basename(bb), str(e)[:60]))
-print(f'usable backbones: {len(backbones)}  (repo cif {len(cands_cif)}, drive pdb {len(drive_pdb)}, skipped {len(skipped)})')
+print(f'usable backbones: {len(backbones)}  (repo cif {len(cands_cif)}, drive used {len(drive_pdb)}, skipped {len(skipped)})')
 for s in skipped[:5]: print('  skip', s)
 
 OUTDIR = f'{REPO}/runs/rung26f_negdesign'; os.makedirs(OUTDIR, exist_ok=True)
 all_cands = []
 for i, bb in enumerate(backbones):
     g = nd.generate_two_state(bb, n_candidates=CFG['n'], temperature=CFG['temp'],
-                              n_orders=CFG['orders'], top_k=CFG['top_k'])
+                              n_orders=CFG['orders'], top_k=CFG['top_k'], chunk=CFG['chunk'])
     for c in g['top']:
         c['backbone'] = os.path.basename(bb)
     all_cands += g['top']
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
     print(f"[{i+1}/{len(backbones)}] {os.path.basename(bb):28s} dscore max={g['dscore_max']:+.4f} mean={g['dscore_mean']:+.4f}")
     # incremental save (resumable / crash-safe)
     all_cands.sort(key=lambda c: -c['dscore_wt_minus_mut'])

@@ -57,8 +57,9 @@ THREE2ONE = {  # standard 20 + a couple of common alts -> 1-letter
 def read_complex(cif_path):
     """Return (groove, peptide, binder), each a list of (resname, {atom: (x,y,z)})
     with only backbone atoms, chains identified by content not by label."""
-    from Bio.PDB import MMCIFParser
-    parser = MMCIFParser(QUIET=True)
+    from Bio.PDB import MMCIFParser, PDBParser
+    is_cif = cif_path.lower().endswith((".cif", ".mmcif"))
+    parser = MMCIFParser(QUIET=True) if is_cif else PDBParser(QUIET=True)
     s = parser.get_structure("x", cif_path)
     model = next(iter(s))
     chains = []
@@ -206,12 +207,13 @@ def _featurize(pdb_path):
 
 
 def generate_two_state(cif_path, n_candidates=64, temperature=0.2, n_orders=4,
-                       seed=0, top_k=8):
+                       seed=0, top_k=8, chunk=8):
     """Sample n_candidates binder sequences on this fixed backbone conditioned on the MUT
     context, then two-state-score each (paired decoding orders) and rank by
     dscore = NLL_wt - NLL_mut (positive => prefers MUT => discriminating). This is the
     greedy negative-design version: oversample under MUT, keep the WT-disfavouring tail.
-    The Colab notebook runs this on every Drive backbone and AF2-confirms the top_k."""
+    Sampling/scoring run in mini-batches of `chunk` so peak GPU memory stays bounded
+    regardless of n_candidates (a 16 GB T4 OOMs if all N are batched at once)."""
     import torch
     from protein_mpnn_utils import _scores, _S_to_seq
     model, device = load_model()
@@ -222,66 +224,68 @@ def generate_two_state(cif_path, n_candidates=64, temperature=0.2, n_orders=4,
         write_backbone_pdb(wt_pdb, groove, peptide, binder, WT_RESNAME)
         fM, _ = _featurize(mut_pdb)
         fW, _ = _featurize(wt_pdb)
-    X, S_mut, mask, _len, chain_M, chain_enc = fM[0], fM[1], fM[2], fM[3], fM[4], fM[5]
+    X, S_mut, mask, chain_M, chain_enc = fM[0], fM[1], fM[2], fM[4], fM[5]
     chain_M_pos, omit_AA_mask, residue_idx = fM[10], fM[11], fM[12]
     pssm_coef, pssm_bias, pssm_log_odds_all, bias_by_res = fM[15], fM[16], fM[17], fM[18]
     S_wt = fW[1]
     N = n_candidates
 
-    def rep(t):
-        return t.repeat(*([N] + [1] * (t.dim() - 1)))
-
-    X_, S_mut_, mask_, chain_M_, chain_enc_, chain_M_pos_, residue_idx_ = map(
-        rep, (X, S_mut, mask, chain_M, chain_enc, chain_M_pos, residue_idx))
-    S_wt_ = rep(S_wt)
-    omit_AA_mask_, pssm_coef_, pssm_bias_, pssm_log_odds_all_, bias_by_res_ = map(
-        rep, (omit_AA_mask, pssm_coef, pssm_bias, pssm_log_odds_all, bias_by_res))
-    pssm_log_odds_mask_ = (pssm_log_odds_all_ > 0.0).float()
-
     omit_AAs_np = np.array([aa in "X" for aa in ALPHABET], dtype=np.float32)
     bias_AAs_np = np.zeros(len(ALPHABET), dtype=np.float32)
 
+    seqs, nll_mut_all, nll_wt_all = [], [], []
     torch.manual_seed(seed)
-    with torch.no_grad():
-        randn = torch.randn(chain_M_.shape, device=device)
-        sd = model.sample(X_, randn, S_mut_, chain_M_, chain_enc_, residue_idx_,
-                          mask=mask_, temperature=temperature, omit_AAs_np=omit_AAs_np,
-                          bias_AAs_np=bias_AAs_np, chain_M_pos=chain_M_pos_,
-                          omit_AA_mask=omit_AA_mask_, pssm_coef=pssm_coef_,
-                          pssm_bias=pssm_bias_, pssm_multi=0.0, pssm_log_odds_flag=0,
-                          pssm_log_odds_mask=pssm_log_odds_mask_, pssm_bias_flag=0,
-                          bias_by_res=bias_by_res_)
-        S_sample = sd["S"]
-        cmb = chain_M_.bool()
-        S_eval_mut = torch.where(cmb, S_sample, S_mut_)
-        S_eval_wt = torch.where(cmb, S_sample, S_wt_)
-        mask_for_loss = mask_ * chain_M_ * chain_M_pos_
-        nll_mut = torch.zeros(N, device=device)
-        nll_wt = torch.zeros(N, device=device)
-        for _ in range(n_orders):
-            r = torch.randn(chain_M_.shape, device=device)  # paired order for both states
-            lpm = model(X_, S_eval_mut, mask_, chain_M_ * chain_M_pos_, residue_idx_,
-                        chain_enc_, r)
-            lpw = model(X_, S_eval_wt, mask_, chain_M_ * chain_M_pos_, residue_idx_,
-                        chain_enc_, r)
-            nll_mut += _scores(S_eval_mut, lpm, mask_for_loss)
-            nll_wt += _scores(S_eval_wt, lpw, mask_for_loss)
-        nll_mut /= n_orders
-        nll_wt /= n_orders
-        dscore = (nll_wt - nll_mut).cpu().numpy()
-        nll_mut_np = nll_mut.cpu().numpy()
-        nll_wt_np = nll_wt.cpu().numpy()
-        seqs = [_S_to_seq(S_sample[b], chain_M_[b]) for b in range(N)]
+    done = 0
+    while done < N:
+        b = min(chunk, N - done)
 
+        def rep(t):
+            return t.repeat(*([b] + [1] * (t.dim() - 1)))
+
+        X_, S_mut_, mask_, chain_M_, chain_enc_, chain_M_pos_, residue_idx_ = map(
+            rep, (X, S_mut, mask, chain_M, chain_enc, chain_M_pos, residue_idx))
+        S_wt_ = rep(S_wt)
+        omit_AA_mask_, pssm_coef_, pssm_bias_, plo_, bias_by_res_ = map(
+            rep, (omit_AA_mask, pssm_coef, pssm_bias, pssm_log_odds_all, bias_by_res))
+        plo_mask_ = (plo_ > 0.0).float()
+        with torch.no_grad():
+            randn = torch.randn(chain_M_.shape, device=device)
+            sd = model.sample(X_, randn, S_mut_, chain_M_, chain_enc_, residue_idx_,
+                              mask=mask_, temperature=temperature, omit_AAs_np=omit_AAs_np,
+                              bias_AAs_np=bias_AAs_np, chain_M_pos=chain_M_pos_,
+                              omit_AA_mask=omit_AA_mask_, pssm_coef=pssm_coef_,
+                              pssm_bias=pssm_bias_, pssm_multi=0.0, pssm_log_odds_flag=0,
+                              pssm_log_odds_mask=plo_mask_, pssm_bias_flag=0,
+                              bias_by_res=bias_by_res_)
+            S_sample = sd["S"]
+            cmb = chain_M_.bool()
+            S_eval_mut = torch.where(cmb, S_sample, S_mut_)
+            S_eval_wt = torch.where(cmb, S_sample, S_wt_)
+            mfl = mask_ * chain_M_ * chain_M_pos_
+            nm = torch.zeros(b, device=device); nw = torch.zeros(b, device=device)
+            for _ in range(n_orders):
+                r = torch.randn(chain_M_.shape, device=device)  # paired order, both states
+                lpm = model(X_, S_eval_mut, mask_, chain_M_ * chain_M_pos_, residue_idx_, chain_enc_, r)
+                lpw = model(X_, S_eval_wt, mask_, chain_M_ * chain_M_pos_, residue_idx_, chain_enc_, r)
+                nm += _scores(S_eval_mut, lpm, mfl); nw += _scores(S_eval_wt, lpw, mfl)
+            nm /= n_orders; nw /= n_orders
+            nll_mut_all += nm.cpu().numpy().tolist()
+            nll_wt_all += nw.cpu().numpy().tolist()
+            seqs += [_S_to_seq(S_sample[j], chain_M_[j]) for j in range(b)]
+        done += b
+        if device == "cuda":
+            torch.cuda.empty_cache()
+
+    nll_mut_np = np.array(nll_mut_all); nll_wt_np = np.array(nll_wt_all)
+    dscore = nll_wt_np - nll_mut_np
     order = np.argsort(-dscore)  # best (most MUT-preferring) first
     cands = [{
-        "seq": seqs[b],
-        "nll_mut": round(float(nll_mut_np[b]), 4),
+        "seq": seqs[b], "nll_mut": round(float(nll_mut_np[b]), 4),
         "nll_wt": round(float(nll_wt_np[b]), 4),
         "dscore_wt_minus_mut": round(float(dscore[b]), 4),
     } for b in order[:top_k]]
     return {
-        "n_candidates": N, "temperature": temperature, "n_orders": n_orders,
+        "n_candidates": N, "temperature": temperature, "n_orders": n_orders, "chunk": chunk,
         "dscore_max": round(float(dscore.max()), 4),
         "dscore_mean": round(float(dscore.mean()), 4),
         "dscore_std": round(float(dscore.std()), 4),

@@ -3,60 +3,61 @@
   "backbone": "rung26d rank_1 (PXDesign dual-passer)",
   "target": "IDH1_R132H_A0101  pep MUT=IIGHHAYGDQY / WT=IIGRHAYGDQY  p4",
   "noise_floor_nll": "~0.03-0.05 (from validate.json) - dscore must clear this to mean anything",
-  "n_candidates": 24,
+  "n_candidates": 16,
   "temperature": 0.25,
   "n_orders": 4,
-  "dscore_max": 0.0235,
-  "dscore_mean": -0.0024,
-  "dscore_std": 0.0094,
+  "chunk": 8,
+  "dscore_max": 0.0144,
+  "dscore_mean": -0.0047,
+  "dscore_std": 0.0057,
   "top": [
     {
-      "seq": "DATWKQIEKLLKEILKLVEAMAAAETDPELRAELEAVARGIAGFIKLFRETKDVALALAELQGLLSHLEVIRPRLDAEQRKLADEAAKKVKEAIALLKAQ",
-      "nll_mut": 0.9867,
-      "nll_wt": 1.0103,
-      "dscore_wt_minus_mut": 0.0235
+      "seq": "DATWQEILARLEQIRALVEAIAARETDPELQAELRAVARSLDGFIALFKETKDVPLALAEMQGLAAWLDRIRPQLDAEQQALADEARALVAEAIALLQGQ",
+      "nll_mut": 1.007,
+      "nll_wt": 1.0213,
+      "dscore_wt_minus_mut": 0.0144
     },
     {
-      "seq": "DATFQEILKLLEEIAALLAEIAARETDPALRAELEAQARSLKGFIALFRETKDVQLALAEMQGLLSWLDVIEPELDEEGRALLAEARRLVEEAIALLQSQ",
-      "nll_mut": 1.0762,
-      "nll_wt": 1.0915,
-      "dscore_wt_minus_mut": 0.0154
+      "seq": "DEKLAQILELLEQVLALVAQIAAAQKDPALQAELTAVARSLAGFIELFKATKDTALALAELQGLLAWLDEIRPQLDAAQQALADQARALVQQAIALLNSL",
+      "nll_mut": 1.0238,
+      "nll_wt": 1.0221,
+      "dscore_wt_minus_mut": -0.0017
     },
     {
-      "seq": "SETWKKILELLEEILKLIKEMAEKETDPELQAELEAEARSLEGFIELFKKTKDVKLALAEMQGLLAWLDVIKPELDEEQQKLAEEAKKKVEEAIKLLESQ",
-      "nll_mut": 0.935,
-      "nll_wt": 0.944,
-      "dscore_wt_minus_mut": 0.009
+      "seq": "DATWAQIQALLAQIAALVAAIAARETDPGLQAELEAEHRSLQGLIALFAETKDAAYLLAELQGLRAWLDEIRPRLDAESQALADAAAAKVDEAIALLKAL",
+      "nll_mut": 1.0874,
+      "nll_wt": 1.0855,
+      "dscore_wt_minus_mut": -0.0019
     },
     {
-      "seq": "DATLARIEALLERVLALVGAMAAAQTDPALAAELAAVARSIAGFIALFRETKDTALALAECEGLLAWLDVVLPRLDDAQRALAAEARDLVREAIALLRAQ",
-      "nll_mut": 1.0397,
-      "nll_wt": 1.0482,
-      "dscore_wt_minus_mut": 0.0084
+      "seq": "EATWEKILALLKEILALIKQMAELQQDPRLQAELTAVARSLAGFIELFEKTKDVKLALAELQGLLAWLGEIRPELDAEQQALADQAQAKVEEAIKLLQSQ",
+      "nll_mut": 1.0341,
+      "nll_wt": 1.032,
+      "dscore_wt_minus_mut": -0.0021
     },
     {
-      "seq": "EKTLEEIEKILKEIAKLVKEMADLEEDPELQAELEAVYRSLEGFIALFKETKDTQLALAEMQGLLSWLDEIKPRLNEEQQKLADEAKKKVEEAIKLLAAL",
-      "nll_mut": 0.974,
-      "nll_wt": 0.9814,
-      "dscore_wt_minus_mut": 0.0074
+      "seq": "DATWAEIEALLRRVLALVAEIAARETDPRLAAELAAEARSLAGFIALFRETKDVPLALAEMKGLAAWLDEVRPLLDDEQRALADEARALVEEAIALLAAQ",
+      "nll_mut": 0.9649,
+      "nll_wt": 0.9612,
+      "dscore_wt_minus_mut": -0.0036
     },
     {
-      "seq": "DKTLEEILKLLEKIEKLIAEIAKLETDPQLQAELTAVAKSLKGFIKLFKETKDISLLLAELKGLLSWLDEIKPQLDAEQQELADEARKLVEEAIKLAESL",
-      "nll_mut": 1.011,
-      "nll_wt": 1.0183,
-      "dscore_wt_minus_mut": 0.0073
+      "seq": "DATLAQIQALLREVLALVEEIAARETDPALKAELEAEARALAGFIALFEKTKDIALALAELQGLLAWLDEIRPELDAEQKALADRAAALVQQAIALLSAQ",
+      "nll_mut": 0.9974,
+      "nll_wt": 0.9929,
+      "dscore_wt_minus_mut": -0.0045
     },
     {
-      "seq": "DETLKKIEELLEKVRKLVAEIAAKETDPVLKAELEAVARSLEGFIKLFKETKDVKLALAELQGLLAWLDEIKPLLDAESQKLADEARKVVEEAIKLLESL",
-      "nll_mut": 0.9901,
-      "nll_wt": 0.989,
-      "dscore_wt_minus_mut": -0.0011
+      "seq": "EETWERILELLERILALVERMAALETDPRLAAELAAEARALAGFIALFRETKDVELARAELQGLLAWLDEILPELDAEQRALAAEARELVREAIELLDAQ",
+      "nll_mut": 0.9973,
+      "nll_wt": 0.9923,
+      "dscore_wt_minus_mut": -0.0049
     },
     {
-      "seq": "EATWQRILELLREALALVEEMAARETDPRLAAELRAVARSLAGFIALFEQTKDVALALAEVRGLLAWLDEIRPQLDAESQELADKAREVCKEIEALLAGQ",
-      "nll_mut": 1.0896,
-      "nll_wt": 1.0882,
-      "dscore_wt_minus_mut": -0.0014
+      "seq": "SATWEEILALLEQVLALVQAIAERETDPRLRAELEAVARSLAGFIAYFRETKDVTLALAELQGLLAHLDDIAPRLDAEQRALADEARALVEQAIALLQAQ",
+      "nll_mut": 0.9767,
+      "nll_wt": 0.9717,
+      "dscore_wt_minus_mut": -0.005
     }
   ]
 }
