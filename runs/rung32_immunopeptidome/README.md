@@ -28,6 +28,25 @@ demonstrably *would* detect a peptide of our class/allele if it were presented. 
 - **KRAS-G12D** (read-the-mutation) — MS confirms WT IS displayed → binder discrimination is mandatory, not
   optional → hotspot-on-p6 is the right call, and specificity scoring (MUT-vs-WT) is the make-or-break.
 
+## RUNG-32b — MUT-in-tumour confirmation (IEDB; the cancer-side complement) — `scripts/65`, `iedb_mut.json`
+A benign atlas can't show a tumour mutation, so the MUT peptides were checked against **IEDB** (curated
+neoantigen epitopes + MS-eluted ligands + T-cell assays). **Both are experimentally observed MHC ligands on
+our target alleles — prediction → measurement:**
+
+| MUT peptide | IEDB evidence | verdict |
+|---|---|---|
+| KRAS-G12D `VVVGADGVGK` | 18 MHC-ligand assays on **A\*11:01 (11) + A\*03:01 (6)**; **MS-eluted ×4**; **x-ray ×3**; **T-cell-positive 94/106** (A\*03:01/A\*11:01/A\*68:01); 9 papers | **GOLD-STANDARD validated, naturally-presented neoantigen** |
+| PIK3CA-E545K `STRDPLSEITK` | 2 cellular-MHC **binding** assays (A\*11:01, A\*33:03), 1 Pos / 1 Neg; no MS/T-cell | **observed-binding, thinner** — presented-plausible, weaker evidence than KRAS |
+
+**Implications for design:**
+- **KRAS-G12D** target is *rock-solid* (real eluted + crystallized + T-cell-recognized). Two corollaries: (a) de
+  novo binders are a *complementary modality* (natural TCRs already exist — e.g. the A\*11:01 work), so our
+  contribution is the binder *artifact*, not first-discovery of the epitope; (b) **x-ray structures exist → use a
+  real PDB as the design target** instead of (or alongside) the Protenix fold = higher-quality target. [follow-up]
+- **PIK3CA-E545K** is the more *novel* shot (thin prior validation) but its presentation rests on MHCflurry + 1
+  positive binding assay + the benign-absence flip — honestly the weaker-evidenced of the two on presentation,
+  though the *binder* problem is easier (no discrimination needed). Both stay live; evidence levels now explicit.
+
 ## Honest residual
 - Benign atlas = 21 donors / specific tissues; absence ≠ never-presented-anywhere (strong support, not proof).
 - **MUT-in-tumour presentation** (is `STRDPLSEITK` / `VVVGADGVGK` actually eluted from real tumours?) needs a

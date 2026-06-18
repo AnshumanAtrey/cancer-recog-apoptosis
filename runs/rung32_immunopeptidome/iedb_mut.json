@@ -1,0 +1,78 @@
+{
+  "tag": "rung32b_iedb_mut_in_tumour",
+  "source": "IEDB IQ-API (query-api.iedb.org), MHC ligand + T-cell assays",
+  "interpretation": "Both MUT peptides are EXPERIMENTALLY OBSERVED MHC ligands on our target alleles. KRAS-G12D = gold-standard (MS-eluted + x-ray + T-cell+ on A*11:01/A*03:01). PIK3CA-E545K = thinner (cellular-MHC binding only, 1 pos/1 neg on A*11:01/A*33:03; no MS/T-cell) -> presented-plausible, weaker evidence than KRAS.",
+  "results": {
+    "KRAS_G12D": {
+      "peptide": "VVVGADGVGK",
+      "n_mhc_ligand_assays": 18,
+      "mhc_alleles": {
+        "HLA-A*11:01": 11,
+        "HLA-A*03:01": 6,
+        "HLA-A*68:01": 1
+      },
+      "ms_eluted_records": 4,
+      "xray_structures": 3,
+      "qualitative": {
+        "Positive": 13,
+        "Positive-Low": 3,
+        "Negative": 2
+      },
+      "n_tcell_assays": 106,
+      "tcell_positive": 94,
+      "tcell_alleles": [
+        "HLA-A*03:01",
+        "HLA-A*11:01",
+        "HLA-A*68:01",
+        "HLA-A11"
+      ],
+      "n_references": 9,
+      "pubmed_ids": [
+        "31527070",
+        "35474673",
+        "35720289",
+        "36088370",
+        "37415627",
+        "38684865",
+        "39287991",
+        "40681176",
+        "41339521"
+      ],
+      "assay_types": {
+        "3D structure|x-ray crystallography|angstroms": 3,
+        "ligand presentation|mass spectrometry": 3,
+        "qualitative binding|cellular MHC/direct/fluorescence": 3,
+        "qualitative binding|purified MHC/competitive/fluorescence": 3,
+        "dissociation constant KD (~IC50)|purified MHC/competitive/radioactivity|nM": 2,
+        "ligand presentation|cellular MHC/mass spectrometry": 1,
+        "half maximal effective concentration (EC50)|cellular MHC/direct/fluorescence|nM": 1,
+        "half maximal inhibitory concentration (IC50)|cellular MHC/competitive/fluorescence|nM": 1,
+        "qualitative binding|purified MHC/direct/fluorescence": 1
+      }
+    },
+    "PIK3CA_E545K": {
+      "peptide": "STRDPLSEITK",
+      "n_mhc_ligand_assays": 2,
+      "mhc_alleles": {
+        "HLA-A*33:03": 1,
+        "HLA-A*11:01": 1
+      },
+      "ms_eluted_records": 0,
+      "xray_structures": 0,
+      "qualitative": {
+        "Negative": 1,
+        "Positive": 1
+      },
+      "n_tcell_assays": 0,
+      "tcell_positive": 0,
+      "tcell_alleles": [],
+      "n_references": 1,
+      "pubmed_ids": [
+        "37415627"
+      ],
+      "assay_types": {
+        "qualitative binding|cellular MHC/direct/fluorescence": 2
+      }
+    }
+  }
+}
