@@ -1,0 +1,14 @@
+{
+ "gene": "KRAS",
+ "mutation": "G12D",
+ "allele": "HLA-A*03:01",
+ "allele_note": "A*03:01 verified groove (UniProt P04439). A*11:01 presents G12D slightly better (47 vs 71 nM) and is more South-Asia-relevant, but has no clean UniProt entry -> add later from IPD-IMGT/HLA. G12V on A*03:01 is stronger (46 nM) if we prefer presentation over mutation prevalence.",
+ "pep_mut": "VVVGADGVGK",
+ "pep_wt": "VVVGAGGVGK",
+ "p_in_pep": 6,
+ "mutation_role": "p6, CENTRAL BULGE = up-facing/TCR-exposed (binder CAN read it). G12 is Glycine -> WT has NO sidechain at p6; MUT adds an Asp -> presence-vs-absence discrimination (the strongest handle; unlike IDH1 His<->Arg which swaps two bulky residues and FAILED).",
+ "groove_A0301": "SHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDQETRNVKAQSQTDRVDLGTLRGYYNQSEAGSHTIQIMYGCDVGSDGRFLRGYRQDAYDGKDYIALNEDLRSWTAADMAAQITKRKWEAAHEAEQLRAYLDGTCVEWLRRYLENGKETLQRTD",
+ "mhcflurry": {"mut_affinity_nM": 71.1, "mut_presentation": 0.87, "wt_affinity_nM": 52.8, "wt_presentation": 0.89, "note": "MUT and WT BOTH presented (~same) -> NO presentation flip -> selectivity must come from the binder reading the up-facing mutation (opposite mechanism to PIK3CA-E545K). A*11:01: MUT 47nM."},
+ "design_note": "HOTSPOT ON THE MUTATION (p6, the up-facing Asp) -- unlike PIK3CA/BRAF. Because G12 WT is Gly (no sidechain), a binder pocket built for the Asp finds empty space on WT -> discrimination by construction has a REAL shot here. If positive design + hotspot underperforms, the RUNG-26f negative-design method is ready.",
+ "pipeline": "Protenix fold MUT (groove_A0301 + VVVGADGVGK) + WT (VVVGAGGVGK), seed-matched -> scripts/58 pre-crop + p6 exposure check (confirm up-facing, like BRAF audit) -> PXDesign Extended hotspot=p6 -> score MUT vs WT (AF2 binder_specificity + Protenix). WIN = WT clearly worse (binder grips the Asp, finds nothing on Gly)."
+}

@@ -42,6 +42,14 @@ discrimination, which here is supplied by presentation. Coverage: A\*03:01 (~Eur
 - Read-the-mutation targets (KRAS-G12 etc.) are NOT closed — they need the exposure check (fold + SASA); logged
   for a later rung, not dropped.
 
+## Position triage → second target (read-the-mutation): KRAS-G12D (`position_triage.json`)
+Classified every strongly-presented hit by where the mutation sits (HLA-I anchors = P2 + C-terminus = buried;
+central = up-facing). 34 hits have the mutation **up-facing** (binder-readable). Standout = **KRAS-G12 family**
+on A\*03:01/A\*11:01 (`VVVGADGVGK`, p6 central bulge, 47-71 nM): mutation up-facing AND **Gly→Asp = presence
+vs absence** (WT Gly has no sidechain) — the strongest discrimination chemistry, opposite to IDH1's failed
+His↔Arg. → **RUNG-30** pursues KRAS-G12D as the read-the-mutation shot (hotspot ON the mutation), in parallel
+with PIK3CA-E545K (presentation flip). Two mechanisms, two targets.
+
 ## Next (decided, in motion)
 Fold PIK3CA-E545K MUT pMHC (A\*03:01 groove + `STRDPLSEITK`) on the Protenix webserver → PXDesign Extended →
 strong MUT binder (no negative design needed; presentation supplies selectivity) → score; A\*11:01 as the
