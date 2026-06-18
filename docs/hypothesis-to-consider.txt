@@ -1,0 +1,178 @@
+>> TRACKING: the crossed-off status of these 15 (tested where / verdict / open) lives in docs/HYPOTHESIS_LEDGER.md (Section D).
+>> As of 2026-06-18: H4/H8/H11 DONE, H1/H9/H10 PARTIAL, rest OPEN. Now-testable: H5 (microenvironment), H6 (oncometabolite/2-HG ↔ IDH1), H7 (ICD score).
+
+Here are 15 creative hypotheses rooted in the latest synthetic biology and cancer research. Each one is designed to be testable within your existing computational pipeline, pushing your project into genuinely novel territory.
+
+---
+
+### 🧬 Category 1: Next-Generation "Self-Destruction" Mechanisms
+
+These hypotheses move beyond simple apoptosis, engaging alternative cell death pathways that cancer cells find harder to resist.
+
+**1. The "Metal Overload" Hypothesis (Ferroptosis/Cuproptosis)**
+
+> *"Engineered ligands that specifically deliver iron or copper ions to cancer cells will trigger ferroptosis or cuproptosis, bypassing classical apoptosis resistance."*
+
+*   **The Idea**: Instead of triggering apoptosis via DR5, design a ligand that carries a metal ion (e.g., Fe²⁺ or Cu²⁺) and is internalized by a cancer-specific receptor. Once inside, the metal induces lethal lipid peroxidation (ferroptosis) or mitochondrial protein toxicity (cuproptosis).
+*   **Why it's valuable**: Many cancers are resistant to apoptosis. Ferroptosis and cuproptosis offer orthogonal kill mechanisms.
+*   **How to test in silico**: Use your pipeline to design the metal-binding ligand, then use MD simulations to check if the metal remains bound during internalization.
+
+**2. The "Sodium Rush" Hypothesis (NECSO)**
+
+> *"A ligand that activates the TRPM4 ion channel will induce a novel form of programmed necrosis called NECSO, causing rapid cancer cell lysis."*
+
+*   **The Idea**: NECSO is a newly identified programmed necrosis pathway triggered by sodium influx through the TRPM4 channel. Design a bispecific ligand that both binds a cancer receptor and activates TRPM4.
+*   **Why it's valuable**: This is a 2025 discovery—you'd be among the first to exploit it computationally.
+*   **How to test in silico**: Model the ligand-TRPM4 interaction using AlphaFold-Multimer, then simulate sodium flux using coarse-grained MD.
+
+**3. The "Mitochondrial Sabotage" Hypothesis**
+
+> *"Ligands that induce the intracellular formation of peptide nanostructures will physically disrupt mitochondria, causing metabolic collapse and cell death."*
+
+*   **The Idea**: Recent work shows that synthetic peptides can form nanostructures inside cancer cells in response to glutathione, disrupting mitochondria. Design a ligand that, upon internalization, self-assembles into a toxic nanostructure.
+*   **Why it's valuable**: Physical disruption is harder for cancer cells to evolve resistance against.
+*   **How to test in silico**: Use coarse-grained simulations to predict nanostructure formation and mitochondrial membrane disruption.
+
+---
+
+### 🧬 Category 2: "Recognition" & Specificity
+
+These hypotheses focus on making your ligands exquisitely cancer-specific, using multi-factor logic and microenvironment sensing.
+
+**4. The "AND Gate" Hypothesis**
+
+> *"A ligand that requires binding to TWO independent cancer markers simultaneously will achieve near-perfect cancer specificity."*
+
+*   **The Idea**: Instead of a single receptor (like Trop2), design a ligand that only becomes active (or only trimerizes DR5) when it binds two different cancer-specific surface proteins simultaneously.
+*   **Why it's valuable**: Single markers can appear on healthy tissue. A dual-key system dramatically reduces off-target toxicity.
+*   **How to test in silico**: Use your RL environment to optimize for *simultaneous* binding to two targets, with a reward function that penalizes single-target binding.
+
+**5. The "Microenvironment Sniffer" Hypothesis**
+
+> *"Ligands that are activated only by the unique chemical cues of the tumor microenvironment (low pH, high ROS, hypoxia) will spare all healthy tissue."*
+
+*   **The Idea**: Design your ligand with a "sensor" domain that undergoes a conformational change only in the acidic, oxidative, or hypoxic conditions of a tumor. The killing domain is only exposed upon this change.
+*   **Why it's valuable**: This adds an environmental layer of specificity, independent of surface receptors.
+*   **How to test in silico**: Simulate the ligand's conformational dynamics under different pH and ROS conditions using MD.
+
+**6. The "Metabolic Waste" Hypothesis**
+
+> *"Ligands that recognize and bind to oncometabolites (e.g., 2-HG, succinate) will specifically target cancer cells with distinct metabolic signatures."*
+
+*   **The Idea**: Cancer cells often produce unique metabolites (oncometabolites). Design a ligand that binds to a cell-surface transporter of these metabolites, or to the metabolite itself, effectively "smelling" the cancer's metabolic waste.
+*   **Why it's valuable**: This targets the cancer's unique metabolism, not just its surface proteins.
+*   **How to test in silico**: Model the ligand-oncometabolite interaction and the subsequent cellular uptake or signaling.
+
+---
+
+### 🧬 Category 3: Bystander & "Wave" Dynamics
+
+These hypotheses explore how to turn a single cancer cell's death into a wave that destroys the entire tumor.
+
+**7. The "Danger Signal" Hypothesis**
+
+> *"Inducing immunogenic cell death (ICD) in one cancer cell will release 'danger signals' that alert the immune system to destroy the entire tumor."*
+
+*   **The Idea**: Instead of silent apoptosis, design your ligand to trigger ICD—a form of cell death that releases damage-associated molecular patterns (DAMPs). These DAMPs act as a "red flag," recruiting immune cells to clear the rest of the tumor.
+*   **Why it's valuable**: This turns your therapy into a *vaccine*, creating systemic immunity.
+*   **How to test in silico**: Add an ICD "score" to your reward function based on the predicted release of DAMPs (e.g., HMGB1, ATP, calreticulin).
+
+**8. The "Gap Junction Wave" Hypothesis**
+
+> *"A ligand that triggers cell death and also upregulates gap junction proteins will allow the 'death signal' to spread directly to neighboring cancer cells."*
+
+*   **The Idea**: Dying cells can pass apoptotic signals (like calcium waves or reactive oxygen species) to neighbors via gap junctions. Design a ligand that not only kills the cell but also boosts connexin expression, amplifying the wave.
+*   **Why it's valuable**: This creates a self-propagating "death wave" that doesn't rely on diffusion.
+*   **How to test in silico**: Use PhysiCell to model a tumor where cells with upregulated gap junctions transmit a death signal to their neighbors.
+
+**9. The "Fas-FasL Bystander" Hypothesis**
+
+> *"A ligand that upregulates FasL on the surface of a dying cancer cell will trigger apoptosis in neighboring Fas-positive cancer cells."*
+
+*   **The Idea**: The Fas-FasL pathway is a natural mechanism for bystander killing. Engineer your ligand so that when it kills a cell, it also causes that cell to display FasL, which then binds to Fas receptors on adjacent cells, killing them too.
+*   **Why it's valuable**: This is a natural, well-understood bystander mechanism you can co-opt.
+*   **How to test in silico**: Model the Fas-FasL interaction at the cell surface and simulate the spread of death through a heterogeneous tumor population.
+
+---
+
+### 🧬 Category 4: Evolutionary & Synthetic Lethality
+
+These hypotheses use evolutionary principles to outsmart cancer's ability to develop resistance.
+
+**10. The "Evolutionary Trap" Hypothesis**
+
+> *"A ligand that targets a resistance pathway will create an evolutionary trap: cancer cells that evolve to escape the ligand become more vulnerable to standard therapies."*
+
+*   **The Idea**: Design a ligand that kills cancer cells by targeting a protein that, when downregulated to escape the ligand, makes the cells hypersensitive to a standard chemotherapy drug.
+*   **Why it's valuable**: This forces the cancer into a "no-win" scenario. Evolve resistance to the ligand? Then chemo kills you. Don't evolve? The ligand kills you.
+*   **How to test in silico**: Use evolutionary simulation models to predict the fitness landscape of cancer cells under dual selective pressures (ligand + chemo).
+
+**11. The "Synthetic Lethal Partner" Hypothesis**
+
+> *"A ligand that inhibits the 'partner' of a gene already mutated in a cancer cell will trigger synthetic lethality, killing only the cancer cells."*
+
+*   **The Idea**: Synthetic lethality occurs when a cell dies if two specific genes are altered. If a cancer already has a mutation in Gene A, design a ligand that inhibits Gene B (its synthetic lethal partner). Normal cells (with functional Gene A) survive.
+*   **Why it's valuable**: This is exquisitely targeted to the cancer's specific genetic vulnerabilities.
+*   **How to test in silico**: Use your RL pipeline to design ligands that specifically inhibit the protein product of the synthetic lethal partner gene.
+
+---
+
+### 🧬 Category 5: Next-Generation Therapeutic Platforms
+
+These hypotheses are more "blue sky," envisioning entirely new ways to deliver your therapy.
+
+**12. The "Living Drug Factory" Hypothesis**
+
+> *"Engineered bacteria that are programmed to produce and release the bispecific ligand only when they reach the hypoxic tumor core will enable targeted, intratumoral drug production."*
+
+*   **The Idea**: Use synthetic biology to engineer a harmless bacterium (e.g., *E. coli* or *Salmonella*) that homes in on tumors and, once there, produces your bispecific ligand on-site. You could even add a kill-switch for safety.
+*   **Why it's valuable**: This solves the delivery problem. The drug is made exactly where it's needed.
+*   **How to test in silico**: Model the bacterial population dynamics and ligand production rates within a simulated tumor.
+
+**13. The "Self-Amplifying mRNA" Hypothesis**
+
+> *"An mRNA encoding the bispecific ligand, delivered directly to the tumor, will turn cancer cells into 'factories' that produce the killing molecule themselves."*
+
+*   **The Idea**: Instead of delivering the protein ligand, deliver an mRNA that instructs the cancer cell to *make* the ligand. The cell then kills itself and its neighbors.
+*   **Why it's valuable**: This is the logic of the COVID-19 vaccines, applied to cancer therapy.
+*   **How to test in silico**: Model the mRNA translation rate, protein folding, and secretion within the tumor microenvironment.
+
+**14. The "Nano-Origami Death Star" Hypothesis**
+
+> *"DNA origami nanostructures, precisely folded to display the bispecific ligand in a specific multivalent array, will achieve super-avidity binding and DR5 clustering."*
+
+*   **The Idea**: Use DNA origami to create a nanoscale "cage" or "star" that presents your ligand in a highly ordered, multivalent fashion. This super-avidity binding could trigger DR5 clustering (and thus apoptosis) far more potently than a free-floating ligand.
+*   **Why it's valuable**: This is a completely new drug modality—a programmable, nanoscale "death star."
+*   **How to test in silico**: Model the DNA origami structure and its interaction with multiple DR5 receptors on the cell surface.
+
+**15. The "Microwave-Activated Biorobot" Hypothesis**
+
+> *"Engineered bacteria that are programmed to release the bispecific ligand only upon exposure to a focused microwave beam will enable spatiotemporally precise cancer therapy."*
+
+*   **The Idea**: Build on the bacterial therapy concept by adding a microwave-sensitive promoter. The bacteria only produce the ligand when you "turn them on" with a microwave pulse, giving you external control over when and where the therapy is active.
+*   **Why it's valuable**: This adds a layer of external, spatiotemporal control.
+*   **How to test in silico**: Model the thermal and mechanical effects of microwave exposure on the bacteria and the surrounding tissue.
+
+---
+
+### 💎 Summary & How to Prioritize
+
+| Hypothesis | Novelty | Testability | Potential Impact | Effort |
+| :--- | :--- | :--- | :--- | :--- |
+| 1. Metal Overload (Ferroptosis) | High | Medium | High | Medium |
+| 2. Sodium Rush (NECSO) | Very High | Low (new pathway) | High | High |
+| 3. Mitochondrial Sabotage | High | Medium | High | Medium |
+| 4. AND Gate Logic | Medium | High | Very High | Low-Medium |
+| 5. Microenvironment Sniffer | Medium | High | High | Medium |
+| 6. Metabolic Waste | High | Medium | High | High |
+| 7. Danger Signal (ICD) | Medium | High | Very High | Low-Medium |
+| 8. Gap Junction Wave | High | High | High | Medium |
+| 9. Fas-FasL Bystander | Medium | High | High | Low |
+| 10. Evolutionary Trap | High | Medium | Very High | High |
+| 11. Synthetic Lethal Partner | High | High | Very High | Medium |
+| 12. Living Drug Factory | Very High | Low | Very High | Very High |
+| 13. Self-Amplifying mRNA | Medium | Medium | High | Medium |
+| 14. Nano-Origami Death Star | Very High | Low | Very High | Very High |
+| 15. Microwave-Activated Biorobot | Very High | Very Low | High | Very High |
+
+**My recommendation:** Start with Hypotheses **4 (AND Gate)** , **7 (Danger Signal/ICD)** , and **9 (Fas-FasL Bystander)** . They are highly testable within your existing RL + PySB + PhysiCell framework, and they offer immediate, high-impact expansions to your project's scope. Once those are working, tackle the more ambitious ones like **10 (Evolutionary Trap)** and **11 (Synthetic Lethality)** .
