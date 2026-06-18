@@ -1,0 +1,62 @@
+{
+  "tag": "rung26f_negdesign_generate_demo",
+  "backbone": "rung26d rank_1 (PXDesign dual-passer)",
+  "target": "IDH1_R132H_A0101  pep MUT=IIGHHAYGDQY / WT=IIGRHAYGDQY  p4",
+  "noise_floor_nll": "~0.03-0.05 (from validate.json) - dscore must clear this to mean anything",
+  "n_candidates": 24,
+  "temperature": 0.25,
+  "n_orders": 4,
+  "dscore_max": 0.0235,
+  "dscore_mean": -0.0024,
+  "dscore_std": 0.0094,
+  "top": [
+    {
+      "seq": "DATWKQIEKLLKEILKLVEAMAAAETDPELRAELEAVARGIAGFIKLFRETKDVALALAELQGLLSHLEVIRPRLDAEQRKLADEAAKKVKEAIALLKAQ",
+      "nll_mut": 0.9867,
+      "nll_wt": 1.0103,
+      "dscore_wt_minus_mut": 0.0235
+    },
+    {
+      "seq": "DATFQEILKLLEEIAALLAEIAARETDPALRAELEAQARSLKGFIALFRETKDVQLALAEMQGLLSWLDVIEPELDEEGRALLAEARRLVEEAIALLQSQ",
+      "nll_mut": 1.0762,
+      "nll_wt": 1.0915,
+      "dscore_wt_minus_mut": 0.0154
+    },
+    {
+      "seq": "SETWKKILELLEEILKLIKEMAEKETDPELQAELEAEARSLEGFIELFKKTKDVKLALAEMQGLLAWLDVIKPELDEEQQKLAEEAKKKVEEAIKLLESQ",
+      "nll_mut": 0.935,
+      "nll_wt": 0.944,
+      "dscore_wt_minus_mut": 0.009
+    },
+    {
+      "seq": "DATLARIEALLERVLALVGAMAAAQTDPALAAELAAVARSIAGFIALFRETKDTALALAECEGLLAWLDVVLPRLDDAQRALAAEARDLVREAIALLRAQ",
+      "nll_mut": 1.0397,
+      "nll_wt": 1.0482,
+      "dscore_wt_minus_mut": 0.0084
+    },
+    {
+      "seq": "EKTLEEIEKILKEIAKLVKEMADLEEDPELQAELEAVYRSLEGFIALFKETKDTQLALAEMQGLLSWLDEIKPRLNEEQQKLADEAKKKVEEAIKLLAAL",
+      "nll_mut": 0.974,
+      "nll_wt": 0.9814,
+      "dscore_wt_minus_mut": 0.0074
+    },
+    {
+      "seq": "DKTLEEILKLLEKIEKLIAEIAKLETDPQLQAELTAVAKSLKGFIKLFKETKDISLLLAELKGLLSWLDEIKPQLDAEQQELADEARKLVEEAIKLAESL",
+      "nll_mut": 1.011,
+      "nll_wt": 1.0183,
+      "dscore_wt_minus_mut": 0.0073
+    },
+    {
+      "seq": "DETLKKIEELLEKVRKLVAEIAAKETDPVLKAELEAVARSLEGFIKLFKETKDVKLALAELQGLLAWLDEIKPLLDAESQKLADEARKVVEEAIKLLESL",
+      "nll_mut": 0.9901,
+      "nll_wt": 0.989,
+      "dscore_wt_minus_mut": -0.0011
+    },
+    {
+      "seq": "EATWQRILELLREALALVEEMAARETDPRLAAELRAVARSLAGFIALFEQTKDVALALAEVRGLLAWLDEIRPQLDAESQELADKAREVCKEIEALLAGQ",
+      "nll_mut": 1.0896,
+      "nll_wt": 1.0882,
+      "dscore_wt_minus_mut": -0.0014
+    }
+  ]
+}

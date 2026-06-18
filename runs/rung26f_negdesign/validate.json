@@ -1,0 +1,42 @@
+{
+  "tag": "rung26f_negdesign_validate",
+  "method": "ProteinMPNN v_48_020 two-state conditional NLL; design C, fix A+B; MUT p4=HIS vs WT p4=ARG; mean over decoding orders",
+  "n_decoding_orders": 16,
+  "target": "IDH1_R132H_A0101  pep MUT=IIGHHAYGDQY / WT=IIGRHAYGDQY  p4",
+  "interpretation": "dscore>0 => binder prefers MUT context (discriminating). These rank_1/2/3 are AF2+Protenix-confirmed NON-specific binders, so the GATE is |dscore| ~ 0 (harness must not invent discrimination).",
+  "results": [
+    {
+      "binder_len": 100,
+      "binder_scored_residues": 100,
+      "nll_mut": 1.084,
+      "nll_mut_sd": 0.0216,
+      "nll_wt": 1.0793,
+      "nll_wt_sd": 0.022,
+      "dscore_wt_minus_mut": -0.0047,
+      "dscore_noise_sd": 0.0308,
+      "design": "rank_1"
+    },
+    {
+      "binder_len": 100,
+      "binder_scored_residues": 100,
+      "nll_mut": 1.1506,
+      "nll_mut_sd": 0.0224,
+      "nll_wt": 1.1536,
+      "nll_wt_sd": 0.0219,
+      "dscore_wt_minus_mut": 0.003,
+      "dscore_noise_sd": 0.0314,
+      "design": "rank_2"
+    },
+    {
+      "binder_len": 100,
+      "binder_scored_residues": 100,
+      "nll_mut": 1.1847,
+      "nll_mut_sd": 0.0339,
+      "nll_wt": 1.1807,
+      "nll_wt_sd": 0.0338,
+      "dscore_wt_minus_mut": -0.004,
+      "dscore_noise_sd": 0.0479,
+      "design": "rank_3"
+    }
+  ]
+}
