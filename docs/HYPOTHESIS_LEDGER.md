@@ -47,6 +47,7 @@ synthesis in `CAPSTONE.md`; the live one-page state in `STATUS.md`.
 | C6 | **PIK3CA-E545K/A\*03:01** — presentation flip (WT unpresented) → binder auto-specific | 🔄 IN-FLIGHT — folds landed; **design v1 0/10** (≤5% tier, under-powered + no-hotspot) → **v2: hotspot B4+B6 (up-facing) + max batch** | R29 |
 | C7 | **KRAS-G12D/A\*11:01** — read-the-mutation (Gly→Asp presence/absence) | 🔄 IN-FLIGHT — **GO**: free-pMHC fold shows p6 Asp **30% exposed (up-facing)**; crystal's 5% was a TCR-artifact. Gold-standard neoantigen (R32b). Design target staged (hotspot B6); PXDesign after PIK3CA queue. WT presented (R32) → MUT-vs-WT scoring = make-or-break | R30c/R32 |
 | C8 | Target presentation is real (not just MHCflurry-predicted) | ✅ CONFIRMED (real MS) — benign: PIK3CA WT ABSENT (flip corroborated), KRAS WT PRESENT (no flip). MUT-in-tumour (IEDB): KRAS-G12D = gold-standard (MS-eluted+x-ray+T-cell+ on A\*11/03); PIK3CA-E545K = binding-only (thinner) | R32/32b |
+| C9 | **Kill-coupling** — recognizers → AND-gate → apoptosis kills mutant, spares normal | ✅ FEASIBLE (logic) — N=2 AND-gate on 5%-leak recognizers → normal false-death 4×10⁻¹¹, kill 0.99, TI ~10¹⁰ (single recognizer 1.3×10⁻⁴ = unsafe). Internal key = detector → root-kill. **Load-bearing residual: leak INDEPENDENCE** (correlated mis-firing collapses it) | R34 |
 
 ## D. The 15 conceptual hypotheses (`docs/hypothesis-to-consider.txt`) — cross-referenced & crossed off
 | # | Conceptual hypothesis | Verdict vs our work | Where / next |

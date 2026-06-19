@@ -186,6 +186,22 @@ through it — that's the lab's step.
 GUIDE-seq off-target profile (computational ≤1mm-clean ≠ measured); delivery of the circuit. External key —
 binder *affinity/specificity* (SPR/cellular) + immunopeptidomic confirmation in the patient's own tumour.
 
+## 13. Kill-coupling — recognition → self-destruct (the internal key becomes a root-kill, R34)
+The recognizers *detect* the mutation; this closes the loop to **death**. Architecture: **recognizer × N → AND-gate
+→ apoptosis effector** (iCasp9-class — the clinical CAR-T safety switch proves engineered apoptosis-on-demand).
+Every recognizer leaks (~few % in normal cells); a single one wired to a death switch would kill ~5×10⁹ of 10¹¹
+normal cells = lethal. **AND-gating two independent recognizers** makes the joint false-death ~L₁·L₂, and the
+cooperative apoptosis threshold (eARM, §1) filters the rest:
+- N=1 (5% leak): normal false-death **1.3×10⁻⁴** — unsafe. **N=2: 4×10⁻¹¹, therapeutic index ~10¹⁰, kill 0.99.**
+- The threshold amplifies the mutant signal (kill stays ~0.99); cells that don't fully fire are cleared by the
+  **bystander death wave** (§3) → tumour-level cure with cell-level partial kill.
+
+→ **The internal key is now a complete root-kill logic**: recognize the somatic mutation / oncometabolite (the
+only tumour-exclusive signal, §7) → AND-gate for specificity → trigger the cell's *own* apoptosis → wave clears
+escapers. MHC-free, autonomous. **The load-bearing residual: independence of recognizer leaks** (correlated
+mis-firing in stressed normal cells would collapse the AND margin — the key thing a lab must measure), plus a
+non-leaky death module, circuit kinetics (a full coupled-ODE is next), and delivery.
+
 ---
 
 *Rungs: see `README.md` (hypothesis catalog), `STATUS.md` (live map), `docs/HYPOTHESIS_LEDGER.md` (every

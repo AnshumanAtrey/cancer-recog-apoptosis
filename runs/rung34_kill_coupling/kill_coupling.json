@@ -1,0 +1,140 @@
+{
+  "tag": "rung34_kill_coupling",
+  "architecture": "recognizer(toehold/allele-CRISPR/DhdR) x N -> split/serial AND -> iCasp9/caspase-3/BAX apoptosis",
+  "apoptosis_model": {
+    "threshold_K": 0.3,
+    "hill_n": 5.0,
+    "basis": "bistable MOMP/caspase switch, eARM RUNG-1"
+  },
+  "recognizers_grounded": {
+    "toehold_RNA": [
+      0.9,
+      0.05
+    ],
+    "allele_CRISPR": [
+      0.9,
+      0.05
+    ],
+    "DhdR_2HG": [
+      0.98,
+      0.02
+    ]
+  },
+  "min_inputs_for_safe_gate_at_5pct_leak": 2,
+  "design_point": {
+    "N": 2,
+    "leak": 0.05,
+    "tumour_kill": 0.9931,
+    "normal_false_death": 4.018775720003108e-11,
+    "therapeutic_index": 24710984898.494297
+  },
+  "sweep": [
+    {
+      "N": 1,
+      "leak": 0.01,
+      "tumour_kill": 0.9959,
+      "normal_false_death": 4.11522616809769e-08,
+      "therapeutic_index": 24200410.831967205
+    },
+    {
+      "N": 1,
+      "leak": 0.02,
+      "tumour_kill": 0.9959,
+      "normal_false_death": 1.3168706938328317e-06,
+      "therapeutic_index": 756263.8032786881
+    },
+    {
+      "N": 1,
+      "leak": 0.05,
+      "tumour_kill": 0.9959,
+      "normal_false_death": 0.00012858428700012866,
+      "therapeutic_index": 7745.1270491803225
+    },
+    {
+      "N": 1,
+      "leak": 0.1,
+      "tumour_kill": 0.9959,
+      "normal_false_death": 0.004098360655737707,
+      "therapeutic_index": 242.99999999999986
+    },
+    {
+      "N": 1,
+      "leak": 0.2,
+      "tumour_kill": 0.9959,
+      "normal_false_death": 0.11636363636363642,
+      "therapeutic_index": 8.55852971311475
+    },
+    {
+      "N": 2,
+      "leak": 0.01,
+      "tumour_kill": 0.9931,
+      "normal_false_death": 4.115226337448562e-18,
+      "therapeutic_index": 2.4131821188966048e+17
+    },
+    {
+      "N": 2,
+      "leak": 0.02,
+      "tumour_kill": 0.9931,
+      "normal_false_death": 4.213991769547309e-15,
+      "therapeutic_index": 235662316298497.56
+    },
+    {
+      "N": 2,
+      "leak": 0.05,
+      "tumour_kill": 0.9931,
+      "normal_false_death": 4.018775720003108e-11,
+      "therapeutic_index": 24710984898.494297
+    },
+    {
+      "N": 2,
+      "leak": 0.1,
+      "tumour_kill": 0.9931,
+      "normal_false_death": 4.115226168097693e-08,
+      "therapeutic_index": 24131822.182045095
+    },
+    {
+      "N": 2,
+      "leak": 0.2,
+      "tumour_kill": 0.9931,
+      "normal_false_death": 4.213814199763768e-05,
+      "therapeutic_index": 23567.22470891091
+    },
+    {
+      "N": 3,
+      "leak": 0.01,
+      "tumour_kill": 0.9883,
+      "normal_false_death": 4.115226337448564e-28,
+      "therapeutic_index": 2.4016548199377218e+27
+    },
+    {
+      "N": 3,
+      "leak": 0.02,
+      "tumour_kill": 0.9883,
+      "normal_false_death": 1.3484773662551454e-23,
+      "therapeutic_index": 7.329268859673223e+22
+    },
+    {
+      "N": 3,
+      "leak": 0.05,
+      "tumour_kill": 0.9883,
+      "normal_false_death": 1.2558674125514423e-17,
+      "therapeutic_index": 7.869742513971923e+16
+    },
+    {
+      "N": 3,
+      "leak": 0.1,
+      "tumour_kill": 0.9883,
+      "normal_false_death": 4.115226337446872e-13,
+      "therapeutic_index": 2401654819938.709
+    },
+    {
+      "N": 3,
+      "leak": 0.2,
+      "tumour_kill": 0.9883,
+      "normal_false_death": 1.3484773480712342e-08,
+      "therapeutic_index": 73292689.58506751
+    }
+  ],
+  "verdict": "FEASIBLE root-kill. A 2-input AND-gated self-destruct on 5%-leak recognizers gives normal-cell false-death ~4e-11 (therapeutic index ~2e+10) -- killing the cell via its OWN apoptosis only when 2 independent mutation/metabolite signals co-occur. The kill/specificity TRADE-OFF: single-cell tumour-kill drops to ~0.99 at N=2 (a cell escapes if not all N fire) -- but the resistance-agnostic BYSTANDER DEATH WAVE (RUNG-13/21, cures across 4-13% escapees) clears those, so partial single-cell kill is sufficient at the tumour level. Death module precedent: iCasp9 (clinical CAR-T safety switch) = engineered apoptosis-on-demand is proven.",
+  "residuals": "Assumes recognizer leaks are INDEPENDENT -- correlated failure (a stressed normal cell mis-firing several recognizers; shared delivery/cell-state) degrades the AND multiplication and is the key risk to test. Also: the death module itself must be non-leaky (basal iCasp9 must not trigger); delivery of the multi-component circuit; kinetics (does effector cross threshold before the cell adapts?) -- a full eARM ODE of the coupled circuit + in-cell validation are the next/wet steps. This quantifies the SPECIFICITY logic of the kill-coupling, not a built circuit."
+}
