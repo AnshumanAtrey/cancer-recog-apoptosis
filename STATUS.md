@@ -22,7 +22,7 @@ own driver *mutation*. Two "keys" that recognize the mutation, then trigger deat
 - ❌ **BRAF-V600E** CLOSED — mutation buried (2% exposed) + weakly presented. R26e.
 - ✅ **Built the target-selection SCREEN we'd skipped** (R28): 16 drivers × 13 HLA → picks targets by presentation + geometry.
 - 🔄 **PIK3CA-E545K / A\*03:01** (R29) — *presentation flip*. Folds landed; binder design v1 **0/10** (≤5% tier, under-powered+no-hotspot) → **v2: hotspot B4+B6 + max batch**.
-- 🔄 **KRAS-G12D / A\*11:01** (R30b) — *read-the-mutation*. Real crystal target (PDB 7OW6). **CAVEAT: p6 Asp only ~5% exposed in crystal — gated on a free-pMHC fold to confirm exposure before PXDesign.**
+- 🔄 **KRAS-G12D / A\*11:01** (R30c) — *read-the-mutation* **GO**: free-pMHC fold shows p6 Asp **30% exposed** (crystal's 5% was a TCR-artifact). Design target staged (hotspot B6); PXDesign after the PIK3CA queue.
 - ✅ **Immunopeptidomics check (R32)** — real mass-spec (HLA Ligand Atlas) corroborates: PIK3CA WT **absent** from normal (flip real); KRAS WT **present** on normal lung/testis (binder must read G12D). MUT-in-tumour = next layer.
 - → Two complementary shots; **currently fold-bound (hours).**
 

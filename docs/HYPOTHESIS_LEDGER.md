@@ -45,7 +45,7 @@ synthesis in `CAPSTONE.md`; the live one-page state in `STATUS.md`.
 | C4 | External key works for BRAF-V600E | ❌ REFUTED — mutation buried (2% exposed) + weakly presented (3971 nM) | R26e |
 | C5 | Pick binder targets by a presentation/exposure SCREEN, not prestige | ✅ CONFIRMED — screen found 3 presentation-flip + 34 up-facing read-the-mutation targets | R28 |
 | C6 | **PIK3CA-E545K/A\*03:01** — presentation flip (WT unpresented) → binder auto-specific | 🔄 IN-FLIGHT — folds landed; **design v1 0/10** (≤5% tier, under-powered + no-hotspot) → **v2: hotspot B4+B6 (up-facing) + max batch** | R29 |
-| C7 | **KRAS-G12D/A\*11:01** — read-the-mutation (Gly→Asp presence/absence) | 🔄 IN-FLIGHT — real crystal target (7OW6, A\*11:01); **CAVEAT: p6 Asp only ~5% exposed in crystal (not cleanly up-facing); WT IS presented (R32) → must discriminate. GATED on free-pMHC fold to resolve Asp exposure before quota** | R30b/R32 |
+| C7 | **KRAS-G12D/A\*11:01** — read-the-mutation (Gly→Asp presence/absence) | 🔄 IN-FLIGHT — **GO**: free-pMHC fold shows p6 Asp **30% exposed (up-facing)**; crystal's 5% was a TCR-artifact. Gold-standard neoantigen (R32b). Design target staged (hotspot B6); PXDesign after PIK3CA queue. WT presented (R32) → MUT-vs-WT scoring = make-or-break | R30c/R32 |
 | C8 | Target presentation is real (not just MHCflurry-predicted) | ✅ CONFIRMED (real MS) — benign: PIK3CA WT ABSENT (flip corroborated), KRAS WT PRESENT (no flip). MUT-in-tumour (IEDB): KRAS-G12D = gold-standard (MS-eluted+x-ray+T-cell+ on A\*11/03); PIK3CA-E545K = binding-only (thinner) | R32/32b |
 
 ## D. The 15 conceptual hypotheses (`docs/hypothesis-to-consider.txt`) — cross-referenced & crossed off
