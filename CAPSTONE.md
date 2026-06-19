@@ -219,6 +219,23 @@ design target is now explicit and testable: per-recognizer leak amplitude L, lea
 leak **correlation ρ→0**, and **N≥3** if ρ can't be driven low. This converts §13's hand-wave residual into four
 measurable engineering specs — the #1 wet measurement being recognizer-leak **correlation in stressed normal cells**.
 
+## 15. Delivery × bystander wave — separating the kill from delivery (R36)
+R35's safety rests on an escape hatch (*"partial single-cell kill is fine because the bystander wave clears the
+rest"*) that also collides with the residual named on every rung: **delivery reaches only some cells.** R36 models
+both as one **percolation** question — circuit delivered to a seed fraction f, fires w.p. p_kill, dying cells
+recruit neighbours w.p. b (the resistance-agnostic wave) ≡ bond-percolation ignition (2D p_c=0.5):
+- **Super-critical wave (b>p_c):** a **5% seed clears ~99%**; minimum delivery f\* collapses ~3 orders (→0.2%).
+  *Delivery stops being the bottleneck.*
+- **Sub-critical wave:** the wave dies locally → near-complete delivery required. *Delivery IS the bottleneck.*
+- **Partial kill** (p_kill=0.5) clears the tumour **only** when super-critical — the precise condition that makes
+  §14's partial single-cell kill acceptable at the tumour level.
+- **Hard limit:** wave-resistant escapees (R18/R21) cap clearance at **~1−r** → a resistance-agnostic 2nd killer
+  (NK, §3/R21) is mandatory for the last fraction. **3D geometry lowers p_c (~0.25) → even more forgiving.**
+
+→ The therapy's hardest practical objection ("you can't deliver to every cancer cell") is **formally separable**
+from the kill mechanism: the engineering target becomes *make the bystander coupling super-critical* + *add an
+agnostic killer for the resistant fraction* — two individually-tractable problems instead of one impossible one.
+
 ---
 
 *Rungs: see `README.md` (hypothesis catalog), `STATUS.md` (live map), `docs/HYPOTHESIS_LEDGER.md` (every

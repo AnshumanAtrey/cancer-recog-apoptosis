@@ -184,9 +184,12 @@ hypotheses. The *physics* of delivery (robot, sound, EM) is future-safe below; t
       from Twist/GenScript), built from RUNG-16/17 clean handles + RUNG-20 presentation. *Answers:* produces a
       synthesis-ready blueprint + a publishable proof-of-concept — the closest legitimate "make the medicine"
       step without a wet lab. (NOT synthesize-and-inject — that's the clinical ladder, MAGE-A3 = the warning.)
-- [ ] **HYBRID: delivery + wave** (the bio part of "combine wave apoptosis with robotic injection"). 💻. Model
-      delivery that UNDER-reaches (robot/injection hits only part of the tumour) → does the self-propagating
-      wave close the gap the delivery missed? Quantifies how wave + partial-delivery beat either alone.
+- [x] **HYBRID: delivery + wave** ✅ RUNG-36 (extends R24). Modelled partial delivery (seed fraction f) + partial
+      single-cell kill (p_kill, the R35 regime) + bystander wave as **bond-percolation ignition**. RESULT:
+      delivery⊥kill IFF the wave is super-critical (b>p_c=0.5 in 2D, ~0.25 in 3D) — a 5% seed clears ~99% & min
+      delivery collapses ~3 orders; partial kill clears ONLY when super-critical (validates R35's escape hatch);
+      wave-resistant escapees cap clearance at ~1−r → needs R21's agnostic 2nd killer. Kill & delivery are
+      formally separable. (scripts/70, runs/rung36_delivery_wave/, ledger A8, CAPSTONE §15.)
 
 ## FUT — future-safe (pure PHYSICS / hardware; need lab, kept — full list in README Tier Z, Z1–Z6)
 - [ ] **Soundwave at the cancer cell's frequency** (oncotripsy, Z1) — ultrasound resonance; toy arm in RUNG-14

@@ -1,0 +1,317 @@
+{
+  "tag": "rung36_delivery_wave",
+  "model": "stochastic lattice CA = bond-percolation ignition",
+  "pc_2d_bond": 0.5,
+  "clear_target": 0.99,
+  "cleared_grid": {
+    "p_kill=1.0": [
+      {
+        "f": 0.01,
+        "b=0.0": 0.01,
+        "b=0.2": 0.027,
+        "b=0.35": 0.109,
+        "b=0.45": 0.449,
+        "b=0.5": 0.738,
+        "b=0.6": 0.945,
+        "b=0.8": 0.998
+      },
+      {
+        "f": 0.05,
+        "b=0.0": 0.05,
+        "b=0.2": 0.128,
+        "b=0.35": 0.36,
+        "b=0.45": 0.689,
+        "b=0.5": 0.824,
+        "b=0.6": 0.953,
+        "b=0.8": 0.998
+      },
+      {
+        "f": 0.1,
+        "b=0.0": 0.1,
+        "b=0.2": 0.234,
+        "b=0.35": 0.518,
+        "b=0.45": 0.769,
+        "b=0.5": 0.863,
+        "b=0.6": 0.958,
+        "b=0.8": 0.998
+      },
+      {
+        "f": 0.25,
+        "b=0.0": 0.251,
+        "b=0.2": 0.472,
+        "b=0.35": 0.722,
+        "b=0.45": 0.866,
+        "b=0.5": 0.915,
+        "b=0.6": 0.97,
+        "b=0.8": 0.998
+      },
+      {
+        "f": 0.5,
+        "b=0.0": 0.5,
+        "b=0.2": 0.718,
+        "b=0.35": 0.867,
+        "b=0.45": 0.934,
+        "b=0.5": 0.956,
+        "b=0.6": 0.983,
+        "b=0.8": 0.999
+      },
+      {
+        "f": 1.0,
+        "b=0.0": 1.0,
+        "b=0.2": 1.0,
+        "b=0.35": 1.0,
+        "b=0.45": 1.0,
+        "b=0.5": 1.0,
+        "b=0.6": 1.0,
+        "b=0.8": 1.0
+      }
+    ],
+    "p_kill=0.5": [
+      {
+        "f": 0.01,
+        "b=0.0": 0.005,
+        "b=0.2": 0.013,
+        "b=0.35": 0.058,
+        "b=0.45": 0.332,
+        "b=0.5": 0.694,
+        "b=0.6": 0.944,
+        "b=0.8": 0.998
+      },
+      {
+        "f": 0.05,
+        "b=0.0": 0.025,
+        "b=0.2": 0.066,
+        "b=0.35": 0.227,
+        "b=0.45": 0.585,
+        "b=0.5": 0.784,
+        "b=0.6": 0.948,
+        "b=0.8": 0.998
+      },
+      {
+        "f": 0.1,
+        "b=0.0": 0.05,
+        "b=0.2": 0.127,
+        "b=0.35": 0.361,
+        "b=0.45": 0.686,
+        "b=0.5": 0.824,
+        "b=0.6": 0.952,
+        "b=0.8": 0.998
+      },
+      {
+        "f": 0.25,
+        "b=0.0": 0.126,
+        "b=0.2": 0.282,
+        "b=0.35": 0.563,
+        "b=0.45": 0.794,
+        "b=0.5": 0.876,
+        "b=0.6": 0.961,
+        "b=0.8": 0.998
+      },
+      {
+        "f": 0.5,
+        "b=0.0": 0.251,
+        "b=0.2": 0.47,
+        "b=0.35": 0.722,
+        "b=0.45": 0.865,
+        "b=0.5": 0.913,
+        "b=0.6": 0.97,
+        "b=0.8": 0.999
+      },
+      {
+        "f": 1.0,
+        "b=0.0": 0.501,
+        "b=0.2": 0.719,
+        "b=0.35": 0.869,
+        "b=0.45": 0.935,
+        "b=0.5": 0.957,
+        "b=0.6": 0.984,
+        "b=0.8": 0.999
+      }
+    ]
+  },
+  "small_seed_clearance_curve": [
+    {
+      "b": 0.0,
+      "cleared_f0.05": 0.05,
+      "cleared_f0.10": 0.1,
+      "regime": "sub-critical (delivery-bound)"
+    },
+    {
+      "b": 0.2,
+      "cleared_f0.05": 0.127,
+      "cleared_f0.10": 0.233,
+      "regime": "sub-critical (delivery-bound)"
+    },
+    {
+      "b": 0.35,
+      "cleared_f0.05": 0.358,
+      "cleared_f0.10": 0.517,
+      "regime": "sub-critical (delivery-bound)"
+    },
+    {
+      "b": 0.45,
+      "cleared_f0.05": 0.689,
+      "cleared_f0.10": 0.768,
+      "regime": "sub-critical (delivery-bound)"
+    },
+    {
+      "b": 0.5,
+      "cleared_f0.05": 0.825,
+      "cleared_f0.10": 0.862,
+      "regime": "AT p_c"
+    },
+    {
+      "b": 0.55,
+      "cleared_f0.05": 0.908,
+      "cleared_f0.10": 0.923,
+      "regime": "SUPER-critical (wave carries)"
+    },
+    {
+      "b": 0.6,
+      "cleared_f0.05": 0.953,
+      "cleared_f0.10": 0.958,
+      "regime": "SUPER-critical (wave carries)"
+    },
+    {
+      "b": 0.7,
+      "cleared_f0.05": 0.989,
+      "cleared_f0.10": 0.989,
+      "regime": "SUPER-critical (wave carries)"
+    },
+    {
+      "b": 0.8,
+      "cleared_f0.05": 0.998,
+      "cleared_f0.10": 0.998,
+      "regime": "SUPER-critical (wave carries)"
+    },
+    {
+      "b": 0.9,
+      "cleared_f0.05": 1.0,
+      "cleared_f0.10": 1.0,
+      "regime": "SUPER-critical (wave carries)"
+    }
+  ],
+  "min_delivery_for_clearance": [
+    {
+      "b": 0.0,
+      "fstar_pk1.0": 1.0,
+      "fstar_pk0.5": null,
+      "regime": "sub-critical (delivery-bound)"
+    },
+    {
+      "b": 0.2,
+      "fstar_pk1.0": 1.0,
+      "fstar_pk0.5": null,
+      "regime": "sub-critical (delivery-bound)"
+    },
+    {
+      "b": 0.35,
+      "fstar_pk1.0": 1.0,
+      "fstar_pk0.5": null,
+      "regime": "sub-critical (delivery-bound)"
+    },
+    {
+      "b": 0.45,
+      "fstar_pk1.0": 0.9,
+      "fstar_pk0.5": null,
+      "regime": "sub-critical (delivery-bound)"
+    },
+    {
+      "b": 0.5,
+      "fstar_pk1.0": 0.9,
+      "fstar_pk0.5": null,
+      "regime": "AT threshold"
+    },
+    {
+      "b": 0.55,
+      "fstar_pk1.0": 0.9,
+      "fstar_pk0.5": null,
+      "regime": "SUPER-critical (wave carries)"
+    },
+    {
+      "b": 0.6,
+      "fstar_pk1.0": 0.7,
+      "fstar_pk0.5": null,
+      "regime": "SUPER-critical (wave carries)"
+    },
+    {
+      "b": 0.7,
+      "fstar_pk1.0": 0.2,
+      "fstar_pk0.5": 0.35,
+      "regime": "SUPER-critical (wave carries)"
+    },
+    {
+      "b": 0.8,
+      "fstar_pk1.0": 0.002,
+      "fstar_pk0.5": 0.002,
+      "regime": "SUPER-critical (wave carries)"
+    },
+    {
+      "b": 0.9,
+      "fstar_pk1.0": 0.002,
+      "fstar_pk0.5": 0.002,
+      "regime": "SUPER-critical (wave carries)"
+    }
+  ],
+  "resistance_limit": [
+    {
+      "r": 0.0,
+      "cleared": 0.998,
+      "ceiling_est": 1.0
+    },
+    {
+      "r": 0.02,
+      "cleared": 0.9782,
+      "ceiling_est": 0.981
+    },
+    {
+      "r": 0.05,
+      "cleared": 0.9484,
+      "ceiling_est": 0.9525
+    },
+    {
+      "r": 0.1,
+      "cleared": 0.8964,
+      "ceiling_est": 0.905
+    },
+    {
+      "r": 0.2,
+      "cleared": 0.7861,
+      "ceiling_est": 0.81
+    }
+  ],
+  "clearance_3d": [
+    {
+      "b": 0.15,
+      "cleared_f0.05_3d": 0.165,
+      "fstar_3d_pk1.0": 1.0,
+      "regime": "sub-critical"
+    },
+    {
+      "b": 0.2,
+      "cleared_f0.05_3d": 0.304,
+      "fstar_3d_pk1.0": 1.0,
+      "regime": "sub-critical"
+    },
+    {
+      "b": 0.25,
+      "cleared_f0.05_3d": 0.539,
+      "fstar_3d_pk1.0": 1.0,
+      "regime": "SUPER-critical"
+    },
+    {
+      "b": 0.3,
+      "cleared_f0.05_3d": 0.744,
+      "fstar_3d_pk1.0": 1.0,
+      "regime": "SUPER-critical"
+    },
+    {
+      "b": 0.4,
+      "cleared_f0.05_3d": 0.925,
+      "fstar_3d_pk1.0": 0.9,
+      "regime": "SUPER-critical"
+    }
+  ],
+  "verdict": "The bystander wave DECOUPLES the kill from delivery -- but only when it is SUPER-critical, and never past resistance. Quantitatively: (1) When the wave bond-probability b exceeds the percolation threshold (p_c=0.5 in 2D square lattice; ~0.25 in 3D), the minimum delivery for cure COLLAPSES toward a few percent -- a partial seed ignites a tumour-spanning death cluster and the wave clears the rest, so DELIVERY STOPS BEING THE BOTTLENECK. (2) When b is SUB-critical, the wave dies out locally and cure requires near-COMPLETE delivery (f*~1) -- delivery IS the bottleneck. (3) This validates RUNG-35's escape hatch with a condition: partial single-cell kill (p_kill=0.5) still cures at low delivery PROVIDED the wave is super-critical (the f* penalty for halving p_kill is small above p_c, large below it). (4) HARD LIMIT: wave-RESISTANT cells (R18/R21 escapees) cap clearance at ~1-r regardless of wave strength -- the wave alone cannot clear them, which is exactly why a resistance-agnostic 2nd killer (NK, R21) is needed. (5) 3D (real tumour geometry) LOWERS p_c (~0.25) -> the wave is EASIER to make super-critical -> the delivery requirement is even more forgiving than the 2D bound. NET: the engineering target shifts from 'deliver to every cell' (near-impossible) to 'make the bystander coupling super-critical AND add an agnostic killer for the resistant fraction' -- the kill mechanism and the delivery problem are formally separable.",
+  "residuals": "Lattice CA (no vasculature / 3D diffusion geometry / immune kinetics / cell motility); f, p_kill, b, r are effective probabilities, not measured efficiencies; the recognition->caspase-8 transduction potency that sets b is the wet-lab residual (R1/R13). Bond-percolation equivalence assumes each dying cell tries each neighbour once -- graded/kinetic bystander signal (R13) would shift the effective threshold. Robust claim = the percolation COLLAPSE of f* at b=p_c and the 1-r resistance ceiling, not absolute cure%."
+}

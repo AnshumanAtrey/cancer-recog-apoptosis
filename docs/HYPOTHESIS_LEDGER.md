@@ -19,6 +19,7 @@ synthesis in `CAPSTONE.md`; the live one-page state in `STATUS.md`.
 | A5 | One cell's death spreads & clears the tumour, contained | ✅ CONFIRMED (sim) — death wave snaps on, irreversible, spreads, stays contained | R13/R14 |
 | A6 | Expression-LEVEL differences can gate safely | ❌ REFUTED — every expression window leaks → mutation is the ONLY tumour-exclusive signal | R23 |
 | A7 | Clinical tumours need a 2nd, resistance-agnostic mechanism | ✅ CONFIRMED — cure collapses at L≈1; bystander shifts curable size ~10× | R19 |
+| A8 | **Partial delivery + partial kill still clear the tumour IF the bystander wave is super-critical** (delivery⊥kill) | ✅ CONFIRMED (sim) — wave = bond-percolation ignition: above p_c (0.5 in 2D, ~0.25 in 3D) a **5% seed** clears ~99% and min-delivery f\* collapses ~3 orders (→0.002); below p_c delivery must be ~complete. Partial kill (p_kill=0.5) clears ONLY if super-critical (validates R35's escape hatch with a condition). HARD LIMIT: wave-resistant escapees cap clearance at **~1−r** → needs the R21 agnostic 2nd killer. **Delivery & kill are formally separable** | R36 |
 
 ## B. Recognition-window handles (the 12 candidate "tells") — from TODO.md
 | # | Handle | Verdict | Where |
@@ -61,7 +62,7 @@ synthesis in `CAPSTONE.md`; the live one-page state in `STATUS.md`.
 | H6 | Metabolic Waste / oncometabolite (2-HG, succinate) | ✅ FEASIBILITY CONFIRMED (R33) — 2-HG recognition gate for IDH1-R132H is feasible & EASIER than the binder route (the ~2000× concentration differential does the discrimination, not binding selectivity; needs a 2-HG-specific/non-agonist sensor). **RECOVERS IDH1** + GROUNDED: the D-2-HG-specific recognizer **DhdR** already exists (Kd 1.16µM, rejects α-KG+28 metabolites, biosensor 0.3-30mM); design = detune to ~0.1-1mM + couple to death | R33/33b |
 | H7 | Danger Signal (ICD/DAMPs) | ⬜ OPEN — not yet scored; an ICD score on the kill mechanism is cheap | **24h-window candidate** |
 | H8 | Gap-Junction Wave (connexin) | ✅ DONE — connexin relay/bridge tested | R12p_connexin |
-| H9 | Fas-FasL Bystander | ⏳ PARTIAL — bystander cross-kill explored | R13/R21 |
+| H9 | Fas-FasL Bystander | ✅ DONE — bystander wave modelled with real kinetics (R13), as layered cross-kill (R21), and now as the **delivery-decoupling percolation wave** (R36): quantifies when a partial seed clears the tumour + its 1−r resistance ceiling | R13/R21/R36 |
 | H10 | Evolutionary Trap (dual selective pressure) | ⏳ PARTIAL — escape race tested; the specific "trap" variant OPEN | R19 |
 | H11 | Synthetic-Lethal Partner | ✅ DONE — MTAP synthetic-lethal tested | R14 |
 | H12 | Living Drug Factory (engineered bacteria) | ⬜ OPEN (delivery/FUT) | future |

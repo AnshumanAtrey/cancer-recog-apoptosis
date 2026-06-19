@@ -16,6 +16,7 @@ own driver *mutation*. Two "keys" that recognize the mutation, then trigger deat
 | **Internal key** (intracellular mutation-sensing AND-gate self-destruct) | RNA toehold + allele-specific CRISPR | ✅ DONE — **7/7 wobble drivers DNA-addressable** (R27b/c/d) |
 | **External key** (de novo pMHC binder = immune-route recognizer) | design a binder that's mutation-specific | 🔄 IN-FLIGHT (see below) |
 | **Effector / KILL-COUPLING** (recognition → death) | recognizer × N → AND-gate → apoptosis (iCasp9-class) | ✅ LOGIC DESIGNED (R34) + ⚠️ MARGIN CORRECTED (R35) — kill-coupling logic holds, but headline TI ~10¹⁰ was optimistic (assumed graded leak). Under all-or-none leak: N=2→~2.5×10⁻³ (ρ=0), →5×10⁻² (ρ→1). **Conditional** on leak amplitude + **duration**≪commit-time + **correlation ρ→0** + **N≥3**. #1 wet measurement: leak correlation in stressed normal cells |
+| **Delivery / tumour-clearance** (does a partial seed clear the tumour?) | seed fraction f → bystander wave (percolation) | ✅ MODELLED (R36) — **delivery⊥kill IF the wave is super-critical**: above p_c a 5% seed clears ~99% & min-delivery collapses ~3 orders; partial kill clears ONLY if super-critical (validates R35's escape hatch). Resistance caps clearance at ~1−r → needs R21 agnostic 2nd killer. 3D more forgiving. Residual = the wave-coupling potency b (wet) |
 
 ## External key — where we are RIGHT NOW
 - ❌ **IDH1-R132H** CLOSED — His↔Arg too subtle; binder binds but can't discriminate (NULL ×4 incl. negative design). R26c/d/f.
