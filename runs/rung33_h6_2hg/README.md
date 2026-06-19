@@ -45,4 +45,25 @@ The de novo binder was the *only* route that failed for IDH1; the target was nev
   cross-metabolite specificity panel + in-cell validation. Recovers *recognition*; coupling to apoptosis = the
   internal-key circuit.
 
-*Result: `feasibility.json`. Updates HYPOTHESIS_LEDGER H6 (OPEN → feasibility CONFIRMED).*
+## RUNG-33b — grounded in a REAL D-2-HG-specific recognizer: DhdR (the recognition domain already exists)
+H6's feasibility assumed a "2-HG-specific, α-KG-non-agonist" sensor is achievable. It exists and is
+characterized: **DhdR** (allosteric transcriptional regulator, *Achromobacter denitrificans*; Nat. Commun.
+2021, PMC8651671; mechanism in Cell Chem. Biol. 2025):
+- **D-2-HG-specific:** of **30 metabolites tested, ONLY D-2-HG** bound (thermal-shift) — it rejects α-KG and 28
+  other near-relatives. Exactly the chemical specificity the model required, demonstrated.
+- **Kd(D-2-HG) = 1.16 µM** (ITC); solved structures (apo / D-2-HG-bound / DNA-bound) give the allosteric
+  mechanism; already engineered into biosensors detecting **0.3–30 mM** — i.e. across the IDH1-mut tumour range
+  (5–35 mM), even used for intraoperative IDH-status.
+
+**Design refinement (model ↔ real-data reconciliation, rule 5):** DhdR's native 1.16 µM affinity is *too tight*
+for a clean cancer gate — normal-cell 2-HG (~1–5 µM) sits *above* Kd, so untuned DhdR would partially fire in
+normal cells. The robust operating region from the sweep is a **looser ~0.1–1 mM sensor** (fires only at the mM
+mutant level). → **Design rule: keep DhdR's D-2-HG specificity, detune its affinity to ~0.1–1 mM** (affinity
+variants / a thresholding circuit). So the IDH1 root-kill recognizer's recognition domain is **not invented from
+scratch** — it's a tuned DhdR.
+
+**Next:** fetch the DhdR / D-2-HG-bound PDB → the binding-pocket blueprint; design affinity-detuned variants
+(ODesign / mutagenesis) + couple D-2-HG sensing to a death output (the internal-key circuit). The recognition
+half of the IDH1 oncometabolite root-kill now has a concrete, precedented starting molecule.
+
+*Result: `feasibility.json`. Updates HYPOTHESIS_LEDGER H6 (OPEN → feasibility CONFIRMED + grounded in DhdR).*

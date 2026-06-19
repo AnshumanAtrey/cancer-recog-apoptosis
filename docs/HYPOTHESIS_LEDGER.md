@@ -56,7 +56,7 @@ synthesis in `CAPSTONE.md`; the live one-page state in `STATUS.md`.
 | H3 | Mitochondrial Sabotage (peptide nanostructures) | ⬜ OPEN | future |
 | H4 | **AND-Gate logic** (two markers) | ✅ DONE — this is a CORE spec, extensively tested | R10/R27b |
 | H5 | Microenvironment Sniffer (pH/ROS/hypoxia) | ⬜ OPEN — testable now (conformational sensor) | **24h-window candidate** |
-| H6 | Metabolic Waste / oncometabolite (2-HG, succinate) | ✅ FEASIBILITY CONFIRMED (R33) — 2-HG recognition gate for IDH1-R132H is feasible & EASIER than the binder route (the ~2000× concentration differential does the discrimination, not binding selectivity; needs a 2-HG-specific/non-agonist sensor). **RECOVERS IDH1** — the only route that failed for IDH1 was the de novo binder | R33 |
+| H6 | Metabolic Waste / oncometabolite (2-HG, succinate) | ✅ FEASIBILITY CONFIRMED (R33) — 2-HG recognition gate for IDH1-R132H is feasible & EASIER than the binder route (the ~2000× concentration differential does the discrimination, not binding selectivity; needs a 2-HG-specific/non-agonist sensor). **RECOVERS IDH1** + GROUNDED: the D-2-HG-specific recognizer **DhdR** already exists (Kd 1.16µM, rejects α-KG+28 metabolites, biosensor 0.3-30mM); design = detune to ~0.1-1mM + couple to death | R33/33b |
 | H7 | Danger Signal (ICD/DAMPs) | ⬜ OPEN — not yet scored; an ICD score on the kill mechanism is cheap | **24h-window candidate** |
 | H8 | Gap-Junction Wave (connexin) | ✅ DONE — connexin relay/bridge tested | R12p_connexin |
 | H9 | Fas-FasL Bystander | ⏳ PARTIAL — bystander cross-kill explored | R13/R21 |
