@@ -1,0 +1,20 @@
+{
+  "target": "kras_g12d_A1101",
+  "allele": "HLA-A*11:01",
+  "pep_mut": "VVVGADGVGK",
+  "pep_wt": "VVVGAGGVGK",
+  "p_in_pep": 6,
+  "structure": "PDB 7OW6 (2.64A, crystal, TCR stripped)",
+  "design_hotspot": "B6",
+  "hotspot_residue": "p6 Asp (G12D), only 5% exposed in this crystal conformation",
+  "design_note": "read-the-mutation: hotspot ON the G12D Asp (p6). KRAS WT IS presented (R32) so the binder MUST discriminate G12D from G12 (Gly has no sidechain).",
+  "mut_pdb": "/content/cancer-recog-apoptosis/runs/rung30_kras_g12d/staging_crystal/kras_g12d_A1101_mut_pmhc.pdb",
+  "cropped_design_target": "/content/cancer-recog-apoptosis/runs/rung30_kras_g12d/staging_crystal/kras_g12d_A1101_mut_cropped.pdb",
+  "EXPOSURE_CAVEAT": "p6 G12D Asp is only ~5% solvent-exposed in 7OW6 (TCR-stripped) = NOT cleanly up-facing, contradicting the screen's position-heuristic. The crystals are either TCR-BOUND (7OW6/7PB2 = induced-fit conformation) or free with p5-p6 DISORDERED (7OW4) -> the free-pMHC Asp exposure is genuinely uncertain. TCRs DO recognize G12D (gold-standard, R32b) so it IS readable (likely via induced fit/charge), but a de novo binder targeting a partially-buried charged residue is harder (echoes IDH1/BRAF). RECOMMEND: also fold the FREE pMHC (Protenix) to compare conformations before/with the design.",
+  "p6_sasa": {
+    "resname": "ASP",
+    "sasa_A2": 8.8,
+    "rel_pct": 5,
+    "class": "buried"
+  }
+}

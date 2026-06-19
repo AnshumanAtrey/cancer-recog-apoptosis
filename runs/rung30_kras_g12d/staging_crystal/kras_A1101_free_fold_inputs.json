@@ -1,0 +1,9 @@
+{
+ "purpose": "Fold the FREE A*11:01 pMHC (no TCR) to measure the G12D Asp exposure in the free conformation vs the TCR-bound crystal 7OW6 (where it reads ~5%). Resolves whether KRAS-G12D is a real read-the-mutation binder target before spending PXDesign quota.",
+ "gene": "KRAS", "mutation": "G12D", "allele": "HLA-A*11:01",
+ "pep_mut": "VVVGADGVGK", "pep_wt": "VVVGAGGVGK", "p_in_pep": 6,
+ "groove_A1101": "SHSMRYFYTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDQETRNVKAQSQTDRVDLGTLRGYYNQSEDGSHTIQIMYGCDVGPDGRFLRGYRQDAYDGKDYIALNEDLRSWTAADMAAQITKRKWEAAHAAEQQRAYLEGRCVEWLRRYLENGKETLQRTD",
+ "groove_source": "PDB 7OW6 chain A (verified A*11:01; 7 polymorphisms vs A*03:01: 8F>Y,89A>D,104S>P,151E>A,155L>Q,160D>E,162T>R)",
+ "fold_jobs": "Protenix Add Prediction, 2 chains (groove_A1101 + peptide), seed-matched: kras_g12d_A1101_MUT_pmhc (VVVGADGVGK) + kras_g12d_A1101_WT_pmhc (VVVGAGGVGK).",
+ "then": "SASA the free MUT pMHC p6 Asp (scripts/66 logic). If exposed (>=25%) -> KRAS read-the-mutation viable, PXDesign hotspot B6. If still buried -> KRAS bounded like IDH1/BRAF."
+}
