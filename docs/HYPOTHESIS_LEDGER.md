@@ -77,5 +77,6 @@ pathways or physical platforms (future-safe, not now).
 ## Maintenance rule
 When a rung finishes: (1) set its row's verdict here (cross it off), (2) add the rung pointer, (3) if it was a
 conceptual hypothesis (Section D), update its cross-ref. New hypotheses get a row here FIRST (status ⬜ OPEN),
-then a TODO.md entry. `CAPSTONE.md` is the narrative (currently stale at R22 — needs R23–31 added);
-`THESIS.md` is stale (old DR5-bispecific thesis, pre-dates the neoantigen dual-key pivot) — both flagged for update.
+then a TODO.md entry. `CAPSTONE.md` is the narrative (**refreshed to R32, 2026-06-19 — Part II = the two-key
+build-out**); `THESIS.md` carries a SUPERSEDED banner (old DR5-bispecific thesis kept as history; current thesis
+= CAPSTONE §8–12).
