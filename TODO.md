@@ -4,7 +4,46 @@ Living roadmap of what to run next. Every item is a falsifiable, in-silico test 
 Colab. Honest negatives are first-class. See `README.md` for the full hypothesis catalog and finished rungs.
 
 **Legend:** `[ ]` open · `[x]` done · **P0** do next · **P1** soon · **P2** later/refinement · **FUT** future-safe (physics/delivery)
-**Where:** 💻 M2 laptop (CPU) · ☁️ Colab CPU · ⚡ Colab GPU
+**Where:** 💻 M2 laptop (CPU) · ☁️ Colab CPU · ⚡ Colab GPU · 🌐 Protenix/PXDesign webserver (Anshuman runs)
+
+---
+
+## ▶ NEXT SESSION — current frontier (after RUNG-36, 2026-06-19)
+
+> The internal MHC-free **root-kill is now end-to-end in-silico**: recognize mutation (R23/27) → AND-gate
+> specificity (R34) + honest robustness envelope (R35) → cell's own apoptosis → bystander wave clears the tumour
+> from a partial seed (R36) → R21 NK for the resistant tail. The two hardest objections (leak correlation,
+> delivery) are now **measurable engineering specs, not hand-waves.** The still-open *artifact* front = the
+> **external binder** (PIK3CA unconfirmed; KRAS staged). Live map = `STATUS.md`; every hypothesis→verdict =
+> `docs/HYPOTHESIS_LEDGER.md`; narrative = `CAPSTONE.md` (now §1–15). *(This "Done so far" recap below is stale at
+> R20 — trust STATUS/LEDGER/CAPSTONE for R21–36.)*
+
+- [ ] **P0 · KRAS-G12D / A\*11:01 binder design — THE decisive MUT-vs-WT shot.** 🌐 PXDesign webserver (Anshuman
+      runs). Target is STAGED (`runs/rung30_kras_g12d/staging/`, the FREE-fold cropped pMHC, p6 Asp 30% exposed).
+      **Submission spec:** Add Design → upload the staged cropped target → **hotspot `B0:6`** (the up-facing G12D
+      Asp) → mode Extended → **max batch** → task `kras_g12d_a1101_binder` seed 19931. Why it's decisive: KRAS WT
+      VVVGAGGVGK **is** presented on normal tissue (R32), so unlike PIK3CA the binder MUST read the mutation —
+      this is the real discrimination test. **When it lands:** stage into `runs/rung30_kras_g12d/design_v1/`,
+      commit raw FIRST, then score MUT-vs-WT (the make-or-break). Gly→Asp is presence-vs-absence chemistry (the
+      strongest case), unlike the failed IDH1 His↔Arg.
+- [ ] **P0 · PIK3CA-E545K v3 — larger batch.** 🌐 PXDesign. v2 (batch=10) gave 1/10 single-oracle passer in the
+      ≤5% difficulty tier → statistically under-powered. Re-run **same target + hotspot B4+B6** at the **largest
+      batch the webserver allows (100+)**; a ≤5% tier needs hundreds of designs to surface a dual-passer. Decision
+      rule: if 0 **dual-oracle** (AF2-IG **and** Protenix) passers at large batch → PIK3CA binder route is bounded
+      (the flip is still real, but the binder is intractable at this groove) → lean on KRAS + the internal key.
+- [ ] **P1 · Coupled stochastic circuit sim (merge R35 + R36).** 💻 M2. Replace R36's abstract `p_kill`/`b` with
+      the *mechanistic* outputs of R35: per-cell death driven by the bistable eARM ODE under stochastic recognizer
+      leak (telegraph/burst process w/ correlation ρ), wired to the percolation wave. Gives one end-to-end model
+      from molecular leak → tissue clearance, and replaces R36's transience surrogate with real kinetics.
+- [ ] **P1 · DhdR 2-HG sensor — pocket blueprint + affinity-detuned variants (H6 next step).** ⚡ GPU / 🌐.
+      R33 showed the 2-HG metabolite gate is feasible (recovers IDH1). Next: design/repurpose the real D-2-HG
+      recognizer **DhdR** — detune Kd to ~0.1–1 mM + verify the α-KG/L-2-HG/succinate non-agonist panel
+      (chirality matters). Tooling = ODesign-ligand (R31b) or a docking/occupancy refinement of R33.
+- [ ] **WET (cannot do in-silico — document for a lab/collaborator): recognizer-leak CORRELATION ρ in stressed
+      normal cells.** This is the **#1 load-bearing residual** of the whole kill-coupling (R35): the AND-gate's
+      safety margin lives or dies on whether recognizers mis-fire *independently*. Measure ρ across the chosen
+      recognizers in primary normal cells under stress → picks which R35 safety row is real. Also wet: allele-CRISPR
+      cutting efficiency + GUIDE-seq off-target; binder SPR/cellular affinity; multi-component delivery.
 
 ---
 
