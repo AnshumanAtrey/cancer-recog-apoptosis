@@ -1,0 +1,180 @@
+{
+  "tag": "rung35_kill_kinetics",
+  "partA_kinetics": {
+    "u0_fixed_points": [
+      0.0,
+      0.4999999999999298,
+      0.9196433776070805
+    ],
+    "u_crit_saddle_node": 0.19175,
+    "mutant": {
+      "u": 0.81,
+      "committed": true,
+      "t_commit_invkdeg": 0.7268222996705695,
+      "Cfin": 1.8041352551881424
+    },
+    "normal_sustained_graded_leak": {
+      "u": 0.0025,
+      "committed": false,
+      "Cfin": 0.0025000006250006242
+    },
+    "Tmin_full_misfire_invkdeg": 0.7268231632225023,
+    "Tmin_1p5x_threshold_invkdeg": 3.323127895086886,
+    "note": "Bistable irreversible switch. Graded sub-threshold leak never commits; a full mis-fire commits only if SUSTAINED past T_min -> kinetics filter brief leaks. Time in 1/kdeg (~0.5-2h)."
+  },
+  "partB_leak_correlation": [
+    {
+      "N": 2,
+      "L": 0.02,
+      "rho0": 0.0004,
+      "rho0.3": 0.001664360470204305,
+      "rho0.6": 0.004644733394370737,
+      "rho1": 0.02,
+      "rung34_graded_hill": 4.213991769547309e-15
+    },
+    {
+      "N": 2,
+      "L": 0.05,
+      "rho0": 0.0025000000000000005,
+      "rho0.3": 0.0071346288078404894,
+      "rho0.6": 0.01552270048950404,
+      "rho1": 0.05,
+      "rung34_graded_hill": 4.018775720003108e-11
+    },
+    {
+      "N": 2,
+      "L": 0.1,
+      "rho0": 0.010000000000000002,
+      "rho0.3": 0.021616480355793645,
+      "rho0.6": 0.03901746504512842,
+      "rho1": 0.1,
+      "rung34_graded_hill": 4.115226168097693e-08
+    },
+    {
+      "N": 3,
+      "L": 0.02,
+      "rho0": 8.000000000000001e-06,
+      "rho0.3": 0.0002787031585385487,
+      "rho0.6": 0.0019593923801021476,
+      "rho1": 0.02,
+      "rung34_graded_hill": 1.3484773662551454e-23
+    },
+    {
+      "N": 3,
+      "L": 0.05,
+      "rho0": 0.00012500000000000003,
+      "rho0.3": 0.0017224559545441754,
+      "rho0.6": 0.007668270515147294,
+      "rho1": 0.05,
+      "rung34_graded_hill": 1.2558674125514423e-17
+    },
+    {
+      "N": 3,
+      "L": 0.1,
+      "rho0": 0.0010000000000000002,
+      "rho0.3": 0.0069433204432484625,
+      "rho0.6": 0.02187749287663394,
+      "rho1": 0.1,
+      "rung34_graded_hill": 4.115226337446872e-13
+    },
+    {
+      "N": 4,
+      "L": 0.02,
+      "rho0": 1.6e-07,
+      "rho0.3": 7.013268226276165e-05,
+      "rho0.6": 0.0010732221191701319,
+      "rho1": 0.02,
+      "rung34_graded_hill": 4.315127572016463e-32
+    },
+    {
+      "N": 4,
+      "L": 0.05,
+      "rho0": 6.250000000000001e-06,
+      "rho0.3": 0.0005677196718402571,
+      "rho0.6": 0.00466181795262307,
+      "rho1": 0.05,
+      "rung34_graded_hill": 3.924585664223255e-24
+    },
+    {
+      "N": 4,
+      "L": 0.1,
+      "rho0": 0.00010000000000000002,
+      "rho0.3": 0.0028311190899763445,
+      "rho0.6": 0.01447454711366752,
+      "rho1": 0.1,
+      "rung34_graded_hill": 4.115226337448564e-18
+    }
+  ],
+  "partB_required_N": [
+    {
+      "target": 0.0001,
+      "rho0.0": 4,
+      "rho0.3": 7,
+      "rho0.6": null,
+      "rho0.9": null
+    },
+    {
+      "target": 1e-06,
+      "rho0.0": 5,
+      "rho0.3": null,
+      "rho0.6": null,
+      "rho0.9": null
+    },
+    {
+      "target": 1e-09,
+      "rho0.0": 7,
+      "rho0.3": null,
+      "rho0.6": null,
+      "rho0.9": null
+    }
+  ],
+  "partC_synthesis": {
+    "T_commit_invkdeg": 0.7268231632225023,
+    "L_marginal": 0.05,
+    "model": "L_eff = L*(1 - T_commit/T_leak); false-death = joint_fire(L_eff,N,rho)",
+    "transience_table": [
+      {
+        "T_leak_over_T_commit": 0.5,
+        "L_eff": 0.0,
+        "N2_rho0": 0.0,
+        "N2_rho0.3": 0.0,
+        "N3_rho0": 0.0,
+        "N3_rho0.3": 0.0
+      },
+      {
+        "T_leak_over_T_commit": 1.0,
+        "L_eff": 0.0,
+        "N2_rho0": 0.0,
+        "N2_rho0.3": 0.0,
+        "N3_rho0": 0.0,
+        "N3_rho0.3": 0.0
+      },
+      {
+        "T_leak_over_T_commit": 2.0,
+        "L_eff": 0.025,
+        "N2_rho0": 0.0006250000000000001,
+        "N2_rho0.3": 0.002370461886883125,
+        "N3_rho0": 1.5625000000000004e-05,
+        "N3_rho0.3": 0.0004335100387908752
+      },
+      {
+        "T_leak_over_T_commit": 5.0,
+        "L_eff": 0.04000000000000001,
+        "N2_rho0": 0.0016000000000000007,
+        "N2_rho0.3": 0.00500091631589066,
+        "N3_rho0": 6.400000000000004e-05,
+        "N3_rho0.3": 0.001103272258866935
+      },
+      {
+        "T_leak_over_T_commit": 20.0,
+        "L_eff": 0.0475,
+        "N2_rho0": 0.00225625,
+        "N2_rho0.3": 0.006574657532852774,
+        "N3_rho0": 0.00010717187500000001,
+        "N3_rho0.3": 0.0015546146940793072
+      }
+    ]
+  },
+  "verdict": "RUNG-34's headline therapeutic index (~1e10, false-death 4e-11 at N=2) was OPTIMISTIC: it assumed each recognizer's leak is a uniform sub-threshold LEVEL that the bistable Hill switch filters away. Under the conservative, mechanistically-honest model where leak = a FRACTION of normal cells that FULLY mis-fire (all-or-none, as off-target CRISPR cuts / toehold mis-triggers actually are), a 2-input AND-gate at 5% per-recognizer leak gives false-death ~ 2.5e-3 when leaks are INDEPENDENT (rho=0) and rises toward ~5e-2 as leaks become CORRELATED (rho->1) -- i.e. the AND-gate alone is NOT safe (need ~1e-4 to 1e-9). HOWEVER the irreversible bistable KINETICS supply a second, orthogonal filter the static model ignored: a mis-fire only commits the cell if it is SUSTAINED past T_min and the N mis-fires are TEMPORALLY coincident. If recognizer leaks are made TRANSIENT (fast-clearing) and INDEPENDENT, this temporal-AND drives effective false-death back down by several more orders. The corrected design requirement is therefore explicit and testable: (i) per-recognizer leak amplitude L, (ii) leak DURATION << commitment time, (iii) leak CORRELATION rho kept low (independent delivery/cell-state triggers), (iv) N>=3 if rho cannot be driven near zero. The single most important wet measurement remains the recognizer-leak CORRELATION in stressed normal cells -- it sets which row of Part B you live on.",
+  "residuals": "Dimensionless time (1/kdeg ~ 0.5-2h, stated not fitted); reduced 1-variable caspase switch (captures the irreversible bistable snap of eARM/RUNG-1 but not the full tBid/Bax/Apaf cascade); the transience model in Part C is a monotone surrogate for the sustained-coincidence probability, not a fitted leak-kinetics. This quantifies the SPECIFICITY logic + its dynamic robustness, not a built circuit. Wet steps: measure L, the leak time-constant, and rho across recognizers in primary normal cells."
+}

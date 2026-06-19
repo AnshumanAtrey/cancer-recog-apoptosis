@@ -15,13 +15,13 @@ own driver *mutation*. Two "keys" that recognize the mutation, then trigger deat
 | **Recognition BASIS** (what distinguishes cancer) | driver mutations are addressable + tumour-exclusive | ✅ TESTED (R5/6/7/8/11/12/23/27a) |
 | **Internal key** (intracellular mutation-sensing AND-gate self-destruct) | RNA toehold + allele-specific CRISPR | ✅ DONE — **7/7 wobble drivers DNA-addressable** (R27b/c/d) |
 | **External key** (de novo pMHC binder = immune-route recognizer) | design a binder that's mutation-specific | 🔄 IN-FLIGHT (see below) |
-| **Effector / KILL-COUPLING** (recognition → death) | recognizer × N → AND-gate → apoptosis (iCasp9-class) | ✅ LOGIC DESIGNED (R34) — N=2 AND-gate → kill 0.99, normal false-death 4×10⁻¹¹, TI ~10¹⁰; internal key = detector→root-kill. Residual: leak independence |
+| **Effector / KILL-COUPLING** (recognition → death) | recognizer × N → AND-gate → apoptosis (iCasp9-class) | ✅ LOGIC DESIGNED (R34) + ⚠️ MARGIN CORRECTED (R35) — kill-coupling logic holds, but headline TI ~10¹⁰ was optimistic (assumed graded leak). Under all-or-none leak: N=2→~2.5×10⁻³ (ρ=0), →5×10⁻² (ρ→1). **Conditional** on leak amplitude + **duration**≪commit-time + **correlation ρ→0** + **N≥3**. #1 wet measurement: leak correlation in stressed normal cells |
 
 ## External key — where we are RIGHT NOW
 - ❌ **IDH1-R132H** CLOSED — His↔Arg too subtle; binder binds but can't discriminate (NULL ×4 incl. negative design). R26c/d/f.
 - ❌ **BRAF-V600E** CLOSED — mutation buried (2% exposed) + weakly presented. R26e.
 - ✅ **Built the target-selection SCREEN we'd skipped** (R28): 16 drivers × 13 HLA → picks targets by presentation + geometry.
-- 🔄 **PIK3CA-E545K / A\*03:01** (R29) — *presentation flip*. Folds landed; binder design v1 **0/10** (≤5% tier, under-powered+no-hotspot) → **v2: hotspot B4+B6 + max batch**.
+- ⏳ **PIK3CA-E545K / A\*03:01** (R29) — *presentation flip*. v1 **0/10**; **v2 (hotspot B4+B6, Extended) = 1/10 Protenix-basic-only, 0 dual-passers** (rank_1 ptx_iptm 0.87 vs af2_iptm 0.14 → single-model artifact). Difficulty gauge: ≤5% hardest tier on BOTH oracles. Binder UNCONFIRMED — flip is real (C8), but the 11-mer binder is at the edge of de-novo tooling at small batch. Next: larger batch / KRAS companion.
 - 🔄 **KRAS-G12D / A\*11:01** (R30c) — *read-the-mutation* **GO**: free-pMHC fold shows p6 Asp **30% exposed** (crystal's 5% was a TCR-artifact). Design target staged (hotspot B6); PXDesign after the PIK3CA queue.
 - ✅ **Immunopeptidomics check (R32)** — real mass-spec (HLA Ligand Atlas) corroborates: PIK3CA WT **absent** from normal (flip real); KRAS WT **present** on normal lung/testis (binder must read G12D). MUT-in-tumour = next layer.
 - → Two complementary shots; **currently fold-bound (hours).**

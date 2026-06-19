@@ -202,6 +202,23 @@ escapers. MHC-free, autonomous. **The load-bearing residual: independence of rec
 mis-firing in stressed normal cells would collapse the AND margin — the key thing a lab must measure), plus a
 non-leaky death module, circuit kinetics (a full coupled-ODE is next), and delivery.
 
+## 14. Kill-circuit kinetics + leak correlation — stress-testing §13's headline number (R35)
+We then attacked §13's own load-bearing residual instead of banking the 10¹⁰. Two hidden assumptions fell:
+- **Leak is all-or-none, not graded.** §13's 4×10⁻¹¹ assumed leak is a uniform sub-threshold *level* the Hill
+  switch filters. But off-target CRISPR cuts / toehold mis-triggers are **all-or-none per cell** → false-death ≈
+  P(all N fully fire). Under that conservative model, **N=2 at 5% leak gives ~2.5×10⁻³ (ρ=0), not 4×10⁻¹¹** — and
+  rises to ~5×10⁻² as leaks become **correlated** (one-factor Gaussian copula, ρ→1). *Correlation, not N, is the
+  binding constraint*: at ρ≥0.6 no feasible N reaches 10⁻⁴.
+- **Kinetics supply a second, orthogonal filter.** A reduced eARM bistable caspase ODE (irreversible MOMP) shows a
+  supra-threshold mis-fire must be **sustained ≥ T_min (~0.7/k_deg, ~hour-scale)** to commit — a *temporal* AND on
+  top of the molecular AND. If leaks are **transient and independent**, effective false-death drops several more
+  orders (transient + N=3 + ρ=0 → ~10⁻⁵).
+
+→ **Honest correction:** the kill-coupling *logic* holds, but its safety is **conditional**, not a free 10¹⁰. The
+design target is now explicit and testable: per-recognizer leak amplitude L, leak **duration ≪ commitment time**,
+leak **correlation ρ→0**, and **N≥3** if ρ can't be driven low. This converts §13's hand-wave residual into four
+measurable engineering specs — the #1 wet measurement being recognizer-leak **correlation in stressed normal cells**.
+
 ---
 
 *Rungs: see `README.md` (hypothesis catalog), `STATUS.md` (live map), `docs/HYPOTHESIS_LEDGER.md` (every
