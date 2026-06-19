@@ -15,7 +15,7 @@ own driver *mutation*. Two "keys" that recognize the mutation, then trigger deat
 | **Recognition BASIS** (what distinguishes cancer) | driver mutations are addressable + tumour-exclusive | ✅ TESTED (R5/6/7/8/11/12/23/27a) |
 | **Internal key** (intracellular mutation-sensing AND-gate self-destruct) | RNA toehold + allele-specific CRISPR | ✅ DONE — **7/7 wobble drivers DNA-addressable** (R27b/c/d) |
 | **External key** (de novo pMHC binder = immune-route recognizer) | design a binder that's mutation-specific | 🔄 IN-FLIGHT (see below) |
-| **Effector** (the killing, once recognized) | apoptosis / bystander wave / autonomous circuit / delivery | ⏳ modeled (R13/21/23/24), not the current focus |
+| **Effector / KILL-COUPLING** (recognition → death) | recognizer × N → AND-gate → apoptosis (iCasp9-class) | ✅ LOGIC DESIGNED (R34) — N=2 AND-gate → kill 0.99, normal false-death 4×10⁻¹¹, TI ~10¹⁰; internal key = detector→root-kill. Residual: leak independence |
 
 ## External key — where we are RIGHT NOW
 - ❌ **IDH1-R132H** CLOSED — His↔Arg too subtle; binder binds but can't discriminate (NULL ×4 incl. negative design). R26c/d/f.
