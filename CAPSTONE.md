@@ -1,8 +1,12 @@
-# CAPSTONE — the honest, end-to-end synthesis (RUNG 1–22)
+# CAPSTONE — the honest, end-to-end synthesis (RUNG 1–32)
 
-*What we set out to test, what 22 in-silico rungs actually found, and where the irreducible wet-lab line sits.*
+*What we set out to test, what 32 in-silico rungs actually found, and where the irreducible wet-lab line sits.*
 Every number below is a **prediction or simulation**, not biology. Honest negatives are kept as first-class.
-This synthesises the public rungs in `README.md`; the source concept is Shriya Rai's (private).
+This synthesises the public rungs in `README.md`; the source concept is private (`memory/`, gitignored).
+**Part I (§0–6, RUNG 1–22)** mapped the three-stage chain + the anti-evolution layering. **Part II (§7–12, RUNG
+23–32)** is the build-out: the chain became a concrete **two-KEY recognizer**, half of which (the MHC-free
+internal key) is now built + genome-wide-safety-validated, while the de novo-binder half hit an honest wall and
+was answered by a presentation/geometry screen.
 
 ---
 
@@ -116,5 +120,73 @@ through it — that's the lab's step.
 
 ---
 
-*Rungs: see `README.md` (hypothesis catalog + per-rung results). Next experiments: `TODO.md`. Source concept &
-strategy: private (`memory/`, gitignored).*
+# PART II — RUNG 23–32: from "the chain works" to a buildable two-KEY recognizer
+
+## 7. The pivot — expression leaks, so the MUTATION is the only tumour-exclusive signal (R23/25)
+- **RUNG-23 (autonomous AND-gate):** every intracellular *expression/metabolic* program leaks into a vital
+  organ (worst-donor) → expression-level recognition **cannot** gate safely. A v1 artifact (62% "proliferation"
+  in post-mitotic cells) was caught as impossible and fixed (rule-5). **Conclusion: the somatic mutation is the
+  ONLY clean tumour-exclusive signal** — which re-grounds the whole recognition layer and motivates sensing the
+  mutation *itself*.
+- **RUNG-25:** autonomous mutation-sensing is feasible at the RNA level for ~10/12 substitution types
+  (AND-of-2 → ~1e-6 tumour-exclusive) but **fails for G·U-wobble (G>A) types** (KRAS-G12D, IDH1-R132H, TP53
+  hotspots) → those need **DNA-level (CRISPR)** sensing.
+
+## 8. The architecture that crystallized — TWO complementary KEYS
+- **External key** — a *de novo binder* to the neoantigen pMHC (immune route; needs the MHC window lit).
+- **Internal key** — an **autonomous intracellular mutation-sensing AND-gate self-destruct** (RNA toehold +
+  allele-specific CRISPR), **MHC-FREE** → reaches the permanently-dark core the immune route can't (the ~4–13%
+  residual Part I named). *This MHC-free self-destruct is the novel contribution.*
+
+## 9. Internal key — BUILT + genome-wide safety-validated (R27/31)
+- **RUNG-27d:** allele-specific CRISPR guides designed for **7/7 G>A-wobble drivers** (SpCas9-NGG rescues 5;
+  SpCas9-NG rescues the 2 misses via deep SEED guides) → all DNA-addressable. Discrimination = PAM-creation or a
+  PAM-proximal seed mismatch that collapses Cas9 on the WT allele.
+- **RUNG-31/31b:** off-target scan of all 7 guides — coding transcriptome **and the full GRCh38 genome**
+  (pigeonhole, exhaustive ≤1 mismatch, both strands). **0 cutting-competent (≤1mm) off-targets in any other
+  gene, genome-wide.** Sanity-checked (each guide hits its own locus at 1mm = the SNV; KRAS→KRASP1 paralog is a
+  positive control). → the internal key **does not fire in normal cells** at the resolution that matters. The
+  MHC-free recognizer is built + safety-checked in-silico. (Residual: measured cutting / GUIDE-seq.)
+
+## 10. External key — the honest negative, then the rigorous fix (R26/28)
+- **de novo binders BIND but can't DISCRIMINATE subtle mutations.** IDH1-R132H/A\*01:01: strong dual-validated
+  pMHC binders (PXDesign + Protenix) but **NULL** on His↔Arg discrimination across AF2-IG + ColabDesign-AF2 +
+  Protenix **and** the principled **negative-design** method (ProteinMPNN two-state, R26f). Autopsy: positive
+  design + a hotspot makes the binder *contact* the mutation, not *depend* on it. BRAF-V600E: mutation **buried**
+  (2% exposed) + weakly presented (R26e). **Lesson: subtle/buried single substitutions are intractable for de
+  novo binders** — the immune route is *bounded* for those (they're covered by the internal key instead).
+- **The fix — pick targets by a SCREEN, not by prestige (RUNG-28):** MHCflurry × 16 drivers × 13 HLA-I →
+  targets where a binder *can* win, via two mechanisms:
+  - **PIK3CA-E545K / A\*03:01 (R29):** *presentation FLIP* — E545K creates the A\*03/A\*11 C-terminal anchor →
+    WT (20 µM) isn't presented while MUT (51 nM) is (~397×) → **a strong MUT-pMHC binder is auto-specific, no
+    discrimination needed.** [binder design in-flight; v1 under-powered, v2 with peptide hotspot + max batch running]
+  - **KRAS-G12D / A\*11:01 (R30b):** *read-the-mutation* (Gly→Asp = presence-vs-absence) — staged from a **real
+    crystal** (PDB 7OW6), but the crystal shows the G12D Asp only ~5% exposed (caveat); **gated on a free-pMHC
+    fold** to confirm exposure before spending design quota.
+
+## 11. Presentation validated against REAL mass-spec (R32)
+- **Benign immunopeptidome (HLA Ligand Atlas):** PIK3CA WT `STRDPLSEITE` **ABSENT** (with A\*03/A\*11 donors
+  present) → the presentation flip is corroborated by data, not just MHCflurry. KRAS WT `VVVGAGGVGK` **PRESENT**
+  on normal lung/testis → no flip → the KRAS binder *must* discriminate.
+- **IEDB (cancer/epitope):** both MUT peptides experimentally observed. **KRAS-G12D = gold-standard** (MS-eluted
+  + x-ray + T-cell-positive 94/106 on A\*11:01/A\*03:01); PIK3CA-E545K = thinner (cellular-MHC binding only).
+  → our predicted neoantigens are real; evidence levels now explicit.
+
+## 12. Updated headline
+> The recognition-gated self-destruct now has **two keys.** The **internal key** — an MHC-free, autonomous
+> mutation-sensing CRISPR AND-gate — is **built and genome-wide-safety-validated** for the wobble drivers,
+> covering the MHC-dark core the immune route cannot. The **external key** (de novo pMHC binder) taught an honest
+> lesson — *subtle/buried single substitutions are undiscriminable* — which was answered by a presentation/
+> geometry **screen** that selects targets where a binder can win (PIK3CA presentation-flip; KRAS read-the-
+> mutation), with presentation now **corroborated by real mass-spec.** Part I showed the chain is *coherent*;
+> Part II made *half of it a validated, safety-checked design* and put the other half on screen-chosen, data-
+> backed targets — binder artifacts pending.
+
+**Updated wet-lab line (adds to §5):** internal key — real allele-specific *cutting* efficiency + a clean
+GUIDE-seq off-target profile (computational ≤1mm-clean ≠ measured); delivery of the circuit. External key —
+binder *affinity/specificity* (SPR/cellular) + immunopeptidomic confirmation in the patient's own tumour.
+
+---
+
+*Rungs: see `README.md` (hypothesis catalog), `STATUS.md` (live map), `docs/HYPOTHESIS_LEDGER.md` (every
+hypothesis → verdict). Next experiments: `TODO.md`. Source concept & strategy: private (`memory/`, gitignored).*

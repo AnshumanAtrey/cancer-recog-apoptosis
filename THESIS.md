@@ -1,5 +1,14 @@
 # Target Thesis — Hybrid recon-apoptosis (locked 2026-05-29)
 
+> ⚠️ **SUPERSEDED (2026-06-19) — kept as decision history.** This DR5-bispecific (tumour-antigen × death-receptor)
+> thesis was the *early* design, before RUNG-15/23 proved **every surface/expression handle leaks** into vital
+> tissue → the project pivoted to the **mutation as the only tumour-exclusive signal** and a **two-KEY
+> recognizer**: (1) an MHC-free **internal key** (autonomous mutation-sensing CRISPR AND-gate self-destruct —
+> built + genome-wide-safety-validated, R27/31) and (2) an **external de novo pMHC binder** on screen-chosen
+> targets (PIK3CA-E545K presentation-flip, KRAS-G12D read-the-mutation; R26/28/29/30). The "trigger the cell's
+> own apoptosis" half survives; the *recognition*-by-surface-receptor half was refuted. **Current thesis:
+> `CAPSTONE.md` §8–12 + `STATUS.md`.** DR5/surface content below is historical.
+
 ## Decision
 
 The project designs **recognition ligands that (1) bind a cancer-enriched cell-surface
