@@ -56,7 +56,7 @@ synthesis in `CAPSTONE.md`; the live one-page state in `STATUS.md`.
 | H3 | Mitochondrial Sabotage (peptide nanostructures) | ⬜ OPEN | future |
 | H4 | **AND-Gate logic** (two markers) | ✅ DONE — this is a CORE spec, extensively tested | R10/R27b |
 | H5 | Microenvironment Sniffer (pH/ROS/hypoxia) | ⬜ OPEN — testable now (conformational sensor) | **24h-window candidate** |
-| H6 | Metabolic Waste / oncometabolite (2-HG, succinate) | ⬜ OPEN — **note: IDH1-R132H (our target) MAKES 2-HG** → a natural tie-in | **24h-window candidate** |
+| H6 | Metabolic Waste / oncometabolite (2-HG, succinate) | ✅ FEASIBILITY CONFIRMED (R33) — 2-HG recognition gate for IDH1-R132H is feasible & EASIER than the binder route (the ~2000× concentration differential does the discrimination, not binding selectivity; needs a 2-HG-specific/non-agonist sensor). **RECOVERS IDH1** — the only route that failed for IDH1 was the de novo binder | R33 |
 | H7 | Danger Signal (ICD/DAMPs) | ⬜ OPEN — not yet scored; an ICD score on the kill mechanism is cheap | **24h-window candidate** |
 | H8 | Gap-Junction Wave (connexin) | ✅ DONE — connexin relay/bridge tested | R12p_connexin |
 | H9 | Fas-FasL Bystander | ⏳ PARTIAL — bystander cross-kill explored | R13/R21 |

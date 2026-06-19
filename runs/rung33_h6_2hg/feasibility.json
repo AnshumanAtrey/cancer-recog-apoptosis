@@ -1,0 +1,313 @@
+{
+  "tag": "rung33_h6_2hg_recognition_feasibility",
+  "concentrations_mM": {
+    "2HG_mutant": 10.0,
+    "2HG_normal": 0.005,
+    "alphaKG": 0.5
+  },
+  "concentration_sources": "D-2-HG IDH1-mut 5-35 mM (Dang 2009 Nature); normal low-uM; alpha-KG ~0.1-1 mM.",
+  "gate_criteria": {
+    "fire_on": 0.5,
+    "leak_max": 0.05
+  },
+  "min_selectivity_for_clean_gate": 1,
+  "n_feasible_points": 48,
+  "easiest_operating_point": {
+    "K_2HG_mM": 0.001,
+    "selectivity": 2,
+    "fire_mut": 0.976,
+    "fire_norm": 0.0195
+  },
+  "feasible_points": [
+    {
+      "K_2HG_mM": 0.001,
+      "selectivity": 1,
+      "fire_mut": 0.952,
+      "fire_norm": 0.0099
+    },
+    {
+      "K_2HG_mM": 0.001,
+      "selectivity": 2,
+      "fire_mut": 0.976,
+      "fire_norm": 0.0195
+    },
+    {
+      "K_2HG_mM": 0.001,
+      "selectivity": 3,
+      "fire_mut": 0.984,
+      "fire_norm": 0.029
+    },
+    {
+      "K_2HG_mM": 0.001,
+      "selectivity": 5,
+      "fire_mut": 0.99,
+      "fire_norm": 0.0472
+    },
+    {
+      "K_2HG_mM": 0.003,
+      "selectivity": 1,
+      "fire_mut": 0.952,
+      "fire_norm": 0.0098
+    },
+    {
+      "K_2HG_mM": 0.003,
+      "selectivity": 2,
+      "fire_mut": 0.975,
+      "fire_norm": 0.0194
+    },
+    {
+      "K_2HG_mM": 0.003,
+      "selectivity": 3,
+      "fire_mut": 0.983,
+      "fire_norm": 0.0286
+    },
+    {
+      "K_2HG_mM": 0.003,
+      "selectivity": 5,
+      "fire_mut": 0.99,
+      "fire_norm": 0.0463
+    },
+    {
+      "K_2HG_mM": 0.01,
+      "selectivity": 1,
+      "fire_mut": 0.951,
+      "fire_norm": 0.0097
+    },
+    {
+      "K_2HG_mM": 0.01,
+      "selectivity": 2,
+      "fire_mut": 0.975,
+      "fire_norm": 0.0189
+    },
+    {
+      "K_2HG_mM": 0.01,
+      "selectivity": 3,
+      "fire_mut": 0.983,
+      "fire_norm": 0.0275
+    },
+    {
+      "K_2HG_mM": 0.01,
+      "selectivity": 5,
+      "fire_mut": 0.989,
+      "fire_norm": 0.0435
+    },
+    {
+      "K_2HG_mM": 0.03,
+      "selectivity": 1,
+      "fire_mut": 0.95,
+      "fire_norm": 0.0093
+    },
+    {
+      "K_2HG_mM": 0.03,
+      "selectivity": 2,
+      "fire_mut": 0.973,
+      "fire_norm": 0.0175
+    },
+    {
+      "K_2HG_mM": 0.03,
+      "selectivity": 3,
+      "fire_mut": 0.981,
+      "fire_norm": 0.0248
+    },
+    {
+      "K_2HG_mM": 0.03,
+      "selectivity": 5,
+      "fire_mut": 0.987,
+      "fire_norm": 0.037
+    },
+    {
+      "K_2HG_mM": 0.1,
+      "selectivity": 1,
+      "fire_mut": 0.943,
+      "fire_norm": 0.0083
+    },
+    {
+      "K_2HG_mM": 0.1,
+      "selectivity": 2,
+      "fire_mut": 0.966,
+      "fire_norm": 0.0141
+    },
+    {
+      "K_2HG_mM": 0.1,
+      "selectivity": 3,
+      "fire_mut": 0.974,
+      "fire_norm": 0.0184
+    },
+    {
+      "K_2HG_mM": 0.1,
+      "selectivity": 5,
+      "fire_mut": 0.98,
+      "fire_norm": 0.0244
+    },
+    {
+      "K_2HG_mM": 0.1,
+      "selectivity": 10,
+      "fire_mut": 0.985,
+      "fire_norm": 0.0323
+    },
+    {
+      "K_2HG_mM": 0.1,
+      "selectivity": 30,
+      "fire_mut": 0.988,
+      "fire_norm": 0.0411
+    },
+    {
+      "K_2HG_mM": 0.1,
+      "selectivity": 100,
+      "fire_mut": 0.99,
+      "fire_norm": 0.0455
+    },
+    {
+      "K_2HG_mM": 0.1,
+      "selectivity": 300,
+      "fire_mut": 0.99,
+      "fire_norm": 0.0469
+    },
+    {
+      "K_2HG_mM": 0.3,
+      "selectivity": 1,
+      "fire_mut": 0.926,
+      "fire_norm": 0.0062
+    },
+    {
+      "K_2HG_mM": 0.3,
+      "selectivity": 2,
+      "fire_mut": 0.948,
+      "fire_norm": 0.009
+    },
+    {
+      "K_2HG_mM": 0.3,
+      "selectivity": 3,
+      "fire_mut": 0.955,
+      "fire_norm": 0.0106
+    },
+    {
+      "K_2HG_mM": 0.3,
+      "selectivity": 5,
+      "fire_mut": 0.962,
+      "fire_norm": 0.0123
+    },
+    {
+      "K_2HG_mM": 0.3,
+      "selectivity": 10,
+      "fire_mut": 0.966,
+      "fire_norm": 0.0141
+    },
+    {
+      "K_2HG_mM": 0.3,
+      "selectivity": 30,
+      "fire_mut": 0.969,
+      "fire_norm": 0.0155
+    },
+    {
+      "K_2HG_mM": 0.3,
+      "selectivity": 100,
+      "fire_mut": 0.97,
+      "fire_norm": 0.0161
+    },
+    {
+      "K_2HG_mM": 0.3,
+      "selectivity": 300,
+      "fire_mut": 0.971,
+      "fire_norm": 0.0163
+    },
+    {
+      "K_2HG_mM": 1.0,
+      "selectivity": 1,
+      "fire_mut": 0.87,
+      "fire_norm": 0.0033
+    },
+    {
+      "K_2HG_mM": 1.0,
+      "selectivity": 2,
+      "fire_mut": 0.889,
+      "fire_norm": 0.004
+    },
+    {
+      "K_2HG_mM": 1.0,
+      "selectivity": 3,
+      "fire_mut": 0.896,
+      "fire_norm": 0.0043
+    },
+    {
+      "K_2HG_mM": 1.0,
+      "selectivity": 5,
+      "fire_mut": 0.901,
+      "fire_norm": 0.0045
+    },
+    {
+      "K_2HG_mM": 1.0,
+      "selectivity": 10,
+      "fire_mut": 0.905,
+      "fire_norm": 0.0047
+    },
+    {
+      "K_2HG_mM": 1.0,
+      "selectivity": 30,
+      "fire_mut": 0.908,
+      "fire_norm": 0.0049
+    },
+    {
+      "K_2HG_mM": 1.0,
+      "selectivity": 100,
+      "fire_mut": 0.909,
+      "fire_norm": 0.005
+    },
+    {
+      "K_2HG_mM": 1.0,
+      "selectivity": 300,
+      "fire_mut": 0.909,
+      "fire_norm": 0.005
+    },
+    {
+      "K_2HG_mM": 3.0,
+      "selectivity": 1,
+      "fire_mut": 0.741,
+      "fire_norm": 0.0014
+    },
+    {
+      "K_2HG_mM": 3.0,
+      "selectivity": 2,
+      "fire_mut": 0.755,
+      "fire_norm": 0.0015
+    },
+    {
+      "K_2HG_mM": 3.0,
+      "selectivity": 3,
+      "fire_mut": 0.759,
+      "fire_norm": 0.0016
+    },
+    {
+      "K_2HG_mM": 3.0,
+      "selectivity": 5,
+      "fire_mut": 0.763,
+      "fire_norm": 0.0016
+    },
+    {
+      "K_2HG_mM": 3.0,
+      "selectivity": 10,
+      "fire_mut": 0.766,
+      "fire_norm": 0.0016
+    },
+    {
+      "K_2HG_mM": 3.0,
+      "selectivity": 30,
+      "fire_mut": 0.768,
+      "fire_norm": 0.0017
+    },
+    {
+      "K_2HG_mM": 3.0,
+      "selectivity": 100,
+      "fire_mut": 0.769,
+      "fire_norm": 0.0017
+    },
+    {
+      "K_2HG_mM": 3.0,
+      "selectivity": 300,
+      "fire_mut": 0.769,
+      "fire_norm": 0.0017
+    }
+  ],
+  "verdict": "FEASIBLE, and EASIER than the binder route. Clean gates span a wide (affinity x selectivity) region -- even at LOW binding selectivity (down to ~1x). KEY INSIGHT: the discrimination is driven by the ~2000x 2-HG CONCENTRATION DIFFERENTIAL (mutant ~mM vs normal ~uM), NOT by binding selectivity -- in normal cells alpha-KG out-competes the trace 2-HG but does not FIRE; in mutant cells 2-HG dominates. So the cell's own metabolism pre-amplifies the signal. The real REQUIREMENT is CHEMICAL SPECIFICITY (alpha-KG / succinate / L-2-HG must be NON-agonists, not just weaker binders) -- which is precedented (D2HGDH is catalytically 2-HG-specific; engineered 2-HG biosensors exist). Unlike the de novo binder (His<->Arg = two equal-abundance bulky residues, intractable, RUNG-26), 2-HG gets discrimination FOR FREE from the concentration gap. -> 2-HG RECOVERS IDH1-R132H recognition.",
+  "residuals": "Feasibility/occupancy model, not a designed sensor (cf. RUNG-25 for RNA). Assumes alpha-KG is a competitive NON-agonist (a SPECIFIC sensor); a false-agonist alpha-KG would need much higher selectivity. Also needs D- vs L-2-HG chirality + succinate/glutarate cross-talk + actual sensor design (ODesign ligand model / aptamer) + in-cell validation. Recovers IDH1 RECOGNITION; coupling to apoptosis is the internal-key circuit."
+}
