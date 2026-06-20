@@ -18,13 +18,15 @@ Colab. Honest negatives are first-class. See `README.md` for the full hypothesis
 > `docs/HYPOTHESIS_LEDGER.md`; narrative = `CAPSTONE.md` (now §1–15). *(This "Done so far" recap below is stale at
 > R20 — trust STATUS/LEDGER/CAPSTONE for R21–36.)*
 
-- [ ] **P0 · KRAS-G12D / A\*11:01 binder design — THE decisive MUT-vs-WT shot.** 🌐 PXDesign webserver (Anshuman
-      runs). Target is STAGED (`runs/rung30_kras_g12d/staging/`, the FREE-fold cropped pMHC, p6 Asp 30% exposed).
-      **Submission spec:** Add Design → upload the staged cropped target → **hotspot `B0:6`** (the up-facing G12D
-      Asp) → mode Extended → **max batch** → task `kras_g12d_a1101_binder` seed 19931. Why it's decisive: KRAS WT
-      VVVGAGGVGK **is** presented on normal tissue (R32), so unlike PIK3CA the binder MUST read the mutation —
-      this is the real discrimination test. **When it lands:** stage into `runs/rung30_kras_g12d/design_v1/`,
-      commit raw FIRST, then score MUT-vs-WT (the make-or-break). Gly→Asp is presence-vs-absence chemistry (the
+- [x] **P0 · KRAS-G12D / A\*11:01 binder v1** ✅ RAN (commit 6cb15a9) — **0/10 on ALL oracles** at batch=10 (best
+      af2_iptm 0.37, af2_ipAE 21). Difficulty gauge: ≤5% hardest tier on BOTH → 0/10 is the EXPECTED yield at
+      batch=10, NOT a refutation (geometry intact, Asp 30% exposed, presence-vs-absence chemistry). MUT-vs-WT test
+      still PENDING (no binder grips MUT yet). `runs/rung30_kras_g12d/design_v1/`, ledger C7.
+- [ ] **P0 · KRAS-G12D / A\*11:01 binder v2 — LARGE BATCH (the real shot).** 🌐 PXDesign. Identical settings —
+      crop `A0:1-108, B0:1-10`, **hotspot `B0:6`**, length **80–120**, Extended, seed 19931 — but **max batch
+      (100–200, not 10)**. A ≤5% difficulty tier needs hundreds of designs to surface dual-passers; v1's 10 was a
+      scout. **When it lands:** stage `design_v2/`, commit raw FIRST, then score MUT-vs-WT against the staged WT
+      (`kras_g12d_A1101_free_wt_pmhc.pdb`) — MUT-good + WT-bad = the win. SAME large-batch lever applies to PIK3CA v3. Gly→Asp is presence-vs-absence chemistry (the
       strongest case), unlike the failed IDH1 His↔Arg.
 - [ ] **P0 · PIK3CA-E545K v3 — larger batch.** 🌐 PXDesign. v2 (batch=10) gave 1/10 single-oracle passer in the
       ≤5% difficulty tier → statistically under-powered. Re-run **same target + hotspot B4+B6** at the **largest

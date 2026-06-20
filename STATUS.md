@@ -23,7 +23,7 @@ own driver *mutation*. Two "keys" that recognize the mutation, then trigger deat
 - ❌ **BRAF-V600E** CLOSED — mutation buried (2% exposed) + weakly presented. R26e.
 - ✅ **Built the target-selection SCREEN we'd skipped** (R28): 16 drivers × 13 HLA → picks targets by presentation + geometry.
 - ⏳ **PIK3CA-E545K / A\*03:01** (R29) — *presentation flip*. v1 **0/10**; **v2 (hotspot B4+B6, Extended) = 1/10 Protenix-basic-only, 0 dual-passers** (rank_1 ptx_iptm 0.87 vs af2_iptm 0.14 → single-model artifact). Difficulty gauge: ≤5% hardest tier on BOTH oracles. Binder UNCONFIRMED — flip is real (C8), but the 11-mer binder is at the edge of de-novo tooling at small batch. Next: larger batch / KRAS companion.
-- 🔄 **KRAS-G12D / A\*11:01** (R30c) — *read-the-mutation* **GO**: free-pMHC fold shows p6 Asp **30% exposed** (crystal's 5% was a TCR-artifact). Design target staged (hotspot B6); PXDesign after the PIK3CA queue.
+- ⏳ **KRAS-G12D / A\*11:01** (R30) — *read-the-mutation*. Free-pMHC fold: p6 Asp **30% exposed**. Design **v1 (hotspot B0:6, batch=10) = 0/10 all oracles** (best af2_iptm 0.37). Difficulty gauge: ≤5% hardest tier on BOTH → 0/10 at batch=10 is the EXPECTED yield, NOT a refutation. Geometry intact, presence-vs-absence chemistry. **MUT-vs-WT test still PENDING** (need a binder that grips MUT). Next: **v2 large batch (100–200)**.
 - ✅ **Immunopeptidomics check (R32)** — real mass-spec (HLA Ligand Atlas) corroborates: PIK3CA WT **absent** from normal (flip real); KRAS WT **present** on normal lung/testis (binder must read G12D). MUT-in-tumour = next layer.
 - → Two complementary shots; **currently fold-bound (hours).**
 
