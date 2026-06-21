@@ -236,6 +236,24 @@ recruit neighbours w.p. b (the resistance-agnostic wave) ≡ bond-percolation ig
 from the kill mechanism: the engineering target becomes *make the bystander coupling super-critical* + *add an
 agnostic killer for the resistant fraction* — two individually-tractable problems instead of one impossible one.
 
+## 16. Wave containment — the danger §15 hid (R37)
+§15 says the wave must be **super-critical** to clear the tumour. But the wave is **resistance-agnostic** and the
+tumour is a small island in a **sea of normal tissue** — so we asked the question §15's pure-tumour lattice hid:
+does the super-critical wave run away through normal tissue? Two-tissue lattice (tumour disk in a normal sea),
+wave bond-prob set by the *receiving* cell's type:
+- **An ungated super-critical wave is a catastrophe by boundary spillover *alone*** — it crosses the tumour edge
+  and kills ~99.8% of normal tissue **even at zero leak.** The wave doesn't know the boundary.
+- **Containment requires a recognition-gated bystander signal:** super-critical into tumour (b_t), **sub-critical,
+  well below p_c, into normal** (b_n) — the death completes only where the receiver's own mutation-sensor is primed.
+  Then tumour clearance is unchanged while normal death stays small.
+- **The wave amplifies the §14 leak** by the normal-tissue death-cluster size (~tens× even when contained; →∞ if
+  ungated) ⇒ effective normal false-death = (leak)×(cluster size); §14's leak target must be *tightened* by that
+  factor. An intrinsic collateral **rim** (~1–6%) dies at the boundary regardless.
+
+→ A **second load-bearing residual** joins §14's leak-correlation: the bystander signal must be **recognition-gated**
+(b_n ≪ b_t, well below p_c). The very super-criticality that lets the wave cure from a tiny seed makes it lethal in
+normal tissue unless gated — and because the wave *multiplies* the leak, the gate is as load-bearing as the leak.
+
 ---
 
 *Rungs: see `README.md` (hypothesis catalog), `STATUS.md` (live map), `docs/HYPOTHESIS_LEDGER.md` (every

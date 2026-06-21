@@ -1,0 +1,136 @@
+{
+  "tag": "rung37_wave_containment",
+  "pc_2d": 0.5,
+  "model": "two-tissue lattice CA; wave bond prob set by receiving cell type (recognition gate)",
+  "ungated_wave": [
+    {
+      "p_ig_n": 0.0,
+      "tumour_cleared": 0.999,
+      "normal_killed": 0.998
+    },
+    {
+      "p_ig_n": 1e-05,
+      "tumour_cleared": 0.999,
+      "normal_killed": 0.998
+    },
+    {
+      "p_ig_n": 0.001,
+      "tumour_cleared": 0.999,
+      "normal_killed": 0.998
+    },
+    {
+      "p_ig_n": 0.01,
+      "tumour_cleared": 0.999,
+      "normal_killed": 0.998
+    }
+  ],
+  "gated_wave_sweep": [
+    {
+      "b_n": 0.0,
+      "tumour_cleared": 0.998,
+      "normal_killed": 0.001,
+      "regime": "CONTAINED (sub-critical)"
+    },
+    {
+      "b_n": 0.1,
+      "tumour_cleared": 0.998,
+      "normal_killed": 0.0027,
+      "regime": "CONTAINED (sub-critical)"
+    },
+    {
+      "b_n": 0.2,
+      "tumour_cleared": 0.998,
+      "normal_killed": 0.0063,
+      "regime": "CONTAINED (sub-critical)"
+    },
+    {
+      "b_n": 0.35,
+      "tumour_cleared": 0.998,
+      "normal_killed": 0.025,
+      "regime": "CONTAINED (sub-critical)"
+    },
+    {
+      "b_n": 0.45,
+      "tumour_cleared": 0.999,
+      "normal_killed": 0.1593,
+      "regime": "CONTAINED (sub-critical)"
+    },
+    {
+      "b_n": 0.5,
+      "tumour_cleared": 0.999,
+      "normal_killed": 0.6093,
+      "regime": "AT p_c"
+    },
+    {
+      "b_n": 0.6,
+      "tumour_cleared": 0.999,
+      "normal_killed": 0.9445,
+      "regime": "RUNAWAY (super-critical)"
+    },
+    {
+      "b_n": 0.8,
+      "tumour_cleared": 0.999,
+      "normal_killed": 0.9979,
+      "regime": "RUNAWAY (super-critical)"
+    }
+  ],
+  "leak_amplification": [
+    {
+      "p_ig_n": 1e-05,
+      "nk_contained_bn0.35": 0.0004683924485125858,
+      "amp_contained": 46.8,
+      "nk_ungated_bn0.80": 0.6236448798627002,
+      "amp_ungated": 62364.5
+    },
+    {
+      "p_ig_n": 0.0001,
+      "nk_contained_bn0.35": 0.0027889016018306637,
+      "amp_contained": 27.9,
+      "nk_ungated_bn0.80": 0.9978689931350115,
+      "amp_ungated": 9978.7
+    },
+    {
+      "p_ig_n": 0.001,
+      "nk_contained_bn0.35": 0.016282894736842107,
+      "amp_contained": 16.3,
+      "nk_ungated_bn0.80": 0.9978368135011442,
+      "amp_ungated": 997.8
+    },
+    {
+      "p_ig_n": 0.01,
+      "nk_contained_bn0.35": 0.11901101258581236,
+      "amp_contained": 11.9,
+      "nk_ungated_bn0.80": 0.9980978260869565,
+      "amp_ungated": 99.8
+    }
+  ],
+  "collateral_rim": [
+    {
+      "b_n": 0.0,
+      "tumour_cleared": 0.999,
+      "normal_rim_killed": 0.0
+    },
+    {
+      "b_n": 0.1,
+      "tumour_cleared": 0.999,
+      "normal_rim_killed": 0.0011
+    },
+    {
+      "b_n": 0.2,
+      "tumour_cleared": 0.999,
+      "normal_rim_killed": 0.0031
+    },
+    {
+      "b_n": 0.35,
+      "tumour_cleared": 0.999,
+      "normal_rim_killed": 0.0121
+    },
+    {
+      "b_n": 0.45,
+      "tumour_cleared": 0.999,
+      "normal_rim_killed": 0.0625
+    }
+  ],
+  "verdict": "The bystander wave must be BISTABLE ACROSS TISSUE TYPE -- super-critical inside the tumour (to clear it, R36) AND sub-critical in normal tissue (or it runs away). (1) An UNGATED super-critical wave is a catastrophe by BOUNDARY SPILLOVER alone: the tumour-clearing wave crosses the tumour edge into normal tissue (b_n super-critical) and percolates through ~all of it -- even with ZERO normal leak (p_ig_n=0 -> 0.998 normal killed); a normal false-fire merely adds ignition sources. The wave does not know the tumour boundary. (2) A RECOGNITION-GATED wave (the bystander death completes only in cells whose own mutation-sensor is primed -> a much lower effective bond prob b_n into normal cells) contains the kill: tumour clearance is unchanged (b_t carries it) while normal-tissue death stays small -- but ONLY while b_n < p_c=0.5, and really b_n must sit WELL below p_c (normal_killed jumps 0.025->0.16->0.61 across b_n=0.35->0.45->0.50). (3) The wave AMPLIFIES the R35 leak by the MEAN normal-tissue death-cluster size: a sub-critical gate bounds the amplification (~tens-fold at b_n=0.35, ->1x only as b_n->0) but it DIVERGES as b_n->p_c, and an ungated wave turns a 1e-5 leak into total death (>1e4 x). So the effective normal false-death is ~ (R35 leak) x (normal cluster size) -- R35's leak target must be TIGHTENED by that factor, and is only safe behind a gate well below p_c. (4) Even contained, the wave kills a thin RIM of normal tissue at the tumour boundary (an intrinsic 'surgical margin' that grows with b_n: ~1.2% at b_n=0.35, ~6% at 0.45). NET: the design must engineer a wave that is super-critical among recognised (tumour) cells and sub-critical among unrecognised (normal) cells -- a RECOGNITION-GATED bystander signal with b_n well below p_c. This is a new, named safety requirement that R36's pure-tumour percolation hid; it sits beside R35's leak-correlation as the second load-bearing residual of the kill-coupling.",
+  "residuals": "2D lattice CA with a SHARP tumour/normal boundary (real tumours are infiltrative/graded -> the rim and containment are softer); b_t, b_n, p_ig_n, f are effective probabilities; the recognition gate is modelled as a reduced bond prob into normal cells, not a molecular circuit; no 3D / vasculature / immune clearance. Robust claim = the b_n<p_c containment REQUIREMENT + the leak-amplification, not absolute fractions. Wet residual: the actual recognition-gating of the bystander signal (does the death factor require the receiver's mutation-sensor?) -- the molecular basis of b_n << b_t."
+}
