@@ -22,11 +22,18 @@ Colab. Honest negatives are first-class. See `README.md` for the full hypothesis
       af2_iptm 0.37, af2_ipAE 21). Difficulty gauge: ≤5% hardest tier on BOTH → 0/10 is the EXPECTED yield at
       batch=10, NOT a refutation (geometry intact, Asp 30% exposed, presence-vs-absence chemistry). MUT-vs-WT test
       still PENDING (no binder grips MUT yet). `runs/rung30_kras_g12d/design_v1/`, ledger C7.
-- [ ] **P0 · KRAS-G12D / A\*11:01 binder v2 — LARGE BATCH (the real shot).** 🌐 PXDesign. Identical settings —
-      crop `A0:1-108, B0:1-10`, **hotspot `B0:6`**, length **80–120**, Extended, seed 19931 — but **max batch
-      (100–200, not 10)**. A ≤5% difficulty tier needs hundreds of designs to surface dual-passers; v1's 10 was a
-      scout. **When it lands:** stage `design_v2/`, commit raw FIRST, then score MUT-vs-WT against the staged WT
-      (`kras_g12d_A1101_free_wt_pmhc.pdb`) — MUT-good + WT-bad = the win. SAME large-batch lever applies to PIK3CA v3. Gly→Asp is presence-vs-absence chemistry (the
+- [x] **P0 · KRAS-G12D / A\*11:01 binder v2 — 80-design test** ✅ DONE (commits 2f8bf88 + 4e8f453) — 8 seeds ×10 =
+      **80 designs, 0 dual-oracle passers** → BOUNDED at PXDesign. Binders engage (af2_iptm 0.70 vs v1 0.37) but no
+      design passes AF2's bar (min ipAE 16.1) and AF2 vs Protenix **anti-correlate r=−0.41** (af2>0.5: 16/80,
+      ptx>0.8: 5/80, overlap 0) → dual-pass structurally rare, not under-sampled. MUT-vs-WT never triggered =
+      discrimination UNTESTED. `design_v2/`, ledger C7. (Same conclusion implies PIK3CA v3 large-batch would likely
+      also be 0-dual — both ≤5%-tier; deprioritised.)
+- [ ] **P1 · External binder via a DIFFERENT generator (the only honest remaining binder lever).** ⚡ GPU / 🌐.
+      PXDesign's prior can't co-certify a KRAS/PIK3CA binder (AF2+Protenix anti-correlate). Try **ODesign** (R31b,
+      epitope-specified) or **RFdiffusion+ProteinMPNN+AF2** on the same staged MUT pMHC (hotspot B0:6); a different
+      design prior may find designs both oracles certify. If that ALSO yields 0 dual-passers → the neoantigen-pMHC
+      external binder is genuinely bounded in-silico → recognition load sits entirely on the internal key.
+      *Or accept bounded now and stop spending on binders — the internal key (R27/R33/R34-37) is the contribution.* Gly→Asp is presence-vs-absence chemistry (the
       strongest case), unlike the failed IDH1 His↔Arg.
 - [ ] **P0 · PIK3CA-E545K v3 — larger batch.** 🌐 PXDesign. v2 (batch=10) gave 1/10 single-oracle passer in the
       ≤5% difficulty tier → statistically under-powered. Re-run **same target + hotspot B4+B6** at the **largest
