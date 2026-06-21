@@ -33,10 +33,14 @@ Colab. Honest negatives are first-class. See `README.md` for the full hypothesis
       batch the webserver allows (100+)**; a ≤5% tier needs hundreds of designs to surface a dual-passer. Decision
       rule: if 0 **dual-oracle** (AF2-IG **and** Protenix) passers at large batch → PIK3CA binder route is bounded
       (the flip is still real, but the binder is intractable at this groove) → lean on KRAS + the internal key.
-- [ ] **P1 · Coupled stochastic circuit sim (merge R35 + R36).** 💻 M2. Replace R36's abstract `p_kill`/`b` with
-      the *mechanistic* outputs of R35: per-cell death driven by the bistable eARM ODE under stochastic recognizer
-      leak (telegraph/burst process w/ correlation ρ), wired to the percolation wave. Gives one end-to-end model
-      from molecular leak → tissue clearance, and replaces R36's transience surrogate with real kinetics.
+- [x] **P1 · Couple R35 leak + R36 percolation** ✅ RUNG-37 (commit 426fad3) — coupled them on a two-tissue
+      lattice and found the hidden hole: the super-critical wave runs away through normal tissue (boundary spillover
+      kills ~99.8% even at zero leak) UNLESS the bystander signal is **recognition-gated** (b_n well below p_c);
+      the wave **amplifies** the R35 leak by the normal cluster size. New 2nd load-bearing residual. (ledger A9, CAPSTONE §16.)
+- [ ] **P2 · Full mechanistic merge (R35 ODE → R37 lattice).** 💻 M2. R37 used effective `p_ig_n`/`b`; the deeper
+      version drives each lattice cell's ignition by the R35 *bistable eARM ODE* under a stochastic recognizer-leak
+      burst process (with correlation ρ) → one model from molecular leak-kinetics all the way to tissue containment.
+      Refinement, not blocking — R37 already has the key tissue-level result.
 - [ ] **P1 · DhdR 2-HG sensor — pocket blueprint + affinity-detuned variants (H6 next step).** ⚡ GPU / 🌐.
       R33 showed the 2-HG metabolite gate is feasible (recovers IDH1). Next: design/repurpose the real D-2-HG
       recognizer **DhdR** — detune Kd to ~0.1–1 mM + verify the α-KG/L-2-HG/succinate non-agonist panel
