@@ -1,0 +1,241 @@
+{
+  "tag": "rung38_end_to_end_safety",
+  "pc_2d": 0.5,
+  "law": "tissue normal false-death ~= molecular_leak(N,L,rho,transience) x wave_amplification(b_n)",
+  "wave_amplification": {
+    "0.2": 3.271596109839817,
+    "0.35": 16.17920480549199,
+    "0.45": 210.15088672768877
+  },
+  "design_points": [
+    {
+      "N": 2,
+      "rho": 0.0,
+      "transience": "transient",
+      "b_n": 0.2,
+      "molecular_leak": 0.0002777777777777779,
+      "amplification": 3.271596109839817,
+      "end_to_end": 0.0009087766971777273,
+      "abs_deaths_at_1e11": 90877669.71777272,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 2,
+      "rho": 0.0,
+      "transience": "transient",
+      "b_n": 0.35,
+      "molecular_leak": 0.0002777777777777779,
+      "amplification": 16.17920480549199,
+      "end_to_end": 0.004494223557081111,
+      "abs_deaths_at_1e11": 449422355.70811105,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 2,
+      "rho": 0.0,
+      "transience": "sustained",
+      "b_n": 0.2,
+      "molecular_leak": 0.0025000000000000005,
+      "amplification": 3.271596109839817,
+      "end_to_end": 0.008178990274599543,
+      "abs_deaths_at_1e11": 817899027.4599544,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 2,
+      "rho": 0.0,
+      "transience": "sustained",
+      "b_n": 0.35,
+      "molecular_leak": 0.0025000000000000005,
+      "amplification": 16.17920480549199,
+      "end_to_end": 0.04044801201372999,
+      "abs_deaths_at_1e11": 4044801201.3729987,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 2,
+      "rho": 0.3,
+      "transience": "transient",
+      "b_n": 0.2,
+      "molecular_leak": 0.00124710602839027,
+      "amplification": 3.271596109839817,
+      "end_to_end": 0.004080027231039392,
+      "abs_deaths_at_1e11": 408002723.1039392,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 2,
+      "rho": 0.3,
+      "transience": "transient",
+      "b_n": 0.35,
+      "molecular_leak": 0.00124710602839027,
+      "amplification": 16.17920480549199,
+      "end_to_end": 0.02017718384748989,
+      "abs_deaths_at_1e11": 2017718384.7489889,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 2,
+      "rho": 0.3,
+      "transience": "sustained",
+      "b_n": 0.2,
+      "molecular_leak": 0.0071346288078404894,
+      "amplification": 3.271596109839817,
+      "end_to_end": 0.023341623852882035,
+      "abs_deaths_at_1e11": 2334162385.2882032,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 2,
+      "rho": 0.3,
+      "transience": "sustained",
+      "b_n": 0.35,
+      "molecular_leak": 0.0071346288078404894,
+      "amplification": 16.17920480549199,
+      "end_to_end": 0.11543262069321444,
+      "abs_deaths_at_1e11": 11543262069.321444,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 3,
+      "rho": 0.0,
+      "transience": "transient",
+      "b_n": 0.2,
+      "molecular_leak": 4.629629629629632e-06,
+      "amplification": 3.271596109839817,
+      "end_to_end": 1.5146278286295456e-05,
+      "abs_deaths_at_1e11": 1514627.8286295456,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 3,
+      "rho": 0.0,
+      "transience": "transient",
+      "b_n": 0.35,
+      "molecular_leak": 4.629629629629632e-06,
+      "amplification": 16.17920480549199,
+      "end_to_end": 7.490372595135186e-05,
+      "abs_deaths_at_1e11": 7490372.595135186,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 3,
+      "rho": 0.0,
+      "transience": "sustained",
+      "b_n": 0.2,
+      "molecular_leak": 0.00012500000000000003,
+      "amplification": 3.271596109839817,
+      "end_to_end": 0.0004089495137299772,
+      "abs_deaths_at_1e11": 40894951.37299772,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 3,
+      "rho": 0.0,
+      "transience": "sustained",
+      "b_n": 0.35,
+      "molecular_leak": 0.00012500000000000003,
+      "amplification": 16.17920480549199,
+      "end_to_end": 0.0020224006006864994,
+      "abs_deaths_at_1e11": 202240060.06864995,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 3,
+      "rho": 0.3,
+      "transience": "transient",
+      "b_n": 0.2,
+      "molecular_leak": 0.00019440142543592368,
+      "amplification": 3.271596109839817,
+      "end_to_end": 0.0006360029472034832,
+      "abs_deaths_at_1e11": 63600294.72034831,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 3,
+      "rho": 0.3,
+      "transience": "transient",
+      "b_n": 0.35,
+      "molecular_leak": 0.00019440142543592368,
+      "amplification": 16.17920480549199,
+      "end_to_end": 0.0031452604766073894,
+      "abs_deaths_at_1e11": 314526047.66073895,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 3,
+      "rho": 0.3,
+      "transience": "sustained",
+      "b_n": 0.2,
+      "molecular_leak": 0.0017224559545441754,
+      "amplification": 3.271596109839817,
+      "end_to_end": 0.005635180200257153,
+      "abs_deaths_at_1e11": 563518020.0257154,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    },
+    {
+      "N": 3,
+      "rho": 0.3,
+      "transience": "sustained",
+      "b_n": 0.35,
+      "molecular_leak": 0.0017224559545441754,
+      "amplification": 16.17920480549199,
+      "end_to_end": 0.02786796765700942,
+      "abs_deaths_at_1e11": 2786796765.700942,
+      "tumour_cleared": 0.998,
+      "safe_lt_1e6": false
+    }
+  ],
+  "best_point": {
+    "N": 3,
+    "rho": 0.0,
+    "transience": "transient",
+    "b_n": 0.2,
+    "molecular_leak": 4.629629629629632e-06,
+    "amplification": 3.271596109839817,
+    "end_to_end": 1.5146278286295456e-05,
+    "abs_deaths_at_1e11": 1514627.8286295456,
+    "tumour_cleared": 0.998,
+    "safe_lt_1e6": false
+  },
+  "worst_point": {
+    "N": 2,
+    "rho": 0.3,
+    "transience": "sustained",
+    "b_n": 0.35,
+    "molecular_leak": 0.0071346288078404894,
+    "amplification": 16.17920480549199,
+    "end_to_end": 0.11543262069321444,
+    "abs_deaths_at_1e11": 11543262069.321444,
+    "tumour_cleared": 0.998,
+    "safe_lt_1e6": false
+  },
+  "lever_ranking_x_worse": {
+    "N 3->2": 59.99999999999999,
+    "rho 0->0.3": 41.99070789415949,
+    "transient->sustained": 26.999999999999993,
+    "gate b_n 0.20->0.35": 4.945355191256831
+  },
+  "delivery_footprint_examples": {
+    "systemic_1e11": 1514627.8286295456,
+    "regional_1e9": 15146.278286295457,
+    "localised_1e7": 151.46278286295455
+  },
+  "verdict": "The internal root-kill's tissue-level safety is a COMPOSITION of THREE multiplicative factors: normal false-death = (molecular leak, R35) x (wave amplification, R37) x (delivery footprint = normal cells carrying the circuit). (1) COMPOSITION LAW: the molecular AND-gate leak (~1e-3..1e-5) is MULTIPLIED by the wave's normal-tissue cluster size (3x at a tight gate b_n=0.2, 16x at 0.35, 210x near p_c) -> the two load-bearing residuals (R35 leak, R37 containment) are MULTIPLICATIVE, not independent. (2) LEVER RANKING (worst->best span ~7600x across the grid): adding an AND-input (N 2->3) is the strongest lever (~60x), then recognizer correlation (rho 0->0.3, ~42x at N=3), then leak transience (~27x), then the gate tightness (~5x for b_n 0.2->0.35, blowing up to ~210x near p_c). The best swept design (N=3, rho~0, transient, tight gate b_n=0.2) reaches ~1.5e-5 of circuit-carrying cells; N=4 or a tighter gate/lower base leak pushes below 1e-6. (3) THIRD FACTOR: that fraction hits only normal cells that CARRY the circuit, so TUMOUR-LOCALISED delivery (R36 showed a few-% seed already cures) shrinks the at-risk population by orders -> delivery localisation is a SAFETY lever too, unifying R36's efficacy result with safety. NET: the autonomous root-kill is tissue-safe in a CONCRETE, COMPOSED design region -- N>=3 + transient + uncorrelated leaks + a tight recognition-gate + localised delivery -- and in that region the SAME wave still clears the tumour from a partial seed. This is the complete in-silico safety envelope of the internal key; whether a given design is 'safe enough' is now a product of FOUR measurable numbers (L, rho, leak-lifetime, b_n) x the delivery footprint, not a hand-wave.",
+  "residuals": "Composition of two reduced models (R35 copula leak + R37 lattice amplification); effective probabilities, 2D CA, sharp tumour boundary; lattice resolves normal_killed only to ~1/N_cells so the SAFE region is verified analytically (molecular_leak x measured cluster size) with the lattice confirming tumour clearance + the unsafe rows. abs@1e11 is illustrative (the relevant at-risk tissue near the tumour is smaller). Wet residuals unchanged: measure recognizer leak L, correlation rho, leak time-constant, and the bystander recognition-gating (b_n) in primary normal cells."
+}

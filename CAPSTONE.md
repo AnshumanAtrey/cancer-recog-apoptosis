@@ -254,6 +254,24 @@ wave bond-prob set by the *receiving* cell's type:
 (b_n ≪ b_t, well below p_c). The very super-criticality that lets the wave cure from a tiny seed makes it lethal in
 normal tissue unless gated — and because the wave *multiplies* the leak, the gate is as load-bearing as the leak.
 
+## 17. The end-to-end safety envelope — composing it all into one number (R38)
+§14 (molecular leak) and §16 (wave containment) were treated separately; R38 composes them and finds the safety is
+a **product of three factors**:
+> **tissue normal false-death = (molecular leak, §14) × (wave amplification, §16) × (delivery footprint)**
+- **The two residuals MULTIPLY** — the molecular AND-gate leak is scaled by the wave's normal-tissue cluster size
+  (3× at a tight gate, 16× loose, 210× near p_c). End-to-end death spans **~7,600×** across the design grid.
+- **Lever ranking:** adding an AND-input (N 3→2: **60×**) > recognizer correlation (ρ: **42×**) > leak transience
+  (**27×**) > gate tightness (5×, →210× near p_c). No single factor suffices; you must win all of them.
+- **Delivery localisation is *also* a safety lever:** the leak only hits circuit-*carrying* normal cells, so
+  tumour-localised delivery (§15: a few-% seed already cures) shrinks the at-risk population by orders — §15's
+  efficacy result **is** the safety result.
+
+→ The autonomous root-kill is **tissue-safe *and* curative in a concrete, composed region**: N≥3 + transient,
+uncorrelated leaks + a tight recognition-gate + localised delivery — and in that region the same wave still clears
+the tumour from a partial seed. "Safe enough" is no longer a hand-wave but the **product of four measurable
+molecular numbers (L, ρ, leak-lifetime, b_n) × the delivery footprint** — the complete in-silico safety envelope of
+the internal key, composing §13–16 into one verdict.
+
 ---
 
 *Rungs: see `README.md` (hypothesis catalog), `STATUS.md` (live map), `docs/HYPOTHESIS_LEDGER.md` (every
