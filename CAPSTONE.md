@@ -291,6 +291,19 @@ apoptosis** — that is what turns Shriya's local *"destroy itself from within"*
 third clearance layer (local wave §15 + systemic ICD-immunity §18 + NK tail §3). H7 is not a footnote; it is the
 local-vs-systemic pivot of the whole concept.
 
+## 19. Where the independent recognizers come from — orthogonal modalities (R40, Shriya's H5)
+§14/§17 demanded **N≥3 independent recognizers** with low leak-correlation, but the recognition we built is all
+*one modality* (mutation sensors read the same somatic-signal class → likely **correlated** leaks). R40 resolves
+this with a block-correlated leak model and a clean principle: **independence, not individual cleanliness, is the
+currency of an AND-gate.** A 30%-leaky *independent* microenvironment input beats a 5%-clean *correlated* mutation
+input; the winning gate ANDs **orthogonal physical modalities** — mutation (DNA/RNA) + oncometabolite (2-HG, §11's
+H6) + microenvironment (hypoxia/acidosis, H5) — whose leaks multiply (joint ≈ 3×10⁻⁴), beating a correlated
+mutation stack by 16–83× as correlation rises. This gives Shriya's **microenvironment sniffer (H5)** a concrete
+role — *not* a standalone recognizer (it leaks), but the gate's **independence-provider** — and converts §14's #1
+residual (leak correlation) into a **design principle: choose recognizers that mis-fire for unrelated reasons.**
+*Honest conditionality:* the advantage holds only if same-modality leaks are genuinely correlated; if not, clean
+mutation-stacking wins — so the decision is gated on the same wet measurement (ρ) §14 already flagged.
+
 ---
 
 *Rungs: see `README.md` (hypothesis catalog), `STATUS.md` (live map), `docs/HYPOTHESIS_LEDGER.md` (every
