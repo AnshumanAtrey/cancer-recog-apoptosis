@@ -272,6 +272,25 @@ the tumour from a partial seed. "Safe enough" is no longer a hand-wave but the *
 molecular numbers (L, ρ, leak-lifetime, b_n) × the delivery footprint** — the complete in-silico safety envelope of
 the internal key, composing §13–16 into one verdict.
 
+## 18. Reaching the metastases — local cure vs whole-body cure (R39, Shriya's H7)
+Everything above clears the **local** tumour. But the bystander wave is contact-based — it cannot reach a distant
+micrometastasis that never received the circuit, and **metastasis is what kills patients.** The only mechanism
+that reaches untreated distant deposits is systemic immunity raised by **immunogenic cell death (ICD)** — the
+abscopal effect. R39 tests it, and finds three regimes:
+- **Tolerogenic (clean) apoptosis → local-only cure.** Below the immune-priming threshold, no systemic immunity is
+  raised; distant metastases **grow back.** The primary is cured but the patient is not. (Plain apoptosis is often
+  *tolerogenic* — a real danger here.)
+- **Immunogenic death (above threshold) → abscopal cure.** ICD (calreticulin/HMGB1/ATP, or a pyroptotic/
+  necroptotic flavour) raises a persistent T-cell response that eradicates untreated deposits (i\*≈0.26, rising
+  with immunosuppression).
+- **Heavy immunosuppression → immunity alone fails** even at maximal immunogenicity → exactly where §3/R21's
+  resistance-agnostic NK arm and checkpoint-release are required.
+
+→ **New design requirement:** the internal self-destruct must be **engineered for immunogenic cell death, not clean
+apoptosis** — that is what turns Shriya's local *"destroy itself from within"* into a **whole-body cure**, adding a
+third clearance layer (local wave §15 + systemic ICD-immunity §18 + NK tail §3). H7 is not a footnote; it is the
+local-vs-systemic pivot of the whole concept.
+
 ---
 
 *Rungs: see `README.md` (hypothesis catalog), `STATUS.md` (live map), `docs/HYPOTHESIS_LEDGER.md` (every
