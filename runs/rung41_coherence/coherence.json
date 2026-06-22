@@ -1,0 +1,193 @@
+{
+  "tag": "rung41_coherence",
+  "pc_2d": 0.5,
+  "i_star_R39": 0.26,
+  "normal_tol": 0.05,
+  "model": "b_n_eff(i) = b_n_base + kappa*i ; compose R37 containment with R39 immunogenicity",
+  "window_sweep": [
+    {
+      "b_n_base": 0.1,
+      "kappa": 0.0,
+      "i_max_contained": 1.0,
+      "window_ok": true,
+      "verdict": "compatible"
+    },
+    {
+      "b_n_base": 0.1,
+      "kappa": 0.1,
+      "i_max_contained": 1.0,
+      "window_ok": true,
+      "verdict": "compatible"
+    },
+    {
+      "b_n_base": 0.1,
+      "kappa": 0.2,
+      "i_max_contained": 1.0,
+      "window_ok": true,
+      "verdict": "compatible"
+    },
+    {
+      "b_n_base": 0.1,
+      "kappa": 0.3,
+      "i_max_contained": 1.0,
+      "window_ok": true,
+      "verdict": "compatible"
+    },
+    {
+      "b_n_base": 0.1,
+      "kappa": 0.5,
+      "i_max_contained": 0.65,
+      "window_ok": true,
+      "verdict": "compatible"
+    },
+    {
+      "b_n_base": 0.1,
+      "kappa": 0.8,
+      "i_max_contained": 0.4,
+      "window_ok": true,
+      "verdict": "compatible"
+    },
+    {
+      "b_n_base": 0.2,
+      "kappa": 0.0,
+      "i_max_contained": 1.0,
+      "window_ok": true,
+      "verdict": "compatible"
+    },
+    {
+      "b_n_base": 0.2,
+      "kappa": 0.1,
+      "i_max_contained": 1.0,
+      "window_ok": true,
+      "verdict": "compatible"
+    },
+    {
+      "b_n_base": 0.2,
+      "kappa": 0.2,
+      "i_max_contained": 1.0,
+      "window_ok": true,
+      "verdict": "compatible"
+    },
+    {
+      "b_n_base": 0.2,
+      "kappa": 0.3,
+      "i_max_contained": 0.8,
+      "window_ok": true,
+      "verdict": "compatible"
+    },
+    {
+      "b_n_base": 0.2,
+      "kappa": 0.5,
+      "i_max_contained": 0.5,
+      "window_ok": true,
+      "verdict": "compatible"
+    },
+    {
+      "b_n_base": 0.2,
+      "kappa": 0.8,
+      "i_max_contained": 0.30000000000000004,
+      "window_ok": true,
+      "verdict": "compatible"
+    }
+  ],
+  "contradiction_map_suppression_x_kappa": [
+    {
+      "istar": 0.26,
+      "supp": "none",
+      "kappa": 0.2,
+      "open": true
+    },
+    {
+      "istar": 0.26,
+      "supp": "none",
+      "kappa": 0.5,
+      "open": true
+    },
+    {
+      "istar": 0.26,
+      "supp": "none",
+      "kappa": 0.8,
+      "open": true
+    },
+    {
+      "istar": 0.39,
+      "supp": "x0.5",
+      "kappa": 0.2,
+      "open": true
+    },
+    {
+      "istar": 0.39,
+      "supp": "x0.5",
+      "kappa": 0.5,
+      "open": true
+    },
+    {
+      "istar": 0.39,
+      "supp": "x0.5",
+      "kappa": 0.8,
+      "open": true
+    },
+    {
+      "istar": 0.64,
+      "supp": "x0.35",
+      "kappa": 0.2,
+      "open": true
+    },
+    {
+      "istar": 0.64,
+      "supp": "x0.35",
+      "kappa": 0.5,
+      "open": true
+    },
+    {
+      "istar": 0.64,
+      "supp": "x0.35",
+      "kappa": 0.8,
+      "open": false
+    }
+  ],
+  "collateral_at_istar": [
+    {
+      "b_n_base": 0.1,
+      "kappa": 0.0,
+      "normal_death_at_istar": 0.0011155606407322655
+    },
+    {
+      "b_n_base": 0.1,
+      "kappa": 0.2,
+      "normal_death_at_istar": 0.0019450800915331806
+    },
+    {
+      "b_n_base": 0.1,
+      "kappa": 0.5,
+      "normal_death_at_istar": 0.004252479023646072
+    },
+    {
+      "b_n_base": 0.1,
+      "kappa": 0.8,
+      "normal_death_at_istar": 0.007885202135774217
+    },
+    {
+      "b_n_base": 0.2,
+      "kappa": 0.0,
+      "normal_death_at_istar": 0.003151220442410374
+    },
+    {
+      "b_n_base": 0.2,
+      "kappa": 0.2,
+      "normal_death_at_istar": 0.005158276125095347
+    },
+    {
+      "b_n_base": 0.2,
+      "kappa": 0.5,
+      "normal_death_at_istar": 0.009496567505720824
+    },
+    {
+      "b_n_base": 0.2,
+      "kappa": 0.8,
+      "normal_death_at_istar": 0.023865369946605642
+    }
+  ],
+  "verdict": "I went hunting for a contradiction between R39 (need immunogenic death to clear metastases) and R37 (need the wave contained) -- and the thesis MOSTLY SURVIVES, with one cornered failure mode. (1) At no immunosuppression (R39 i*=0.26), the compatible window stays OPEN across the entire inflammatory-spread range tested (kappa up to 0.8): the window NARROWS as the death gets more locally inflammatory (i_max falls 1.0 -> 0.40) but never closes, and AT the metastasis-clearing threshold dose the local collateral is tiny (<=2.4% even at kappa=0.8) -- well inside the margin. So the requirements DO compose in the realistic range; no free contradiction. (2) The contradiction is REAL but CORNERED: it appears only when a maximally-LYTIC death (high kappa) meets IMMUNOSUPPRESSION (which raises R39's i* to 0.4-0.64) -- then the immunogenicity needed for systemic clearance exceeds the immunogenicity that stays contained, and R37 & R39 collide. (3) A tighter recognition gate (lower b_n_base) widens the safe window. DESIGN CONSTRAINT (the real output, new and measurable): the immunogenic death should prime SYSTEMIC ADAPTIVE immunity (antigen-specific DC->T-cell -- safe for normal cells, clears metastases) while keeping LOCAL INNATE inflammatory spread (kappa) low -- favour a calreticulin/limited-HMGB1 'eat-me + prime' signal over full lytic pyroptotic spillage. The effector must be TUNED: neither pure tolerogenic apoptosis (fails R39) nor maximally-lytic pyroptosis (risks R37 under suppression). Net: the chain is COHERENT in the realistic regime, with kappa added to the list of things a lab must keep bounded.",
+  "residuals": "2D lattice CA, sharp boundary; b_n_eff = b_n_base + kappa*i is a LINEAR surrogate for innate inflammatory coupling; I_STAR imported from R39 (reduced model; rises under immunosuppression -> window tighter); NORMAL_TOL=5% is a stated acceptable-margin judgement. Robust claim = the EXISTENCE of a kappa-bounded compatible window + the design constraint (systemic-priming without local-inflammatory-spread), not the absolute kappa_crit. WET residual: the actual local inflammatory spread (kappa) of a given engineered immunogenic death mode -- the new thing to measure, alongside R35's leak-correlation and R37's gate."
+}

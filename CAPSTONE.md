@@ -304,6 +304,20 @@ residual (leak correlation) into a **design principle: choose recognizers that m
 *Honest conditionality:* the advantage holds only if same-modality leaks are genuinely correlated; if not, clean
 mutation-stacking wins — so the decision is gated on the same wet measurement (ρ) §14 already flagged.
 
+## 20. Red-team: do the requirements contradict? (R41)
+§18's immunogenic-death demand and §16's containment demand pull in opposite directions — immunogenic death is
+*inflammatory* (DAMP/lytic spread), and inflammation doesn't respect the recognition gate. So we deliberately tried
+to **break the thesis**: model the effective normal coupling as `b_n_eff = b_n_base + κ·i` (κ = the death mode's
+local inflammatory spread) and ask whether any immunogenicity both clears metastases (i ≥ i*) and stays contained.
+**The thesis held in the realistic regime:** at no immunosuppression the compatible window stays open across all κ
+(it narrows but never closes; local collateral ≤2.4% at the threshold dose). The contradiction is **cornered** — it
+appears only when a *maximally-lytic* death (high κ) meets *immunosuppression* (which raises i* to 0.4–0.64). →
+The chain §13–§19 is **internally coherent**, and a new measurable constraint falls out: the immunogenic death must
+**prime systemic adaptive immunity while keeping local innate inflammatory spread κ low** (calreticulin/limited-HMGB1
+"eat-me + prime", not full lytic pyroptosis). The effector is *tuned*: neither tolerogenic apoptosis (fails §18) nor
+maximally-lytic pyroptosis (risks §16 under suppression). κ joins leak-correlation, the gate, and the four envelope
+numbers on the list a lab must keep bounded.
+
 ---
 
 *Rungs: see `README.md` (hypothesis catalog), `STATUS.md` (live map), `docs/HYPOTHESIS_LEDGER.md` (every
