@@ -1,0 +1,67 @@
+# KRAS-G12D binder retry via ODesign — run guide (the honest "different generator" lever)
+
+**Why ODesign (not more PXDesign, not BindCraft):** KRAS v2 was bounded because AF2-IG and Protenix **anti-correlate**
+(r=−0.41) — no design satisfies both. A generator that optimizes for AF2 (BindCraft) would inherit that problem.
+**ODesign is an all-atom interaction *world-model*, not AF2-based** — a genuinely different generative prior, with
+explicit **epitope/hotspot specification** (exactly our need: force the binder onto the G12D Asp). It is the one
+principled shot left at the external binder. *(Repo: The-Institute-for-AI-Molecular-Design/ODesign, Apache-2.0,
+arXiv 2510.22304; verified R31b.)*
+
+> **Honest caveat (rule 7):** this is a heavy CUDA-12.1 research stack (torch 2.3.1 + pyg + deepspeed + a HF
+> checkpoint + a Google-Drive CCD file). I could **not** truly dry-run the CUDA wheels on the M2 (platform-specific),
+> so the steps below are ODesign's **documented** recipe + our **validated** input — not a "tested" notebook.
+> Expect possible install iteration on first run. The **container path is the maintainers' recommended, lower-risk
+> option** if pip fights you.
+
+## What's already prepped (validated on M2)
+- **Input JSON:** `kras_odesign_input.json` (this dir) — target = pMHC (chain A/1-108 MHC + chain B/1-10 peptide),
+  designed binder length **80** (the v2 winner), **hotspot `B/4,B/5,B/6,B/7,B/8`** centred on **B/6 = the G12D Asp**.
+  Validated against the staged PDB (peptide `VVVGADGVGK`, res 6 = D). ✓
+- **Target structure:** `runs/rung30_kras_g12d/staging/kras_g12d_A1101_free_mut_cropped.pdb` (gitignored — upload it
+  to the run box). Rename/copy to `./data/kras_g12d_A1101_free_mut_cropped.pdb` (matches `ref_file` in the JSON).
+
+## Path A — container (recommended, lower-risk; needs a CUDA GPU box)
+```bash
+git clone https://github.com/The-Institute-for-AI-Molecular-Design/ODesign.git && cd ODesign
+# get the protein-binder checkpoint (flexible receptor):
+bash ./ckpt/get_odesign_ckpt.sh ./ckpt          # or grab odesign_base_prot_flex.pt from the HF repo
+# download components.v20240608.cif (+ .rdkit_mol.pkl) from their Google Drive -> ./data/   (one-time, all-atom CCD)
+cp /path/to/kras_g12d_A1101_free_mut_cropped.pdb ./data/
+cp /path/to/kras_odesign_input.json ./examples/protein_design/prot_binding_prot/kras.json
+# build + run the container (Dockerfile / odesign.def both shipped):
+docker run --gpus all -it --rm --shm-size=8g -v $(pwd)/ckpt:/app/ODesign/ckpt \
+  -v $(pwd)/data:/app/ODesign/data -v $(pwd)/outputs:/app/ODesign/outputs <odesign-image> \
+  bash inference_demo.sh
+```
+Edit `inference_demo.sh` first:
+- `infer_model_name="odesign_base_prot_flex"`  (protein binder, flexible receptor)
+- `input_json_path="./examples/protein_design/prot_binding_prot/kras.json"`
+- `seeds="[42,123,777,2024,31337]"`  · `N_sample=10`   → ~50 designs (multi-seed, like the KRAS v2 sweep)
+- `exp_name="kras_g12d_odesign_v1"`
+
+## Path B — Colab (lighter, more fragile). Setup cell, in order:
+1. **GPU guard FIRST:** `import torch; assert torch.cuda.is_available(), "NO GPU — Runtime→Change runtime type→GPU"; print(torch.cuda.get_device_name(0))` — but torch isn't installed yet, so first run `!nvidia-smi` and bail if no GPU.
+2. `!git clone … ODesign && cd ODesign`
+3. `!pip install -r requirements.txt -f https://data.pyg.org/whl/torch-2.3.1+cu121.html` (their exact command; Colab CUDA ≈12.x). **Do NOT use condacolab** (rule 7 — it wipes pip installs).
+4. checkpoint + CCD download (as Path A).
+5. upload the cropped PDB + the input JSON.
+6. run `scripts/inference.py` (the command at the bottom of `inference_demo.sh`).
+7. **persist `outputs/` to Drive** before the runtime dies (rule 7), then download.
+Rule-7 hygiene: magics on their own lines; assert CUDA at the top of the run cell; print a heartbeat (output-dir file count) every ~30 s since inference is one long subprocess.
+
+## The make-or-break: MUT-vs-WT scoring (this is the real test, ODesign only generates)
+ODesign outputs binder sequences/structures against the **MUT** pMHC. A binder that *binds* isn't the win — it must
+**discriminate**. For each top ODesign binder:
+1. Fold it against the **MUT** pMHC and the **WT** pMHC (`runs/rung30_kras_g12d/staging/kras_g12d_A1101_free_wt_pmhc.pdb`)
+   — Protenix *and* AF2-IG (both oracles, since the bound was dual-certification).
+2. **Win = high on MUT, low on WT, on BOTH oracles.** A binder that grips MUT and WT equally fails (it would attack
+   the WT peptide presented on normal tissue, R32).
+3. If ODesign **also** yields 0 dual-certified discriminating binders → the neoantigen-pMHC external binder is
+   genuinely bounded in-silico across two independent generators → recognition load sits entirely on the **internal
+   key** (R27/R33/R34–40), which is already the validated contribution.
+
+## Honest expectation
+The prior is a long shot (KRAS is a ≤5%-difficulty, single-residue-discrimination target; PXDesign got 0/80). ODesign's
+*different prior* + *all-atom epitope control* is a real reason it *could* succeed where AF2-based design didn't — but
+treat it as one clean shot, not a sure thing. Either outcome is informative: a dual-certified discriminating binder is
+a breakthrough artifact; another 0 is a strong second-generator confirmation that the route is bounded.

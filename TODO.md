@@ -28,12 +28,15 @@ Colab. Honest negatives are first-class. See `README.md` for the full hypothesis
       ptx>0.8: 5/80, overlap 0) → dual-pass structurally rare, not under-sampled. MUT-vs-WT never triggered =
       discrimination UNTESTED. `design_v2/`, ledger C7. (Same conclusion implies PIK3CA v3 large-batch would likely
       also be 0-dual — both ≤5%-tier; deprioritised.)
-- [ ] **P1 · External binder via a DIFFERENT generator (the only honest remaining binder lever).** ⚡ GPU / 🌐.
-      PXDesign's prior can't co-certify a KRAS/PIK3CA binder (AF2+Protenix anti-correlate). Try **ODesign** (R31b,
-      epitope-specified) or **RFdiffusion+ProteinMPNN+AF2** on the same staged MUT pMHC (hotspot B0:6); a different
-      design prior may find designs both oracles certify. If that ALSO yields 0 dual-passers → the neoantigen-pMHC
-      external binder is genuinely bounded in-silico → recognition load sits entirely on the internal key.
-      *Or accept bounded now and stop spending on binders — the internal key (R27/R33/R34-37) is the contribution.* Gly→Asp is presence-vs-absence chemistry (the
+- [~] **P1 · External binder via a DIFFERENT generator — ODesign PREPPED, awaiting a GPU run.** ⚡ GPU box / 🌐.
+      ODesign chosen (all-atom interaction world-model, NOT AF2-based → escapes the AF2/Protenix anti-correlation
+      that bounded PXDesign; epitope-specified). **Validated input + run guide ready:** `runs/rung30_kras_g12d/odesign/`
+      (kras_odesign_input.json: target pMHC A/1-108+B/1-10, binder len 80, hotspot B/4-B/8 on the G12D Asp;
+      RUN_GUIDE.md: container [recommended] + Colab paths, multi-seed, MUT-vs-WT scoring plan). **To run (Anshuman,
+      needs CUDA GPU):** upload cropped PDB → `inference_demo.sh` with seeds [42,123,777,2024,31337] N_sample=10 →
+      ~50 designs → fold winners vs MUT+WT on both oracles. Honest: long shot (KRAS ≤5% tier; PXDesign 0/80), but a
+      different prior is the one real reason it could co-certify. 0 again = strong 2nd-generator confirmation the
+      route is bounded → recognition sits on the internal key (R27/R33/R34-40), already the contribution. Gly→Asp is presence-vs-absence chemistry (the
       strongest case), unlike the failed IDH1 His↔Arg.
 - [ ] **P0 · PIK3CA-E545K v3 — larger batch.** 🌐 PXDesign. v2 (batch=10) gave 1/10 single-oracle passer in the
       ≤5% difficulty tier → statistically under-powered. Re-run **same target + hotspot B4+B6** at the **largest
