@@ -111,23 +111,22 @@ C_CCD_DL = r'''!pip install -q -U gdown
 !gdown {PKL_FILE_ID} -O /content/ODesign/data/components.v20240608.cif.rdkit_mol.pkl
 !ls -lh /content/ODesign/data'''
 
-C_UPLOAD = r'''# Upload BOTH from runs/rung30_kras_g12d/ :
-#   - staging/kras_g12d_A1101_free_mut_cropped.pdb   (the design target; gitignored, on your laptop)
-#   - odesign/kras_odesign_input.json                (the validated input)
-from google.colab import files
-print("Select BOTH files: kras_g12d_A1101_free_mut_cropped.pdb  and  kras_odesign_input.json")
-_ = files.upload()'''
-
-C_PLACE = r'''import shutil, os, json
+C_FETCH_DIRS = r'''# Pull the validated input DIRECTLY from the public repo (no manual upload — the files are tracked).
+import os
 os.makedirs("/content/ODesign/data", exist_ok=True)
 os.makedirs("/content/ODesign/examples/protein_design/prot_binding_prot", exist_ok=True)
-shutil.copy("kras_g12d_A1101_free_mut_cropped.pdb",
-            "/content/ODesign/data/kras_g12d_A1101_free_mut_cropped.pdb")
-shutil.copy("kras_odesign_input.json",
-            "/content/ODesign/examples/protein_design/prot_binding_prot/kras.json")
+RAW = "https://raw.githubusercontent.com/AnshumanAtrey/cancer-recog-apoptosis/main"
+print("fetching from", RAW)'''
+
+C_FETCH_DL = r'''!wget -q -O /content/ODesign/data/kras_g12d_A1101_free_mut_cropped.pdb {RAW}/runs/rung30_kras_g12d/staging/kras_g12d_A1101_free_mut_cropped.pdb
+!wget -q -O /content/ODesign/examples/protein_design/prot_binding_prot/kras.json {RAW}/runs/rung30_kras_g12d/odesign/kras_odesign_input.json'''
+
+C_FETCH_VERIFY = r'''import os, json
 spec = json.load(open("/content/ODesign/examples/protein_design/prot_binding_prot/kras.json"))
 print("input JSON OK:", json.dumps(spec, indent=2))
-assert os.path.exists("/content/ODesign/data/kras_g12d_A1101_free_mut_cropped.pdb"), "target PDB missing"'''
+p = "/content/ODesign/data/kras_g12d_A1101_free_mut_cropped.pdb"
+assert os.path.exists(p) and os.path.getsize(p) > 1000, "target PDB fetch failed (check the RAW url / branch)"
+print("target PDB OK:", os.path.getsize(p), "bytes")'''
 
 C_RUN = r'''# --- INFERENCE with GPU guard + heartbeat (inference is one long subprocess; rule 7) ---
 import torch, os, time, threading, subprocess
@@ -197,8 +196,9 @@ CELLS = [
     md(MD_CCD),
     code(C_CCD_IDS),
     code(C_CCD_DL),
-    code(C_UPLOAD),
-    code(C_PLACE),
+    code(C_FETCH_DIRS),
+    code(C_FETCH_DL),
+    code(C_FETCH_VERIFY),
     code(C_RUN),
     code(C_PERSIST),
     md(MD_SCORE),

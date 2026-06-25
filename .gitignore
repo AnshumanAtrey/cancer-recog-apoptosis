@@ -7,6 +7,11 @@ runs/**/*.pdb
 runs/**/cache/
 runs/**/wandb/
 runs/**/checkpoints/
+# EXCEPTION: the KRAS-G12D pMHC structures are small (<120KB) run INPUTS the ODesign Colab notebook
+# pulls directly from raw GitHub (no manual upload). Public biology, ATOM records only — track them.
+!runs/rung30_kras_g12d/staging/kras_g12d_A1101_free_mut_cropped.pdb
+!runs/rung30_kras_g12d/staging/kras_g12d_A1101_free_mut_pmhc.pdb
+!runs/rung30_kras_g12d/staging/kras_g12d_A1101_free_wt_pmhc.pdb
 
 # Python
 __pycache__/
