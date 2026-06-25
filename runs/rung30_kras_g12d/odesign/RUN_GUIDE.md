@@ -39,15 +39,19 @@ Edit `inference_demo.sh` first:
 - `seeds="[42,123,777,2024,31337]"`  · `N_sample=10`   → ~50 designs (multi-seed, like the KRAS v2 sweep)
 - `exp_name="kras_g12d_odesign_v1"`
 
-## Path B — Colab (lighter, more fragile). Setup cell, in order:
-1. **GPU guard FIRST:** `import torch; assert torch.cuda.is_available(), "NO GPU — Runtime→Change runtime type→GPU"; print(torch.cuda.get_device_name(0))` — but torch isn't installed yet, so first run `!nvidia-smi` and bail if no GPU.
-2. `!git clone … ODesign && cd ODesign`
-3. `!pip install -r requirements.txt -f https://data.pyg.org/whl/torch-2.3.1+cu121.html` (their exact command; Colab CUDA ≈12.x). **Do NOT use condacolab** (rule 7 — it wipes pip installs).
-4. checkpoint + CCD download (as Path A).
-5. upload the cropped PDB + the input JSON.
-6. run `scripts/inference.py` (the command at the bottom of `inference_demo.sh`).
-7. **persist `outputs/` to Drive** before the runtime dies (rule 7), then download.
-Rule-7 hygiene: magics on their own lines; assert CUDA at the top of the run cell; print a heartbeat (output-dir file count) every ~30 s since inference is one long subprocess.
+## Path B — Colab (built + AST-checked): `notebooks/binder_odesign_kras_colab.ipynb`
+Open that notebook in Colab (rebuild with `python scripts/_build_odesign_nb.py`; every code cell is AST-checked).
+Set **Runtime → T4 GPU** first. It runs, in order: GPU-guard (pre-install, probes `nvidia-smi`) → clone +
+`pip install -r requirements.txt -f https://data.pyg.org/whl/torch-2.3.1+cu121.html` (NO condacolab, rule 7) →
+GPU-guard (post-install) → `ckpt/get_odesign_ckpt.sh` → **CCD by file-ID** → upload the cropped MUT PDB +
+`kras_odesign_input.json` → `scripts/inference.py` (seeds `[42,123,777,2024,31337]`, N_sample=10) with a
+**heartbeat thread** (output-dir file count + GPU mem every 30 s) → **persist `outputs/` to Drive**.
+- **The one manual step:** paste the two Google-Drive file IDs for `components.v20240608.cif` and
+  `components.v20240608.cif.rdkit_mol.pkl` (folder `…/folders/1wPmwIrC3G52q1JFY0RXY95tjKDl7YEln`). **Do NOT
+  `gdown --folder`** — that folder also holds the **850 GB** `odesign_full_data.tar.gz`.
+- **Honest (rule 7):** the CUDA-12.1 wheels could not be M2-dry-run (platform-specific), so first-run install
+  iteration is possible; numpy/protobuf pins may force a Colab restart (then re-run from the cell *after*
+  install — do NOT re-run install). If pip fights you, fall back to **Path A** (container) on a CUDA box.
 
 ## The make-or-break: MUT-vs-WT scoring (this is the real test, ODesign only generates)
 ODesign outputs binder sequences/structures against the **MUT** pMHC. A binder that *binds* isn't the win — it must
