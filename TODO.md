@@ -8,15 +8,23 @@ Colab. Honest negatives are first-class. See `README.md` for the full hypothesis
 
 ---
 
-## ▶ NEXT SESSION — current frontier (after RUNG-36, 2026-06-19)
+## ▶ NEXT SESSION — current frontier (after RUNG-42, 2026-06-25)
 
-> The internal MHC-free **root-kill is now end-to-end in-silico**: recognize mutation (R23/27) → AND-gate
-> specificity (R34) + honest robustness envelope (R35) → cell's own apoptosis → bystander wave clears the tumour
-> from a partial seed (R36) → R21 NK for the resistant tail. The two hardest objections (leak correlation,
-> delivery) are now **measurable engineering specs, not hand-waves.** The still-open *artifact* front = the
-> **external binder** (PIK3CA unconfirmed; KRAS staged). Live map = `STATUS.md`; every hypothesis→verdict =
-> `docs/HYPOTHESIS_LEDGER.md`; narrative = `CAPSTONE.md` (now §1–15). *(This "Done so far" recap below is stale at
-> R20 — trust STATUS/LEDGER/CAPSTONE for R21–36.)*
+> The internal MHC-free **root-kill is end-to-end in-silico** and has now survived **two deliberate red-teams**:
+> recognize mutation (R23/27) → AND-gate of **orthogonal modalities** (R40) → cell's own apoptosis (R34) +
+> honest robustness envelope (R35/R38) → bystander wave clears from a partial seed (R36) but must be
+> **recognition-gated** to stay contained (R37) → **immunogenic** death for whole-body reach (R39) → the
+> requirements **compose** (R41 coherence) → and the **evolutionary trap (R42, H10)** closes the coupled escape
+> but is dominated by R21's agnostic killer + blind to the new **p_decouple** residual. **The in-silico
+> conceptual catalog (Shriya's 15 hypotheses) is now EXHAUSTED** — every remaining open hypothesis is
+> wet/delivery/physical. The frontier is now the **residual list** (p_decouple, leak-correlation ρ, the external
+> binder) + the GPU run + the paper. Live map = `STATUS.md`; verdicts = `docs/HYPOTHESIS_LEDGER.md`; narrative =
+> `CAPSTONE.md` (now §1–21). *(The "Done so far" recap below is stale at R20 — trust STATUS/LEDGER/CAPSTONE.)*
+>
+> - [x] **H10 evolutionary trap** ✅ RUNG-42 (scripts/76, runs/rung42_evolutionary_trap/, ledger H10+A12, CAPSTONE §21) —
+>       collateral-sensitivity double-bind closes the COUPLED escape (curable-ceiling ×1/p_decouple, analytic-validated)
+>       but blind to the DECOUPLING escape (new residual p_decouple) + efficacy-dominated by R21's agnostic killer
+>       (toxicity-sparing edge only); cost alone ≠ lethality. A red-team result: real mechanism, two honest negatives.
 
 - [x] **P0 · KRAS-G12D / A\*11:01 binder v1** ✅ RAN (commit 6cb15a9) — **0/10 on ALL oracles** at batch=10 (best
       af2_iptm 0.37, af2_ipAE 21). Difficulty gauge: ≤5% hardest tier on BOTH → 0/10 is the EXPECTED yield at

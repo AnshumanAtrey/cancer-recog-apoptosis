@@ -318,6 +318,28 @@ The chain §13–§19 is **internally coherent**, and a new measurable constrain
 maximally-lytic pyroptosis (risks §16 under suppression). κ joins leak-correlation, the gate, and the four envelope
 numbers on the list a lab must keep bounded.
 
+## 21. Red-team #2: the evolutionary trap — does a double-bind close the escape R19 left open? (R42, Shriya's H10)
+§3/R19 left a hole: at clinical size some cell has already escaped recognition and sweeps unless a
+resistance-**agnostic** 2nd killer (R21 NK) mops it up. H10's "evolutionary trap" proposes a cleverer fix — a
+**collateral-sensitivity double-bind**: make the escape mutation itself sensitise the cell to a 2nd therapy B
+(escape A → die to B). We modelled it as sustained dual pressure on R19's lattice, splitting escape into a
+**coupled** route (lost the essential driver → costly + B-hypersensitive) and a rare **decoupled** route
+(evaded recognition without losing the driver → cost-free). **The trap closes the coupled escape** — P(cure)
+0.00 (no trap) → 1.00 (perfect coupling), and the lattice validates the analytic `L_eff = μ·p_decouple·N0`, so
+the **curable-tumour ceiling multiplies by 1/p_decouple** (×100 at p_decouple=1e-2). But the red-team found
+**two honest negatives on its cleverness**: (1) it is **blind to the decoupling escape** — *every* escape in
+the sim took that route — so **p_decouple (the driver-epitope coupling) is a new load-bearing residual**, the
+H10 analogue of §14's leak-correlation ρ, minimised by recognising the **driver mutation itself**
+(KRAS-G12D = neoantigen = driver); and (2) at equal kill budget it is **efficacy-dominated by the
+resistance-agnostic killer we already have** (R21): agnostic 1.00 vs trap 0.22 once decoupling exists, because
+the agnostic killer isn't blind to the decoupled route — the trap's only edge is **toxicity-sparing**
+(a clinical residual this model doesn't resolve). And the fitness cost **alone** is insufficient (costliness ≠
+lethality — a slow escapee still escapes; you need the active 2nd kill). → H10 **sharpens but does not replace**
+the resistance answer: drive p_decouple→0 by targeting the driver mutation, keep R21's agnostic cross-kill +
+R22's multi-target essentiality as the robust backstop, and use collateral sensitivity opportunistically to
+spare normal tissue. With this, the in-silico conceptual catalog (Shriya's 15 hypotheses) is **exhausted** —
+the frontier now lives entirely on the residual list (p_decouple, ρ, delivery, the external binder).
+
 ---
 
 *Rungs: see `README.md` (hypothesis catalog), `STATUS.md` (live map), `docs/HYPOTHESIS_LEDGER.md` (every

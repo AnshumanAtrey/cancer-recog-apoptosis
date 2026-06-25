@@ -1,0 +1,181 @@
+{
+  "tag": "rung42_evolutionary_trap",
+  "question": "Does a collateral-sensitivity double-bind (escape A -> hypersensitive to B) CLOSE the escape route R19 left open? And where does the decoupling escape (p_decouple) reopen it?",
+  "model": "stochastic lattice CA extending R19: S/RT(coupled escape)/RF(decoupled escape)/FRONT; wave A (recognition, R19) + systemic pressure B (collateral-sensitive: b_trap on RT >> b_base on RF/S) + fitness cost s on RT. pure-numpy CPU.",
+  "params": {
+    "grid": 130,
+    "N0": 3042,
+    "reps": 32,
+    "mu": 0.005,
+    "muN0": 15.21,
+    "trap_strong": {
+      "s_cost": 0.35,
+      "b_trap": 0.3,
+      "b_base": 0.02
+    },
+    "k_A": 0.6,
+    "p_grow": 0.25
+  },
+  "r19_baseline_trap_OFF_pcure": 0.0,
+  "pdecouple_sweep_trap_ON": {
+    "0.0": {
+      "p_cure": 1.0,
+      "escape_route": {
+        "coupled": 0,
+        "decoupled": 0
+      }
+    },
+    "0.001": {
+      "p_cure": 0.969,
+      "escape_route": {
+        "coupled": 0,
+        "decoupled": 1
+      }
+    },
+    "0.01": {
+      "p_cure": 0.781,
+      "escape_route": {
+        "coupled": 0,
+        "decoupled": 7
+      }
+    },
+    "0.05": {
+      "p_cure": 0.438,
+      "escape_route": {
+        "coupled": 0,
+        "decoupled": 18
+      }
+    },
+    "0.2": {
+      "p_cure": 0.031,
+      "escape_route": {
+        "coupled": 0,
+        "decoupled": 31
+      }
+    },
+    "0.5": {
+      "p_cure": 0.0,
+      "escape_route": {
+        "coupled": 0,
+        "decoupled": 32
+      }
+    },
+    "1.0": {
+      "p_cure": 0.0,
+      "escape_route": {
+        "coupled": 0,
+        "decoupled": 32
+      }
+    }
+  },
+  "fitness_cost_sweep_perfect_coupling_B_on": {
+    "0.0": 1.0,
+    "0.1": 1.0,
+    "0.2": 1.0,
+    "0.35": 1.0,
+    "0.5": 1.0,
+    "0.8": 1.0
+  },
+  "collateral_kill_sweep_perfect_coupling_cost_OFF": {
+    "0.0": 0.0,
+    "0.05": 0.0,
+    "0.1": 0.0,
+    "0.2": 1.0,
+    "0.3": 1.0,
+    "0.5": 1.0
+  },
+  "cost_only_no_B_perfect_coupling": {
+    "0.0": 0.0,
+    "0.5": 0.0,
+    "0.8": 0.0,
+    "0.95": 0.0
+  },
+  "analytic_validation_sim_vs_exp": [
+    {
+      "p_decouple": 0.0,
+      "sim_p_cure": 1.0,
+      "analytic_exp_-muPdN0": 1.0
+    },
+    {
+      "p_decouple": 0.001,
+      "sim_p_cure": 0.969,
+      "analytic_exp_-muPdN0": 0.985
+    },
+    {
+      "p_decouple": 0.01,
+      "sim_p_cure": 0.781,
+      "analytic_exp_-muPdN0": 0.859
+    },
+    {
+      "p_decouple": 0.05,
+      "sim_p_cure": 0.438,
+      "analytic_exp_-muPdN0": 0.467
+    },
+    {
+      "p_decouple": 0.2,
+      "sim_p_cure": 0.031,
+      "analytic_exp_-muPdN0": 0.048
+    },
+    {
+      "p_decouple": 0.5,
+      "sim_p_cure": 0.0,
+      "analytic_exp_-muPdN0": 0.0
+    },
+    {
+      "p_decouple": 1.0,
+      "sim_p_cure": 0.0,
+      "analytic_exp_-muPdN0": 0.0
+    }
+  ],
+  "collateral_vs_agnostic_equal_budget": {
+    "0.0": {
+      "collateral_trap_p_cure": 1.0,
+      "agnostic_bystander_p_cure": 1.0
+    },
+    "0.01": {
+      "collateral_trap_p_cure": 0.781,
+      "agnostic_bystander_p_cure": 1.0
+    },
+    "0.1": {
+      "collateral_trap_p_cure": 0.219,
+      "agnostic_bystander_p_cure": 1.0
+    }
+  },
+  "clinical_extrapolation": {
+    "micromet_1e5": {
+      "R19_no_trap_pcure": 0.90484,
+      "trap_pd_1e-2_pcure": 0.999,
+      "trap_pd_1e-4_pcure": 0.99999,
+      "curable_ceiling_multiplier_1_over_pd": {
+        "pd=1e-2": 100,
+        "pd=1e-4": 10000
+      }
+    },
+    "small_1e7": {
+      "R19_no_trap_pcure": 5e-05,
+      "trap_pd_1e-2_pcure": 0.90484,
+      "trap_pd_1e-4_pcure": 0.999,
+      "curable_ceiling_multiplier_1_over_pd": {
+        "pd=1e-2": 100,
+        "pd=1e-4": 10000
+      }
+    },
+    "1cm_~1e9": {
+      "R19_no_trap_pcure": 0.0,
+      "trap_pd_1e-2_pcure": 5e-05,
+      "trap_pd_1e-4_pcure": 0.90484,
+      "curable_ceiling_multiplier_1_over_pd": {
+        "pd=1e-2": 100,
+        "pd=1e-4": 10000
+      }
+    }
+  },
+  "HEADLINE": {
+    "verdict": "H10 evolutionary trap: REAL but DOMINATED, with a NEW blind spot. The collateral-sensitivity double-bind CLOSES the escape route R19 left open \u2014 P(cure) 0.00 (no trap) -> 1.00 (perfect coupling) \u2014 but only the COUPLED escape, and only as tightly as the driver-epitope coupling holds.",
+    "1_closes_coupled_escape": "Trap ON + perfect coupling cures where R19 escapes (mu*N0=15). Lattice VALIDATES the analytic L_eff = mu*p_decouple*N0 (sim P(cure) tracks exp(-mu*p_decouple*N0) across the sweep) -> curable-tumour ceiling multiplies by 1/p_decouple (pd=1e-2 -> 100x, pd=1e-4 -> 10,000x).",
+    "2_NEW_residual_p_decouple": "The trap is only as tight as the coupling between the recognised feature (A) and the essential driver whose loss sensitises to B. A rare DECOUPLING mutation (evade A without losing the driver) is a cost-free escape the trap is BLIND to \u2014 EVERY escape in the sim was via this route. p_decouple is the H10 analogue of R35's leak-correlation rho: the #1 wet measurement. Targeting the driver mutation ITSELF (KRAS-G12D = neoantigen = driver) minimises p_decouple \u2014 the tightest coupling (ties R22 essentiality + C8 KRAS gold-standard).",
+    "3_DOMINATED_by_agnostic_killer": "At EQUAL kill budget the resistance-AGNOSTIC 2nd killer we already have (R21 NK / R19 bystander) STRICTLY BEATS the collateral trap whenever decoupling exists (pd=0.1: agnostic 1.00 vs trap 0.22) \u2014 it isn't blind to the decoupled route. The trap's ONLY edge is a TOXICITY/specificity argument this equal-budget model doesn't credit (collateral sensitivity may permit a high kill on escaped cells at a dose SAFE for normal tissue, where an agnostic drug is toxicity-capped). -> H10 is a toxicity-sparing COMPLEMENT, NOT the resistance answer; the robust solution stays R21 + R22.",
+    "4_cost_alone_insufficient": "The driver fitness cost ALONE does not close escape (s=0.95, B off -> P(cure)=0.00): a slower escapee still escapes; costliness != lethality. The cost only lowers the bar the ACTIVE 2nd kill (B) must clear. Only s=1 (escape = certain death) would close it without B."
+  },
+  "CEILING": "2D lattice CA, not a tumour (no microenvironment/immune/3D/drug gradients). mu is an EFFECTIVE lumped per-division escape prob; p_decouple is an EFFECTIVE driver-epitope decoupling fraction (a WET residual, not measured here); b_trap/b_base/s are proxies for a real collateral sensitivity whose magnitude is itself a wet-lab residual. BOUNDS when the trap closes escape + exposes the decoupling blind spot; NOT a cure claim."
+}

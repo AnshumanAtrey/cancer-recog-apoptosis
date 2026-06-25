@@ -23,6 +23,7 @@ synthesis in `CAPSTONE.md`; the live one-page state in `STATUS.md`.
 | A9 | **The super-critical wave stays CONTAINED in normal tissue** (doesn't run away once a cell falsely fires) | ⚠️ CONDITIONAL (sim) — a super-critical wave is a catastrophe by **boundary spillover alone** (kills ~99.8% of normal tissue even at ZERO leak). Containment REQUIRES a **recognition-gated** bystander signal: super-critical into tumour (b_t), **sub-critical (well below p_c) into normal** (b_n). The wave **amplifies** the R35 leak by the normal-tissue cluster size (~tens× even when contained, →∞ if ungated) → effective normal false-death = (R35 leak)×(cluster size). Intrinsic collateral **rim** (~1–6%) at the boundary. **2nd load-bearing residual** beside R35 leak-correlation | R37 |
 | A10 | **The whole internal root-kill is tissue-safe AND curative in one composed design region** | ✅ ENVELOPE (sim) — tissue false-death = **(R35 molecular leak) × (R37 wave amplification) × (delivery footprint)** — the two residuals MULTIPLY (~7600× span across the design grid). Lever ranking: N (60×) > ρ (42×) > transience (27×) > gate (5×, →210× near p_c). Safe+curative region = **N≥3 + transient + uncorrelated leak + tight gate + localised delivery**; best swept design 1.5×10⁻⁵ of circuit-carrying cells (N=4/tighter→<10⁻⁶). Delivery localisation is a SAFETY lever (unifies R36). "Safe enough" = product of 4 measurable numbers (L,ρ,leak-lifetime,b_n) × footprint | R38 |
 | A11 | **The accumulated requirements COMPOSE (immunogenic death R39 vs contained wave R37 don't contradict)** | ✅ COHERENT (sim, red-team) — deliberately hunted for a contradiction; thesis HELD in the realistic regime. At no-suppression the compatible immunogenicity window stays OPEN across all inflammatory-spread κ (narrows, never closes; collateral ≤2.4% at the threshold dose). Contradiction is **cornered**: only lytic death (high κ) **+** immunosuppression (high i*) closes it. New design constraint: tuned immunogenic death — systemic-priming, **low local inflammatory spread κ** (calreticulin/limited-HMGB1, not full lytic pyroptosis). κ joins the measurable-knob list | R41 |
+| A12 | **The collateral-sensitivity trap (H10) closes the resistance escape R19 left open** | ⏳ CONDITIONAL/BOUNDED (sim, red-team) — closes the **COUPLED** escape (P(cure) 0→1.00 at perfect coupling; curable-ceiling ×**1/p_decouple**, lattice-validated vs exp(−μ·p_decouple·N0)) but **blind to the DECOUPLING escape** → new residual **p_decouple** (H10 analogue of R35's ρ; minimised by recognising the driver mutation itself), and **efficacy-DOMINATED by R21's resistance-agnostic killer** at equal budget (agnostic 1.00 vs trap 0.22 at pd=0.1; trap's only edge = toxicity-sparing). Cost alone ≠ lethality (s=0.95,no B → 0 cure). **Sharpens, doesn't replace, R21+R22** | R42 |
 
 ## B. Recognition-window handles (the 12 candidate "tells") — from TODO.md
 | # | Handle | Verdict | Where |
@@ -66,17 +67,20 @@ synthesis in `CAPSTONE.md`; the live one-page state in `STATUS.md`.
 | H7 | Danger Signal (ICD/DAMPs) | ✅ DONE (R39) — **the pivotal local-vs-systemic determinant.** Tolerogenic apoptosis → local-only cure (metastases regrow); immunogenic death above a priming threshold → **abscopal cure** of untreated metastases (i\*≈0.26 rising with suppression); heavy immunosuppression → immunity alone fails → needs R21 NK/checkpoint. **DESIGN REQ: engineer the self-destruct for ICD, not clean apoptosis** — turns the local kill into a whole-body cure. 3rd clearance layer (wave R36 + ICD-immunity R39 + NK R21) | R39 |
 | H8 | Gap-Junction Wave (connexin) | ✅ DONE — connexin relay/bridge tested | R12p_connexin |
 | H9 | Fas-FasL Bystander | ✅ DONE — bystander wave modelled with real kinetics (R13), as layered cross-kill (R21), and now as the **delivery-decoupling percolation wave** (R36): quantifies when a partial seed clears the tumour + its 1−r resistance ceiling | R13/R21/R36 |
-| H10 | Evolutionary Trap (dual selective pressure) | ⏳ PARTIAL — escape race tested; the specific "trap" variant OPEN | R19 |
+| H10 | Evolutionary Trap (dual selective pressure) | ✅ DONE (R42) — the collateral-sensitivity double-bind **CLOSES R19's coupled escape** (P(cure) 0→1.00 at perfect coupling; curable-tumour ceiling ×**1/p_decouple**, lattice-validated vs exp(−μ·p_decouple·N0)) BUT a deliberate red-team found two negatives on its cleverness: (a) **blind to the DECOUPLING escape** — every escape took it; **p_decouple is a NEW residual** (the H10 analogue of R35's ρ), and (b) **efficacy-DOMINATED by the resistance-agnostic killer we already have (R21)**: equal-budget agnostic 1.00 vs trap 0.22 at pd=0.1, edged only by toxicity-sparing. Cost alone insufficient (s=0.95, no B → 0 cure; costliness≠lethality). → a **COMPLEMENT, not the resistance answer**; sharpen via driver-mutation targeting (min p_decouple) + keep R21/R22 | R42 |
 | H11 | Synthetic-Lethal Partner | ✅ DONE — MTAP synthetic-lethal tested | R14 |
 | H12 | Living Drug Factory (engineered bacteria) | ⬜ OPEN (delivery/FUT) | future |
 | H13 | Self-Amplifying mRNA | ⬜ OPEN (delivery/FUT) — relates to internal-key delivery | R24-adjacent |
 | H14 | Nano-Origami Death Star | ⬜ OPEN (FUT) | future |
 | H15 | Microwave-Activated Biorobot | ⬜ OPEN (FUT) | future |
 
-**Reading D:** 3 of your 15 are already DONE (H4, H8, H11), 3 PARTIAL (H1, H9, H10), 9 OPEN. The OPEN-and-
-testable-now set = **H5 (microenvironment), H6 (oncometabolite — strong IDH1/2-HG tie-in), H7 (ICD score)** —
-these are the real 24h-window candidates (the rest are wet-lab/delivery/future). H2/3/12/14/15 need new
-pathways or physical platforms (future-safe, not now).
+**Reading D (updated 2026-06-25, after R42):** **8 of your 15 are now DONE** (H4, H5, H6, H7, H8, H9, H10,
+H11), **1 PARTIAL** (H1 — ferroptosis arena done, metal-ligand delivery is wet), **6 OPEN** (H2 sodium-rush,
+H3 mito-sabotage, H12 living drug factory, H13 self-amplifying mRNA, H14 nano-origami, H15 microwave-biorobot).
+**The in-silico-testable conceptual set is now EXHAUSTED** — every remaining OPEN hypothesis needs a new
+biological pathway (H2/H3), a delivery/synthetic-biology platform (H12/H13), or a physical device (H14/H15):
+all future-safe / wet-lab, none answerable on the atlas+simulation tools. The frontier moves OFF the
+conceptual catalog and onto the residual list (p_decouple, leak-correlation ρ, the GPU binder, the paper).
 
 ---
 
