@@ -132,14 +132,18 @@ C_CKPT_CCD = r'''# --- Checkpoints + CCD: read from Drive cache if present; else
 import os, glob, shutil, subprocess
 RELEASE = "https://github.com/AnshumanAtrey/cancer-recog-apoptosis/releases/download/odesign-ccd-v20240608"
 
-# 1) checkpoints — ONLY the 3 that protein-design inference loads (verified vs
-#    src/utils/inference/infer_runner.py: {infer_model_name}.pt @L53, oinvfold_{modality}.ckpt @L105,
-#    v_48_020.pt @L88). The other 6 in get_odesign_ckpt.sh are ligand/NA-only -> skip (less disk, less
-#    time, lower free-tier eviction risk). Per-file Drive cache.
+# 1) checkpoints — EXACTLY the 3 that protein-design inference loads (verified by READING
+#    src/utils/inference/infer_runner.py against a real run): load_checkpoint() loads {infer_model_name}.pt;
+#    for design_modality=="protein", load_invfold_module() builds the ProteinMPNN FAMILY = vanilla
+#    v_48_020.pt + LigandMPNN ligandmpnn_v_32_010_25.pt, then RETURNS (the oinvfold_*.ckpt branch is for
+#    non-protein modalities only -> NOT loaded here; we used to ship it AND miss ligandmpnn -> the smoke's
+#    FileNotFoundError). NOTE: ligandmpnn_v_32_010_25.pt is REQUIRED by the code but is MISSING from
+#    ODesign's own get_odesign_ckpt.sh (their provisioning bug) -> fetched from IPD, LigandMPNN's canonical
+#    host (verified live: HTTP 200, 10.5MB). Per-file Drive cache.
 HF = "https://huggingface.co/The-Institute-for-AI-Molecular-Design"
 CKPTS = [("odesign_base_prot_flex.pt", HF + "/ODesign/resolve/main/ckpt/odesign_base_prot_flex.pt"),
-         ("oinvfold_protein.ckpt", HF + "/OInvFold/resolve/main/oinvfold_protein.ckpt"),
-         ("v_48_020.pt", "https://github.com/dauparas/ProteinMPNN/raw/main/vanilla_model_weights/v_48_020.pt")]
+         ("v_48_020.pt", "https://github.com/dauparas/ProteinMPNN/raw/main/vanilla_model_weights/v_48_020.pt"),
+         ("ligandmpnn_v_32_010_25.pt", "https://files.ipd.uw.edu/pub/ligandmpnn/ligandmpnn_v_32_010_25.pt")]
 for name, url in CKPTS:
     dst, cache = "/content/ODesign/ckpt/" + name, ASSETS + "/ckpt/" + name
     if os.path.exists(cache):
