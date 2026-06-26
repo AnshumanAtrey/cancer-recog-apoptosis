@@ -42,10 +42,12 @@ Edit `inference_demo.sh` first:
 ## Path B — Colab (built + AST-checked): `notebooks/binder_odesign_kras_colab.ipynb`
 Open that notebook in Colab (rebuild with `python scripts/_build_odesign_nb.py`; every code cell is AST-checked).
 Set **Runtime → T4 GPU** first. It runs, in order: GPU-guard (pre-install, probes `nvidia-smi`) → clone +
-`pip install -r requirements.txt -f https://data.pyg.org/whl/torch-2.3.1+cu121.html` (NO condacolab, rule 7) →
-GPU-guard (post-install) → `ckpt/get_odesign_ckpt.sh` → **CCD by file-ID** → upload the cropped MUT PDB +
-`kras_odesign_input.json` → `scripts/inference.py` (seeds `[42,123,777,2024,31337]`, N_sample=10) with a
-**heartbeat thread** (output-dir file count + GPU mem every 30 s) → **persist `outputs/` to Drive**.
+**build a Python-3.10 venv** (`uv venv --python 3.10 /content/odv`) and `pip install -r requirements.txt -f
+https://data.pyg.org/whl/torch-2.3.1+cu121.html` **into it** (ODesign's stack is frozen for Py3.10; Colab is
+3.12 → rdkit==2023.3.1 / torch==2.3.1 have no 3.12 wheels; NO condacolab, rule 7) → GPU-guard checks the venv's
+torch → `ckpt/get_odesign_ckpt.sh` (Drive-cached) → **CCD wget from the GitHub Release** (Drive-cached) → inputs
+wget from the repo → `/content/odv/bin/python scripts/inference.py` (seeds `[42,123,777,2024,31337]`, N_sample=10)
+with a **heartbeat thread** (output-dir file count + GPU mem every 30 s) → **persist `outputs/` to Drive**.
 - **Fully automatic — no uploads, no Google-Drive file IDs.** The **CCD file** (528MB) `wget`s from this
   repo's **GitHub Release** `odesign-ccd-v20240608` (the two CCD files re-hosted as release assets, since git
   rejects >100MB; the 238GB training tar is NOT included). Checkpoints from HuggingFace; inputs from the repo.

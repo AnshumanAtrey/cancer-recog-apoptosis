@@ -42,17 +42,19 @@ world-model, NOT AF2-based** → a genuinely different generative prior, with **
   every later run reads them from Drive — no re-download.
 - ⇒ Set a GPU and **Run-all**. That's it.
 
-> **Honest banner (rule 7).** Heavy CUDA-12.1 stack (torch 2.3.1 + pyg + deepspeed). I could **not** dry-run
-> the CUDA wheels on the M2 (platform-specific), so treat the first run as possibly needing install iteration.
-> If pip fights you, the maintainers' **container path** (`RUN_GUIDE.md` Path A) is the lower-risk option.
+> **Honest banner (rule 7).** ODesign's stack is frozen for **Python 3.10**; Colab is 3.12, so the install
+> builds an isolated **Python-3.10 venv** (`uv venv`) and runs inference under it. Verified the cp310 wheels
+> exist (rdkit 2023.3.1 / torch 2.3.1+cu121 / pyg). I still couldn't execute the CUDA install on the M2, so if
+> a wheel fights on first run, the maintainers' **container path** (`RUN_GUIDE.md` Path A) is the rock-solid fallback.
 
 **Runtime:** set **Runtime → Change runtime type → T4 GPU** BEFORE running — the first cell refuses to proceed
 without a GPU (a CPU fallback runs ~50× slower and silently wastes hours)."""
 
-MD_RESTART = """### If Colab prompts to RESTART after the install
-The full `requirements.txt` pins `numpy==1.26.3` / `protobuf==3.20.2` etc., which can downgrade Colab's base and
-trigger a restart prompt. **That's fine** — click restart, then **re-run from the next cell down** (skip the
-install cell). Do NOT re-run install. (Rule 7: never `condacolab` here — it would wipe the pip installs.)"""
+MD_RESTART = """### The install builds an isolated Python-3.10 venv (`/content/odv`)
+ODesign's stack is frozen for Python 3.10, but Colab runs 3.12 — so the install puts everything in a **separate
+3.10 venv** (`uv venv`) and leaves Colab's own Python alone. ⇒ **no "restart runtime" prompt, nothing to re-run.**
+Inference runs under `/content/odv/bin/python`. The install is ~6–9 min. (Rule 7: no `condacolab` — the venv is
+cleaner.) If a pyg/torch wheel ever fights, the container (RUN_GUIDE Path A) is the fallback."""
 
 MD_SCORE = """## ✅ Next: the real test — MUT-vs-WT discrimination scoring (separate step)
 ODesign wrote designed binders (`outputs/.../*.cif`) against the **MUT** pMHC. Binding isn't the win — it must
@@ -81,12 +83,21 @@ C_INSTALL = r'''%cd /content
 !rm -rf /content/ODesign
 !git clone --depth 1 https://github.com/The-Institute-for-AI-Molecular-Design/ODesign.git
 %cd /content/ODesign
-!pip install -q -r requirements.txt -f https://data.pyg.org/whl/torch-2.3.1+cu121.html'''
+# ODesign's requirements.txt is a FROZEN Python-3.10 env (rdkit==2023.3.1, torch==2.3.1 have NO 3.12 wheels;
+# Colab runs 3.12). Build a Python-3.10 venv with uv and install the stack THERE — inference runs under it.
+# Colab's own Python is left untouched (no restart prompt). [~6-9 min]
+!pip install -q uv
+!uv venv --python 3.10 --seed /content/odv
+!/content/odv/bin/pip install -q -r requirements.txt -f https://data.pyg.org/whl/torch-2.3.1+cu121.html'''
 
-C_GPU_POST = r'''# --- GPU GUARD (after install; fail LOUD before spending time) ---
-import torch
-assert torch.cuda.is_available(), "NO GPU after install — set runtime to T4 and re-run from here."
-print("torch", torch.__version__, "| CUDA", torch.version.cuda, "| GPU", torch.cuda.get_device_name(0))'''
+C_GPU_POST = r'''# --- GPU GUARD (check the 3.10 VENV's torch sees CUDA; fail LOUD before spending time) ---
+import subprocess
+chk = subprocess.run(["/content/odv/bin/python", "-c",
+                      "import torch; print('venv torch', torch.__version__, '| CUDA', torch.version.cuda, "
+                      "'| GPU', torch.cuda.get_device_name(0)); assert torch.cuda.is_available()"],
+                     capture_output=True, text=True)
+print(chk.stdout.strip()); print(chk.stderr[-800:] if chk.returncode else "")
+assert chk.returncode == 0, "venv torch/CUDA check FAILED — see stderr (re-run install, or use container Path A)"'''
 
 C_DRIVE = r'''# --- Mount YOUR Drive for a persistent asset cache (checkpoints + CCD download ONCE) ---
 import os
@@ -168,7 +179,7 @@ def heartbeat(stop):
         print(f"[hb] {time.time()-t0:6.0f}s  outputs={n} files  GPU_used={used:.1f}GB", flush=True)
         stop.wait(30)
 
-cmd = ["python", "./scripts/inference.py",
+cmd = ["/content/odv/bin/python", "./scripts/inference.py",
        "exp=train_odesign_base_prot_flex",
        "data_root_dir=./data", "ckpt_root_dir=./ckpt",
        "exp.infer_model_name=odesign_base_prot_flex",
