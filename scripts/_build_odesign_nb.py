@@ -268,7 +268,14 @@ if dst.startswith("/content/drive"):
     print("✓ persisted to Drive — survives eviction.")
 else:
     print("⚠️  EPHEMERAL save (Drive NOT mounted) — run the drive.mount cell, then RE-RUN this cell, or you "
-          "lose the designs on eviction.")'''
+          "lose the designs on eviction.")
+# Also auto-download the zip to your laptop's ~/Downloads (the project's share->commit workflow, like runlog).
+try:
+    from google.colab import files
+    files.download(dst + "/outputs.zip")
+    print("⬇️  downloading outputs.zip to ~/Downloads — share it so the 59 designs get committed + scored.")
+except Exception as e:
+    print("(no auto-download:", type(e).__name__, "— pull it from Drive manually)")'''
 
 
 def code(src):
