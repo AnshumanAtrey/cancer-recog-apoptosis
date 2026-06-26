@@ -254,12 +254,21 @@ C_RUN = r'''# --- FULL sweep: 5 seeds x 10 samples = ~50 designs (run ONLY after
 ok = run_inference("kras_g12d_odesign_v1", "[42,123,777,2024,31337]", 10, 4)
 print("full sweep produced outputs:", ok)'''
 
-C_PERSIST = r'''# Persist outputs to your Drive BEFORE the runtime dies (rule 7)
+C_PERSIST = r'''# Persist outputs to your Drive BEFORE the runtime dies (rule 7).
+# Do NOT trust the ASSETS var (if drive.mount failed its first try, it fell back to ephemeral /content and a
+# later manual mount won't update it). Probe the live Drive mount directly, and LOUDLY flag an ephemeral save.
 import shutil, os
-dst = ASSETS.rsplit("/", 1)[0] + "/odesign_kras_g12d_v1"   # MyDrive/cancer-recon/odesign_kras_g12d_v1
+DRIVE = "/content/drive/MyDrive"
+dst = (DRIVE + "/cancer-recon/odesign_kras_g12d_v1") if os.path.isdir(DRIVE) else "/content/odesign_kras_g12d_v1"
 os.makedirs(dst, exist_ok=True)
 shutil.make_archive(dst + "/outputs", "zip", "/content/ODesign/outputs")
-print("saved:", dst + "/outputs.zip")'''
+n = sum(len(fs) for _, _, fs in os.walk("/content/ODesign/outputs/kras_g12d_odesign_v1"))
+print("saved:", dst + "/outputs.zip", "| full-sweep design files:", n)
+if dst.startswith("/content/drive"):
+    print("✓ persisted to Drive — survives eviction.")
+else:
+    print("⚠️  EPHEMERAL save (Drive NOT mounted) — run the drive.mount cell, then RE-RUN this cell, or you "
+          "lose the designs on eviction.")'''
 
 
 def code(src):
