@@ -44,15 +44,18 @@ Open that notebook in Colab (rebuild with `python scripts/_build_odesign_nb.py`;
 Set **Runtime → T4 GPU** first. It runs, in order: GPU-guard (pre-install, probes `nvidia-smi`) → clone +
 **build a Python-3.10 venv** (`uv venv --python 3.10 /content/odv`) and `pip install -r requirements.txt -f
 https://data.pyg.org/whl/torch-2.3.1+cu121.html` **into it** (ODesign's stack is frozen for Py3.10; Colab is
-3.12 → rdkit==2023.3.1 / torch==2.3.1 have no 3.12 wheels; NO condacolab, rule 7). **3 corrections to ODesign's
-under-specified requirements.txt are applied IN PLACE before that single install** (so one resolve enforces every
-frozen pin at once — validated locally on a real py3.10/linux-cp310 resolve: numpy 1.26.3 / scipy 1.15.2 /
-biopython 1.83 all stay bit-identical → torch/rdkit ABI unbroken; prody backtracks to the compatible 2.3.1):
-their `biotite==1.0.1` is bumped to **1.2.0** (1.0.1 lacks `biotite.interface.rdkit.from_mol`, added ≥1.2.0), and
-**prody + addict** are appended (imported by ProteinMPNN/invfold but absent from reqs). `flash_attn` is
-deliberately skipped — every `use_flash`/`use_deepspeed_evo_attention`/`use_lma` config defaults false, so its
-20-30min nvcc compile buys nothing. All found by a **local import-scan** of their source (rule 7). → GPU-guard
-checks the venv's torch →
+3.12 → rdkit==2023.3.1 / torch==2.3.1 have no 3.12 wheels; NO condacolab, rule 7). **3 corrections are then
+applied SEQUENTIALLY with `--no-deps`** (NOT in a single combined resolve — that would HARD-FAIL: `protenix==0.5.5`
+in reqs hard-pins `biotite==1.0.1`, so co-resolving `biotite==1.2.0` + protenix is `ResolutionImpossible`,
+verified locally). ODesign's own inference imports `biotite.interface.rdkit` (needs ≥1.2.0) *and* loads protenix
+in the same process, so protenix 0.5.5 demonstrably runs with biotite 1.2.0 — the `==1.0.1` is a stale over-pin.
+So: `pip install --no-deps --upgrade biotite==1.2.0` (1.0.1 lacks `biotite.interface.rdkit.from_mol`; deps already
+present; numpy stays 1.26.3 → torch/rdkit ABI unbroken; the protenix pin degrades to a benign post-install
+warning — PROVEN locally: exit 0, version swapped), then `pip install --no-deps prody==2.3.1 addict` (imported by
+ProteinMPNN/invfold but absent from reqs; 2.3.1 validated-compatible with scipy 1.15.2 / biopython 1.83 / numpy
+1.26.3). `flash_attn` is deliberately skipped — every `use_flash`/`use_deepspeed_evo_attention`/`use_lma` config
+defaults false. All found by a **local import-scan** of their source (rule 7). → GPU-guard checks the venv's
+torch →
 `ckpt/get_odesign_ckpt.sh` (Drive-cached) → **CCD wget from the GitHub Release** (Drive-cached) → inputs wget from
 the repo → **SMOKE run** (1 seed × 2 samples, `num_workers=0`, ~5 min) that must pass before → the **FULL sweep**
 (`/content/odv/bin/python scripts/inference.py`, seeds `[42,123,777,2024,31337]`, N_sample=10). Both go through
