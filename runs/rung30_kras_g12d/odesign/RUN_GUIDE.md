@@ -46,9 +46,12 @@ Set **Runtime → T4 GPU** first. It runs, in order: GPU-guard (pre-install, pro
 GPU-guard (post-install) → `ckpt/get_odesign_ckpt.sh` → **CCD by file-ID** → upload the cropped MUT PDB +
 `kras_odesign_input.json` → `scripts/inference.py` (seeds `[42,123,777,2024,31337]`, N_sample=10) with a
 **heartbeat thread** (output-dir file count + GPU mem every 30 s) → **persist `outputs/` to Drive**.
-- **The one manual step:** paste the two Google-Drive file IDs for `components.v20240608.cif` and
-  `components.v20240608.cif.rdkit_mol.pkl` (folder `…/folders/1wPmwIrC3G52q1JFY0RXY95tjKDl7YEln`). **Do NOT
-  `gdown --folder`** — that folder also holds the **850 GB** `odesign_full_data.tar.gz`.
+- **Assets cache in YOUR Drive** (`MyDrive/cancer-recon/odesign_assets/`): the checkpoints + the CCD file
+  download **once** and every later run reads them from Drive (no re-download, no re-pasting file IDs). The
+  inputs (target PDB + JSON) `wget` from the repo. So after the first run the notebook needs only a GPU.
+- **CCD — provide once:** either drop `components.v20240608.cif` + `…rdkit_mol.pkl` into the Drive
+  `odesign_assets/data/` folder (Option A, no IDs), or paste the two Google-Drive file IDs (Option B; folder
+  `…/folders/1wPmwIrC3G52q1JFY0RXY95tjKDl7YEln`). **Do NOT `gdown --folder`** — it also holds an **850 GB** tar.
 - **Honest (rule 7):** the CUDA-12.1 wheels could not be M2-dry-run (platform-specific), so first-run install
   iteration is possible; numpy/protobuf pins may force a Colab restart (then re-run from the cell *after*
   install — do NOT re-run install). If pip fights you, fall back to **Path A** (container) on a CUDA box.

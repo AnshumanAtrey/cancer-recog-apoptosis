@@ -5,11 +5,16 @@ Builder for notebooks/binder_odesign_kras_colab.ipynb — the KRAS-G12D / A*11:0
 
 Why a builder (rule 7): a GPU/Colab notebook CANNOT be run locally, so a single bad cell = a wasted user
 round-trip. This script AST-CHECKS every code cell (magics `!`/`%`/`#@` neutralised to `pass`) before the
-.ipynb is written, so the notebook is guaranteed to PARSE. It also encodes the rule-7 hygiene that has cost
-us sessions before: GPU-guard at the top of the install AND the run cell; a heartbeat thread (output-dir file
-count + GPU mem + elapsed) since inference is one long subprocess; NO condacolab (pip only); persist outputs
-to Drive before the runtime dies; and the CCD files fetched by file-ID (NOT a folder download — that folder
-also holds an 850 GB training tarball).
+.ipynb is written, so the notebook is guaranteed to PARSE. Rule-7 hygiene baked in: GPU-guard at the top of
+the install AND the run cell; a heartbeat thread (output-dir file count + GPU mem + elapsed) since inference
+is one long subprocess; NO condacolab (pip only).
+
+WORKFLOW (the project Drive convention — matches the other cancer-recon notebooks):
+- Heavy assets (the ODesign checkpoints + the CCD file) are CACHED in YOUR Drive at
+  `/content/drive/MyDrive/cancer-recon/odesign_assets/` -> they download ONCE; every later run reads them
+  from Drive (no re-download, no re-pasting Google-Drive file IDs).
+- The small run INPUTS (target pMHC PDB + input JSON) wget straight from the public repo (no upload).
+- So after the first run, the only thing the notebook needs is a GPU.
 
 Run:  python scripts/_build_odesign_nb.py     # writes the .ipynb + AST-checks every cell
 """
@@ -20,59 +25,61 @@ from pathlib import Path
 
 NB_PATH = Path(__file__).resolve().parent.parent / "notebooks" / "binder_odesign_kras_colab.ipynb"
 
-MD = []  # not used as a list of all; we interleave below
-
 # ---- markdown cells -------------------------------------------------------
 MD_INTRO = """# KRAS-G12D / A\\*11:01 binder retry — **ODesign** (the different-generator lever)
 
 **Why this run.** PXDesign bounded the KRAS-G12D external binder at **0/80 dual-oracle passers** because AF2-IG
 and Protenix **anti-correlate** (r=−0.41) — no design satisfies both. ODesign is an **all-atom interaction
 world-model, NOT AF2-based** → a genuinely different generative prior, with **explicit epitope/hotspot control**
-(force the binder onto the G12D Asp). It is the one principled shot left at the external key.
+(force the binder onto the G12D Asp). The one principled shot left at the external key.
 *(Repo: The-Institute-for-AI-Molecular-Design/ODesign, Apache-2.0, arXiv 2510.22304.)*
 
-> **Honest banner (rule 7).** This is a heavy CUDA-12.1 stack (torch 2.3.1 + pyg + deepspeed + a HF checkpoint
-> + a Google-Drive CCD file). I could **not** dry-run the CUDA wheels on the M2 (platform-specific), so treat
-> the first run as possibly needing install iteration. If pip fights you, the maintainers' **container path**
-> (`Dockerfile`/`odesign.def` in the repo, see `RUN_GUIDE.md` Path A) is the lower-risk option on a CUDA box.
+**How inputs are handled (no manual upload):**
+- The target pMHC PDB + the validated input JSON **`wget` straight from the public repo**.
+- The heavy assets (ODesign **checkpoints** + the **CCD file**) are **cached in YOUR Drive** at
+  `MyDrive/cancer-recon/odesign_assets/` — they download **once**; every later run reads them from Drive.
+- ⇒ After the first run, the notebook needs nothing but a GPU.
 
-**Runtime:** set **Runtime → Change runtime type → T4 GPU** (or better) BEFORE running. The first cell will
-refuse to proceed without a GPU (a CPU fallback would run ~50× slower and silently waste hours).
+> **Honest banner (rule 7).** Heavy CUDA-12.1 stack (torch 2.3.1 + pyg + deepspeed). I could **not** dry-run
+> the CUDA wheels on the M2 (platform-specific), so treat the first run as possibly needing install iteration.
+> If pip fights you, the maintainers' **container path** (`RUN_GUIDE.md` Path A) is the lower-risk option.
 
-**What's the actual test.** ODesign only *generates* binders against the **MUT** pMHC. Binding ≠ winning — the
-binder must **discriminate**: high on MUT, low on **WT**, on **both** oracles. The MUT-vs-WT scoring is the last
-cell's pointer (a separate scoring step), not this notebook. 0 discriminating binders here too = a strong
-2nd-generator confirmation the external route is bounded → recognition rests on the internal key (already the
-validated contribution)."""
+**Runtime:** set **Runtime → Change runtime type → T4 GPU** BEFORE running — the first cell refuses to proceed
+without a GPU (a CPU fallback runs ~50× slower and silently wastes hours)."""
 
 MD_RESTART = """### If Colab prompts to RESTART after the install
 The full `requirements.txt` pins `numpy==1.26.3` / `protobuf==3.20.2` etc., which can downgrade Colab's base and
 trigger a restart prompt. **That's fine** — click restart, then **re-run from the next cell down** (skip the
-install cell). Do NOT re-run the install. (Rule 7: never `condacolab` here — it would wipe the pip installs.)"""
+install cell). Do NOT re-run install. (Rule 7: never `condacolab` here — it would wipe the pip installs.)"""
 
-MD_CCD = """### CCD files — ONE manual step (and a trap to avoid)
+MD_CCD = """### CCD file — provide it ONCE to your Drive (then it's automatic forever)
 ODesign needs the all-atom Chemical Component Dictionary: **`components.v20240608.cif`** and
-**`components.v20240608.cif.rdkit_mol.pkl`**, from their Google Drive folder:
+**`components.v20240608.cif.rdkit_mol.pkl`**, from ODesign's Google Drive folder:
 `https://drive.google.com/drive/folders/1wPmwIrC3G52q1JFY0RXY95tjKDl7YEln`
 
-⚠️ **Do NOT `gdown --folder`** that link — the same folder holds an **850 GB** `odesign_full_data.tar.gz`
-training tarball. Instead, open the folder, right-click **each** of the two CCD files → *Share → Copy link*,
-take the ID from `.../d/<FILE_ID>/view`, and paste the two IDs in the cell below."""
+The cell above already checked your Drive cache (`MyDrive/cancer-recon/odesign_assets/data/`). Two ways to
+fill it — **do this once**:
+- **Option A (simplest):** open that folder in your browser, download the two CCD files, drag them into
+  `MyDrive/cancer-recon/odesign_assets/data/`, then re-run the **checkpoints+CCD** cell. The notebook reads
+  them automatically — **no file IDs, ever.**
+- **Option B:** paste the two Google-Drive file IDs below and the notebook `gdown`s them and **caches them to
+  your Drive** for next time. (Get an ID from `.../d/<FILE_ID>/view`.)
+
+⚠️ Either way, **do NOT `gdown --folder`** that link — the same folder holds an **850 GB** training tarball."""
 
 MD_SCORE = """## ✅ Next: the real test — MUT-vs-WT discrimination scoring (separate step)
-ODesign wrote designed binders (`outputs/.../*.cif`) against the **MUT** pMHC. A binder that binds isn't the
-win — it must **discriminate**. For each top ODesign binder sequence:
+ODesign wrote designed binders (`outputs/.../*.cif`) against the **MUT** pMHC. Binding isn't the win — it must
+**discriminate**. For each top binder sequence:
 1. Fold it against the **MUT** pMHC (`kras_g12d_A1101_free_mut_pmhc.pdb`) **and** the **WT** pMHC
    (`kras_g12d_A1101_free_wt_pmhc.pdb`) — on **both** Protenix and AF2-IG (the bound was dual-certification).
+   Both PDBs are in the repo under `runs/rung30_kras_g12d/staging/` (the notebook can wget them too).
 2. **Win = high on MUT, low on WT, on BOTH oracles.** A binder that grips MUT and WT equally fails (it would
    attack the WT peptide on normal tissue, R32).
 3. Use the existing scoring path (`notebooks/binder_score_colab.ipynb` / `binder_specificity_*`).
 
 **Either outcome is informative:** a dual-certified discriminating binder = a breakthrough artifact; another 0
-= a strong second-generator confirmation the external-binder route is bounded in-silico → the recognition load
-sits entirely on the **internal key** (R27/R33/R34–40), which is already the validated contribution.
-
-Persist `outputs/` to Drive (cell above) BEFORE the runtime dies, then bring the winners into the scoring run."""
+= a strong second-generator confirmation the external-binder route is bounded in-silico → recognition rests on
+the validated **internal key** (R27/R33/R34–40)."""
 
 # ---- code cells (each is pure-python OR magics-on-their-own-lines) ---------
 C_GPU_PRE = r'''# --- GPU GUARD (before install; torch not present yet, so probe nvidia-smi) ---
@@ -94,29 +101,70 @@ import torch
 assert torch.cuda.is_available(), "NO GPU after install — set runtime to T4 and re-run from here."
 print("torch", torch.__version__, "| CUDA", torch.version.cuda, "| GPU", torch.cuda.get_device_name(0))'''
 
-C_CKPT = r'''%cd /content/ODesign
-!bash ./ckpt/get_odesign_ckpt.sh ./ckpt
-!ls -lh ./ckpt'''
+C_DRIVE = r'''# --- Mount YOUR Drive for a persistent asset cache (checkpoints + CCD download ONCE) ---
+import os
+try:
+    from google.colab import drive
+    drive.mount("/content/drive")
+    ASSETS = "/content/drive/MyDrive/cancer-recon/odesign_assets"
+    print("Drive mounted — asset cache:", ASSETS)
+except Exception as e:
+    ASSETS = "/content/odesign_assets"
+    print("no Drive (", type(e).__name__, ") — assets EPHEMERAL (re-download each session):", ASSETS)
+for d in (ASSETS + "/ckpt", ASSETS + "/data", "/content/ODesign/ckpt", "/content/ODesign/data"):
+    os.makedirs(d, exist_ok=True)'''
 
-C_CCD_IDS = r'''# Paste the two Google Drive file IDs (see the markdown above). Do NOT download the 850 GB tar.
+C_CKPT_CCD = r'''# --- Checkpoints + CCD: read from Drive cache if present; else fetch ONCE and cache to Drive ---
+import os, glob, shutil, subprocess
+
+# 1) checkpoints (the design model + inverse-folding + ProteinMPNN)
+KEY = "odesign_base_prot_flex.pt"
+if os.path.exists(ASSETS + "/ckpt/" + KEY):
+    for f in glob.glob(ASSETS + "/ckpt/*"):
+        shutil.copy(f, "/content/ODesign/ckpt/")
+    print("checkpoints: loaded from Drive cache (no re-download) ✓")
+else:
+    print("checkpoints: downloading once (HuggingFace) ...")
+    subprocess.run(["bash", "./ckpt/get_odesign_ckpt.sh", "./ckpt"], cwd="/content/ODesign")
+    for f in glob.glob("/content/ODesign/ckpt/*"):
+        shutil.copy(f, ASSETS + "/ckpt/")
+    print("checkpoints: downloaded + cached to Drive ✓")
+
+# 2) CCD files
+CIF = "/content/ODesign/data/components.v20240608.cif"
+PKL = "/content/ODesign/data/components.v20240608.cif.rdkit_mol.pkl"
+cif_c, pkl_c = ASSETS + "/data/" + os.path.basename(CIF), ASSETS + "/data/" + os.path.basename(PKL)
+if os.path.exists(cif_c) and os.path.exists(pkl_c):
+    shutil.copy(cif_c, CIF); shutil.copy(pkl_c, PKL)
+    NEED_CCD = False
+    print("CCD: loaded from Drive cache (no file IDs needed) ✓")
+else:
+    NEED_CCD = True
+    print("CCD: NOT in Drive cache.  -> Option A: drop the 2 files into", ASSETS + "/data/  and re-run this cell.")
+    print("                          -> Option B: paste the 2 Google-Drive file IDs in the next cell.")
+print("ckpt dir:", os.listdir("/content/ODesign/ckpt"))'''
+
+C_CCD_IDS = r'''# Run ONLY if the cell above said "CCD: NOT in Drive cache" AND you're using Option B (file IDs).
+# If you used Option A (dropped the files in your Drive folder), SKIP this cell.
+import os, shutil, subprocess
 CIF_FILE_ID = ""   # <-- components.v20240608.cif
 PKL_FILE_ID = ""   # <-- components.v20240608.cif.rdkit_mol.pkl
-import os
-assert CIF_FILE_ID and PKL_FILE_ID, "paste BOTH Google Drive file IDs above before running the next cell"
-os.makedirs("/content/ODesign/data", exist_ok=True)
-print("ok — IDs set")'''
+if not NEED_CCD:
+    print("CCD already in place from Drive cache — skipping (nothing to do).")
+else:
+    assert CIF_FILE_ID and PKL_FILE_ID, "paste BOTH Google-Drive file IDs above, or use Option A and skip."
+    subprocess.run(["pip", "install", "-q", "-U", "gdown"])
+    subprocess.run(["gdown", CIF_FILE_ID, "-O", CIF])
+    subprocess.run(["gdown", PKL_FILE_ID, "-O", PKL])
+    assert os.path.getsize(CIF) > 1000 and os.path.getsize(PKL) > 1000, "CCD download failed (check IDs)"
+    shutil.copy(CIF, cif_c); shutil.copy(PKL, pkl_c)   # cache to Drive for next time
+    print("CCD: downloaded + cached to Drive ✓")'''
 
-C_CCD_DL = r'''!pip install -q -U gdown
-!gdown {CIF_FILE_ID} -O /content/ODesign/data/components.v20240608.cif
-!gdown {PKL_FILE_ID} -O /content/ODesign/data/components.v20240608.cif.rdkit_mol.pkl
-!ls -lh /content/ODesign/data'''
-
-C_FETCH_DIRS = r'''# Pull the validated input DIRECTLY from the public repo (no manual upload — the files are tracked).
+C_FETCH_DIRS = r'''# Pull the validated INPUT directly from the public repo (no manual upload — the files are tracked).
 import os
-os.makedirs("/content/ODesign/data", exist_ok=True)
 os.makedirs("/content/ODesign/examples/protein_design/prot_binding_prot", exist_ok=True)
 RAW = "https://raw.githubusercontent.com/AnshumanAtrey/cancer-recog-apoptosis/main"
-print("fetching from", RAW)'''
+print("fetching inputs from", RAW)'''
 
 C_FETCH_DL = r'''!wget -q -O /content/ODesign/data/kras_g12d_A1101_free_mut_cropped.pdb {RAW}/runs/rung30_kras_g12d/staging/kras_g12d_A1101_free_mut_cropped.pdb
 !wget -q -O /content/ODesign/examples/protein_design/prot_binding_prot/kras.json {RAW}/runs/rung30_kras_g12d/odesign/kras_odesign_input.json'''
@@ -167,11 +215,9 @@ print("inference.py exit code:", proc.returncode,
       "| outputs:", sum(len(fs) for _, _, fs in os.walk(OUT)), "files")
 assert proc.returncode == 0, "inference failed — read the traceback above (often a CCD/ckpt path or a pyg/torch mismatch)."'''
 
-C_PERSIST = r'''# Persist outputs to YOUR Drive BEFORE the runtime dies (rule 7)
-from google.colab import drive
-drive.mount("/content/drive")
+C_PERSIST = r'''# Persist outputs to your Drive BEFORE the runtime dies (rule 7)
 import shutil, os
-dst = "/content/drive/MyDrive/odesign_kras_g12d_v1"
+dst = ASSETS.rsplit("/", 1)[0] + "/odesign_kras_g12d_v1"   # MyDrive/cancer-recon/odesign_kras_g12d_v1
 os.makedirs(dst, exist_ok=True)
 shutil.make_archive(dst + "/outputs", "zip", "/content/ODesign/outputs")
 print("saved:", dst + "/outputs.zip")'''
@@ -192,10 +238,10 @@ CELLS = [
     md(MD_RESTART),
     code(C_INSTALL),
     code(C_GPU_POST),
-    code(C_CKPT),
+    code(C_DRIVE),
+    code(C_CKPT_CCD),
     md(MD_CCD),
     code(C_CCD_IDS),
-    code(C_CCD_DL),
     code(C_FETCH_DIRS),
     code(C_FETCH_DL),
     code(C_FETCH_VERIFY),
@@ -218,9 +264,8 @@ def ast_check(cells):
                 lines.append((len(ln) - len(st)) * " " + "pass")
             else:
                 lines.append(ln)
-        src = "\n".join(lines)
         try:
-            ast.parse(src)
+            ast.parse("\n".join(lines))
         except SyntaxError as e:
             errs += 1
             print(f"  [FAIL] code cell #{i}: {e}")
@@ -230,9 +275,8 @@ def ast_check(cells):
 
 
 def main():
-    errs = ast_check(CELLS)
-    if errs:
-        raise SystemExit(f"{errs} cell(s) failed AST check — fix before writing the notebook")
+    if ast_check(CELLS):
+        raise SystemExit("cell(s) failed AST check — fix before writing the notebook")
     nb = {"cells": CELLS,
           "metadata": {"accelerator": "GPU",
                        "colab": {"provenance": [], "gpuType": "T4"},
