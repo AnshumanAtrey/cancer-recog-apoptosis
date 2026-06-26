@@ -89,8 +89,14 @@ C_INSTALL = r'''%cd /content
 !pip install -q uv
 !uv venv --python 3.10 --seed /content/odv
 !/content/odv/bin/pip install -q -r requirements.txt -f https://data.pyg.org/whl/torch-2.3.1+cu121.html
-# ODesign's requirements.txt OMITS prody + addict (their bug — the ProteinMPNN/invfold modules import them).
-!/content/odv/bin/pip install -q prody addict'''
+# THREE corrections to ODesign's under-specified requirements.txt (found by a local import-scan, not guesswork):
+#  - prody + addict: absent entirely (ProteinMPNN/invfold modules import them -> import-time crash).
+#  - biotite: pinned ==1.0.1, but their code imports biotite.interface.rdkit.from_mol, which only exists in
+#    >=1.2.0. 1.2.0's deps (biotraj/numpy/networkx/packaging) are all already satisfied by the frozen reqs,
+#    so it's a clean drop-in with NO numpy churn (numpy stays 1.26.3 -> torch 2.3.1/rdkit 2023.3.1 unbroken).
+# flash_attn is DELIBERATELY NOT installed: every attention config (use_flash/use_deepspeed_evo_attention/
+# use_lma) defaults false and is never set true, so the 20-30min nvcc compile would buy nothing.
+!/content/odv/bin/pip install -q prody addict "biotite==1.2.0"'''
 
 C_GPU_POST = r'''# --- GPU GUARD (check the 3.10 VENV's torch sees CUDA; fail LOUD before spending time) ---
 import subprocess
@@ -169,47 +175,72 @@ p = "/content/ODesign/data/kras_g12d_A1101_free_mut_cropped.pdb"
 assert os.path.exists(p) and os.path.getsize(p) > 1000, "target PDB fetch failed (check the RAW url / branch)"
 print("target PDB OK:", os.path.getsize(p), "bytes")'''
 
-C_RUN = r'''# --- INFERENCE with GPU guard + heartbeat (inference is one long subprocess; rule 7) ---
-import torch, os, time, threading, subprocess
-if not os.path.isdir("/content/ODesign") or not os.path.exists("/content/odv/bin/python"):
-    raise SystemExit("Runtime was reset (free-tier eviction wiped /content). Do Runtime -> Run all from the "
-                     "top — the Drive cache makes the checkpoint/CCD steps fast this time.")
-assert torch.cuda.is_available(), "NO GPU — abort (CPU would be ~50x slower and silent)."
-os.chdir("/content/ODesign")
-OUT = "/content/ODesign/outputs"
-os.makedirs(OUT, exist_ok=True)
+C_RUNLIB = r'''# --- inference runner: reset-guard + GPU-guard + heartbeat + CAPTURED output (rule 7) ---
+# stderr is MERGED into stdout and both streamed live AND kept in a ring buffer, so a crash traceback is
+# ALWAYS printed in the copyable cell output (the old `subprocess.run` left tracebacks in Colab's red box,
+# which got lost on copy). num_workers=0 in the smoke gives a clean main-process traceback (no dataloader wrapper).
+import os, time, threading, subprocess, collections
 
-def heartbeat(stop):
-    t0 = time.time()
-    while not stop.is_set():
-        n = sum(len(fs) for _, _, fs in os.walk(OUT))
-        try:
-            free, total = torch.cuda.mem_get_info(); used = (total - free) / 1e9
-        except Exception:
-            used = -1.0
-        print(f"[hb] {time.time()-t0:6.0f}s  outputs={n} files  GPU_used={used:.1f}GB", flush=True)
-        stop.wait(30)
+def run_inference(exp_name, seeds, n_sample, num_workers):
+    if not os.path.isdir("/content/ODesign") or not os.path.exists("/content/odv/bin/python"):
+        raise SystemExit("Runtime was reset (free-tier eviction wiped /content). Runtime -> Run all from the "
+                         "top — the Drive cache makes the checkpoint/CCD steps fast this time.")
+    import torch
+    assert torch.cuda.is_available(), "NO GPU — abort (CPU would be ~50x slower and silent)."
+    out = "/content/ODesign/outputs"
+    os.makedirs(out, exist_ok=True)
+    n0 = sum(len(fs) for _, _, fs in os.walk(out))
+    cmd = ["/content/odv/bin/python", "./scripts/inference.py",
+           "exp=train_odesign_base_prot_flex",
+           "data_root_dir=./data", "ckpt_root_dir=./ckpt",
+           "exp.infer_model_name=odesign_base_prot_flex",
+           "exp.design_modality=protein",
+           "exp.input_json_path=./examples/protein_design/prot_binding_prot/kras.json",
+           "exp.exp_name=" + exp_name,
+           "exp.seeds=" + seeds,
+           "exp.model.sample_diffusion.N_sample=" + str(n_sample),
+           "exp.use_msa=false", "exp.num_workers=" + str(num_workers),
+           "exp.model.inference_noise_schedulers.coordinate.partial_diffusion.enable=false",
+           "exp.model.inference_noise_schedulers.coordinate.partial_diffusion.snr=0.1"]
+    print("RUN:", " ".join(cmd), flush=True)
+    stop = threading.Event()
+    def hb():
+        t0 = time.time()
+        while not stop.is_set():
+            n = sum(len(fs) for _, _, fs in os.walk(out))
+            try:
+                free, total = torch.cuda.mem_get_info(); used = (total - free) / 1e9
+            except Exception:
+                used = -1.0
+            print(f"[hb] {time.time()-t0:6.0f}s  outputs={n} files  GPU_used={used:.1f}GB", flush=True)
+            stop.wait(30)
+    th = threading.Thread(target=hb, daemon=True); th.start()
+    ring = collections.deque(maxlen=120)
+    proc = subprocess.Popen(cmd, cwd="/content/ODesign", stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT, text=True, bufsize=1)
+    for line in proc.stdout:
+        ring.append(line)
+        print(line, end="", flush=True)
+    proc.wait()
+    stop.set(); time.sleep(0.1)
+    n1 = sum(len(fs) for _, _, fs in os.walk(out))
+    print(f"\ninference exit code: {proc.returncode} | new output files: {n1 - n0}", flush=True)
+    if proc.returncode != 0:
+        print("\n===== LAST 120 LINES (traceback) =====\n" + "".join(ring), flush=True)
+    return proc.returncode == 0 and n1 > n0
 
-cmd = ["/content/odv/bin/python", "./scripts/inference.py",
-       "exp=train_odesign_base_prot_flex",
-       "data_root_dir=./data", "ckpt_root_dir=./ckpt",
-       "exp.infer_model_name=odesign_base_prot_flex",
-       "exp.design_modality=protein",
-       "exp.input_json_path=./examples/protein_design/prot_binding_prot/kras.json",
-       "exp.exp_name=kras_g12d_odesign_v1",
-       "exp.seeds=[42,123,777,2024,31337]",
-       "exp.model.sample_diffusion.N_sample=10",
-       "exp.use_msa=false", "exp.num_workers=4",
-       "exp.model.inference_noise_schedulers.coordinate.partial_diffusion.enable=false",
-       "exp.model.inference_noise_schedulers.coordinate.partial_diffusion.snr=0.1"]
-print("RUN:", " ".join(cmd), flush=True)
-stop = threading.Event()
-th = threading.Thread(target=heartbeat, args=(stop,), daemon=True); th.start()
-proc = subprocess.run(cmd)
-stop.set(); time.sleep(0.1)
-print("inference.py exit code:", proc.returncode,
-      "| outputs:", sum(len(fs) for _, _, fs in os.walk(OUT)), "files")
-assert proc.returncode == 0, "inference failed — read the traceback above (often a CCD/ckpt path or a pyg/torch mismatch)."'''
+print("run_inference() ready.")'''
+
+C_SMOKE = r'''# --- SMOKE: 1 seed x 2 samples, num_workers=0 — PROVE the full pipeline (~5 min) before the 50-design sweep.
+# Validate-before-spend (rule 5/10): we have NEVER yet seen ODesign emit a single design, so confirm the deps
+# resolve + the generator actually writes outputs before committing GPU-hours that a free-tier eviction could kill.
+ok = run_inference("kras_smoke", "[42]", 2, 0)
+assert ok, "SMOKE FAILED — read the '===== LAST 120 LINES (traceback) =====' block printed above."
+print("\n✅ SMOKE PASSED — ODesign wrote outputs. Safe to run the full sweep below.")'''
+
+C_RUN = r'''# --- FULL sweep: 5 seeds x 10 samples = ~50 designs (run ONLY after the smoke passed) ---
+ok = run_inference("kras_g12d_odesign_v1", "[42,123,777,2024,31337]", 10, 4)
+print("full sweep produced outputs:", ok)'''
 
 C_PERSIST = r'''# Persist outputs to your Drive BEFORE the runtime dies (rule 7)
 import shutil, os
@@ -239,6 +270,8 @@ CELLS = [
     code(C_FETCH_DIRS),
     code(C_FETCH_DL),
     code(C_FETCH_VERIFY),
+    code(C_RUNLIB),
+    code(C_SMOKE),
     code(C_RUN),
     code(C_PERSIST),
     md(MD_SCORE),
