@@ -116,18 +116,24 @@ C_CKPT_CCD = r'''# --- Checkpoints + CCD: read from Drive cache if present; else
 import os, glob, shutil, subprocess
 RELEASE = "https://github.com/AnshumanAtrey/cancer-recog-apoptosis/releases/download/odesign-ccd-v20240608"
 
-# 1) checkpoints (design model + inverse-folding + ProteinMPNN) — Drive cache or HuggingFace once
-KEY = "odesign_base_prot_flex.pt"
-if os.path.exists(ASSETS + "/ckpt/" + KEY):
-    for f in glob.glob(ASSETS + "/ckpt/*"):
-        shutil.copy(f, "/content/ODesign/ckpt/")
-    print("checkpoints: loaded from Drive cache (no re-download) ✓")
-else:
-    print("checkpoints: downloading once (HuggingFace) ...")
-    subprocess.run(["bash", "./ckpt/get_odesign_ckpt.sh", "./ckpt"], cwd="/content/ODesign")
-    for f in glob.glob("/content/ODesign/ckpt/*"):
-        shutil.copy(f, ASSETS + "/ckpt/")
-    print("checkpoints: downloaded + cached to Drive ✓")
+# 1) checkpoints — ONLY the 3 that protein-design inference loads (verified vs
+#    src/utils/inference/infer_runner.py: {infer_model_name}.pt @L53, oinvfold_{modality}.ckpt @L105,
+#    v_48_020.pt @L88). The other 6 in get_odesign_ckpt.sh are ligand/NA-only -> skip (less disk, less
+#    time, lower free-tier eviction risk). Per-file Drive cache.
+HF = "https://huggingface.co/The-Institute-for-AI-Molecular-Design"
+CKPTS = [("odesign_base_prot_flex.pt", HF + "/ODesign/resolve/main/ckpt/odesign_base_prot_flex.pt"),
+         ("oinvfold_protein.ckpt", HF + "/OInvFold/resolve/main/oinvfold_protein.ckpt"),
+         ("v_48_020.pt", "https://github.com/dauparas/ProteinMPNN/raw/main/vanilla_model_weights/v_48_020.pt")]
+for name, url in CKPTS:
+    dst, cache = "/content/ODesign/ckpt/" + name, ASSETS + "/ckpt/" + name
+    if os.path.exists(cache):
+        shutil.copy(cache, dst); print("ckpt (Drive cache):", name)
+    else:
+        print("ckpt download:", name, "..."); subprocess.run(["wget", "-q", "-O", dst, url])
+        if os.path.exists(dst) and os.path.getsize(dst) > 100_000:
+            shutil.copy(dst, cache)
+    assert os.path.exists(dst) and os.path.getsize(dst) > 100_000, "checkpoint missing/too small: " + name
+print("checkpoints ready (3 protein-design files) ✓")
 
 # 2) CCD files — Drive cache, else wget from THIS repo's GitHub Release (automatic, no file IDs)
 CIF = "/content/ODesign/data/components.v20240608.cif"
@@ -163,6 +169,9 @@ print("target PDB OK:", os.path.getsize(p), "bytes")'''
 
 C_RUN = r'''# --- INFERENCE with GPU guard + heartbeat (inference is one long subprocess; rule 7) ---
 import torch, os, time, threading, subprocess
+if not os.path.isdir("/content/ODesign") or not os.path.exists("/content/odv/bin/python"):
+    raise SystemExit("Runtime was reset (free-tier eviction wiped /content). Do Runtime -> Run all from the "
+                     "top — the Drive cache makes the checkpoint/CCD steps fast this time.")
 assert torch.cuda.is_available(), "NO GPU — abort (CPU would be ~50x slower and silent)."
 os.chdir("/content/ODesign")
 OUT = "/content/ODesign/outputs"
