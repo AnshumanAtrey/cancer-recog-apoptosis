@@ -88,7 +88,9 @@ C_INSTALL = r'''%cd /content
 # Colab's own Python is left untouched (no restart prompt). [~6-9 min]
 !pip install -q uv
 !uv venv --python 3.10 --seed /content/odv
-!/content/odv/bin/pip install -q -r requirements.txt -f https://data.pyg.org/whl/torch-2.3.1+cu121.html'''
+!/content/odv/bin/pip install -q -r requirements.txt -f https://data.pyg.org/whl/torch-2.3.1+cu121.html
+# ODesign's requirements.txt OMITS prody + addict (their bug — the ProteinMPNN/invfold modules import them).
+!/content/odv/bin/pip install -q prody addict'''
 
 C_GPU_POST = r'''# --- GPU GUARD (check the 3.10 VENV's torch sees CUDA; fail LOUD before spending time) ---
 import subprocess
