@@ -34,11 +34,13 @@ world-model, NOT AF2-based** → a genuinely different generative prior, with **
 (force the binder onto the G12D Asp). The one principled shot left at the external key.
 *(Repo: The-Institute-for-AI-Molecular-Design/ODesign, Apache-2.0, arXiv 2510.22304.)*
 
-**How inputs are handled (no manual upload):**
-- The target pMHC PDB + the validated input JSON **`wget` straight from the public repo**.
-- The heavy assets (ODesign **checkpoints** + the **CCD file**) are **cached in YOUR Drive** at
-  `MyDrive/cancer-recon/odesign_assets/` — they download **once**; every later run reads them from Drive.
-- ⇒ After the first run, the notebook needs nothing but a GPU.
+**Fully automatic — no uploads, no Google-Drive file IDs:**
+- Target pMHC PDB + input JSON: **`wget` from the public repo**.
+- **CCD file** (528MB): **`wget` from this repo's GitHub Release** (`odesign-ccd-v20240608`).
+- ODesign **checkpoints**: from HuggingFace.
+- All heavy assets are **cached in YOUR Drive** (`MyDrive/cancer-recon/odesign_assets/`) on the first run, so
+  every later run reads them from Drive — no re-download.
+- ⇒ Set a GPU and **Run-all**. That's it.
 
 > **Honest banner (rule 7).** Heavy CUDA-12.1 stack (torch 2.3.1 + pyg + deepspeed). I could **not** dry-run
 > the CUDA wheels on the M2 (platform-specific), so treat the first run as possibly needing install iteration.
@@ -51,21 +53,6 @@ MD_RESTART = """### If Colab prompts to RESTART after the install
 The full `requirements.txt` pins `numpy==1.26.3` / `protobuf==3.20.2` etc., which can downgrade Colab's base and
 trigger a restart prompt. **That's fine** — click restart, then **re-run from the next cell down** (skip the
 install cell). Do NOT re-run install. (Rule 7: never `condacolab` here — it would wipe the pip installs.)"""
-
-MD_CCD = """### CCD file — provide it ONCE to your Drive (then it's automatic forever)
-ODesign needs the all-atom Chemical Component Dictionary: **`components.v20240608.cif`** and
-**`components.v20240608.cif.rdkit_mol.pkl`**, from ODesign's Google Drive folder:
-`https://drive.google.com/drive/folders/1wPmwIrC3G52q1JFY0RXY95tjKDl7YEln`
-
-The cell above already checked your Drive cache (`MyDrive/cancer-recon/odesign_assets/data/`). Two ways to
-fill it — **do this once**:
-- **Option A (simplest):** open that folder in your browser, download the two CCD files, drag them into
-  `MyDrive/cancer-recon/odesign_assets/data/`, then re-run the **checkpoints+CCD** cell. The notebook reads
-  them automatically — **no file IDs, ever.**
-- **Option B:** paste the two Google-Drive file IDs below and the notebook `gdown`s them and **caches them to
-  your Drive** for next time. (Get an ID from `.../d/<FILE_ID>/view`.)
-
-⚠️ Either way, **do NOT `gdown --folder`** that link — the same folder holds an **850 GB** training tarball."""
 
 MD_SCORE = """## ✅ Next: the real test — MUT-vs-WT discrimination scoring (separate step)
 ODesign wrote designed binders (`outputs/.../*.cif`) against the **MUT** pMHC. Binding isn't the win — it must
@@ -116,8 +103,9 @@ for d in (ASSETS + "/ckpt", ASSETS + "/data", "/content/ODesign/ckpt", "/content
 
 C_CKPT_CCD = r'''# --- Checkpoints + CCD: read from Drive cache if present; else fetch ONCE and cache to Drive ---
 import os, glob, shutil, subprocess
+RELEASE = "https://github.com/AnshumanAtrey/cancer-recog-apoptosis/releases/download/odesign-ccd-v20240608"
 
-# 1) checkpoints (the design model + inverse-folding + ProteinMPNN)
+# 1) checkpoints (design model + inverse-folding + ProteinMPNN) — Drive cache or HuggingFace once
 KEY = "odesign_base_prot_flex.pt"
 if os.path.exists(ASSETS + "/ckpt/" + KEY):
     for f in glob.glob(ASSETS + "/ckpt/*"):
@@ -130,35 +118,21 @@ else:
         shutil.copy(f, ASSETS + "/ckpt/")
     print("checkpoints: downloaded + cached to Drive ✓")
 
-# 2) CCD files
+# 2) CCD files — Drive cache, else wget from THIS repo's GitHub Release (automatic, no file IDs)
 CIF = "/content/ODesign/data/components.v20240608.cif"
 PKL = "/content/ODesign/data/components.v20240608.cif.rdkit_mol.pkl"
 cif_c, pkl_c = ASSETS + "/data/" + os.path.basename(CIF), ASSETS + "/data/" + os.path.basename(PKL)
 if os.path.exists(cif_c) and os.path.exists(pkl_c):
     shutil.copy(cif_c, CIF); shutil.copy(pkl_c, PKL)
-    NEED_CCD = False
-    print("CCD: loaded from Drive cache (no file IDs needed) ✓")
+    print("CCD: loaded from Drive cache ✓")
 else:
-    NEED_CCD = True
-    print("CCD: NOT in Drive cache.  -> Option A: drop the 2 files into", ASSETS + "/data/  and re-run this cell.")
-    print("                          -> Option B: paste the 2 Google-Drive file IDs in the next cell.")
-print("ckpt dir:", os.listdir("/content/ODesign/ckpt"))'''
-
-C_CCD_IDS = r'''# Run ONLY if the cell above said "CCD: NOT in Drive cache" AND you're using Option B (file IDs).
-# If you used Option A (dropped the files in your Drive folder), SKIP this cell.
-import os, shutil, subprocess
-CIF_FILE_ID = ""   # <-- components.v20240608.cif
-PKL_FILE_ID = ""   # <-- components.v20240608.cif.rdkit_mol.pkl
-if not NEED_CCD:
-    print("CCD already in place from Drive cache — skipping (nothing to do).")
-else:
-    assert CIF_FILE_ID and PKL_FILE_ID, "paste BOTH Google-Drive file IDs above, or use Option A and skip."
-    subprocess.run(["pip", "install", "-q", "-U", "gdown"])
-    subprocess.run(["gdown", CIF_FILE_ID, "-O", CIF])
-    subprocess.run(["gdown", PKL_FILE_ID, "-O", PKL])
-    assert os.path.getsize(CIF) > 1000 and os.path.getsize(PKL) > 1000, "CCD download failed (check IDs)"
+    print("CCD: downloading from GitHub Release (one-time, ~528MB) ...")
+    subprocess.run(["wget", "-q", "-O", CIF, RELEASE + "/components.v20240608.cif"])
+    subprocess.run(["wget", "-q", "-O", PKL, RELEASE + "/components.v20240608.cif.rdkit_mol.pkl"])
+    assert os.path.getsize(CIF) > 1_000_000 and os.path.getsize(PKL) > 1_000_000, "CCD download failed"
     shutil.copy(CIF, cif_c); shutil.copy(PKL, pkl_c)   # cache to Drive for next time
-    print("CCD: downloaded + cached to Drive ✓")'''
+    print("CCD: downloaded from release + cached to Drive ✓")
+print("ckpt dir:", os.listdir("/content/ODesign/ckpt"))'''
 
 C_FETCH_DIRS = r'''# Pull the validated INPUT directly from the public repo (no manual upload — the files are tracked).
 import os
@@ -240,8 +214,6 @@ CELLS = [
     code(C_GPU_POST),
     code(C_DRIVE),
     code(C_CKPT_CCD),
-    md(MD_CCD),
-    code(C_CCD_IDS),
     code(C_FETCH_DIRS),
     code(C_FETCH_DL),
     code(C_FETCH_VERIFY),

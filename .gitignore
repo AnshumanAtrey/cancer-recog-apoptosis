@@ -70,3 +70,8 @@ data/immunopeptidome/
 
 # RCSB crystal structure downloads (re-fetchable). Track the staged target only.
 data/pdb_kras/
+
+# ODesign CCD assets (408MB cif + 120MB pkl) — too big for git (>100MB limit). Hosted as a GitHub
+# Release asset instead; the Colab notebook wgets them. Keep the local copies untracked.
+components.v20240608.cif
+components.v20240608.cif.rdkit_mol.pkl
