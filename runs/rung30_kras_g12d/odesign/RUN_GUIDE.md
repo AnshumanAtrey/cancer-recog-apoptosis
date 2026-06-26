@@ -44,11 +44,15 @@ Open that notebook in Colab (rebuild with `python scripts/_build_odesign_nb.py`;
 Set **Runtime → T4 GPU** first. It runs, in order: GPU-guard (pre-install, probes `nvidia-smi`) → clone +
 **build a Python-3.10 venv** (`uv venv --python 3.10 /content/odv`) and `pip install -r requirements.txt -f
 https://data.pyg.org/whl/torch-2.3.1+cu121.html` **into it** (ODesign's stack is frozen for Py3.10; Colab is
-3.12 → rdkit==2023.3.1 / torch==2.3.1 have no 3.12 wheels; NO condacolab, rule 7) → **3 corrections to ODesign's
-under-specified requirements.txt** (`pip install prody addict "biotite==1.2.0"`: prody+addict are absent, and
-their pinned `biotite==1.0.1` lacks `biotite.interface.rdkit.from_mol` which only exists ≥1.2.0; `flash_attn` is
-deliberately skipped — all attention configs default false, so its 20-30min nvcc compile buys nothing — all
-found by a **local import-scan** of their source, rule 7) → GPU-guard checks the venv's torch →
+3.12 → rdkit==2023.3.1 / torch==2.3.1 have no 3.12 wheels; NO condacolab, rule 7). **3 corrections to ODesign's
+under-specified requirements.txt are applied IN PLACE before that single install** (so one resolve enforces every
+frozen pin at once — validated locally on a real py3.10/linux-cp310 resolve: numpy 1.26.3 / scipy 1.15.2 /
+biopython 1.83 all stay bit-identical → torch/rdkit ABI unbroken; prody backtracks to the compatible 2.3.1):
+their `biotite==1.0.1` is bumped to **1.2.0** (1.0.1 lacks `biotite.interface.rdkit.from_mol`, added ≥1.2.0), and
+**prody + addict** are appended (imported by ProteinMPNN/invfold but absent from reqs). `flash_attn` is
+deliberately skipped — every `use_flash`/`use_deepspeed_evo_attention`/`use_lma` config defaults false, so its
+20-30min nvcc compile buys nothing. All found by a **local import-scan** of their source (rule 7). → GPU-guard
+checks the venv's torch →
 `ckpt/get_odesign_ckpt.sh` (Drive-cached) → **CCD wget from the GitHub Release** (Drive-cached) → inputs wget from
 the repo → **SMOKE run** (1 seed × 2 samples, `num_workers=0`, ~5 min) that must pass before → the **FULL sweep**
 (`/content/odv/bin/python scripts/inference.py`, seeds `[42,123,777,2024,31337]`, N_sample=10). Both go through

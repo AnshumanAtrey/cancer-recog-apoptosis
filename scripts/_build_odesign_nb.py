@@ -83,20 +83,27 @@ C_INSTALL = r'''%cd /content
 !rm -rf /content/ODesign
 !git clone --depth 1 https://github.com/The-Institute-for-AI-Molecular-Design/ODesign.git
 %cd /content/ODesign
-# ODesign's requirements.txt is a FROZEN Python-3.10 env (rdkit==2023.3.1, torch==2.3.1 have NO 3.12 wheels;
-# Colab runs 3.12). Build a Python-3.10 venv with uv and install the stack THERE — inference runs under it.
-# Colab's own Python is left untouched (no restart prompt). [~6-9 min]
+# --- correct ODesign's under-specified requirements.txt IN PLACE, then install ONCE, so the single resolve
+#     enforces EVERY frozen pin simultaneously. VALIDATED locally on a real py3.10 + linux-cp310 resolve:
+#     numpy 1.26.3 / scipy 1.15.2 / biopython 1.83 all stay bit-identical (-> torch 2.3.1 + rdkit 2023.3.1
+#     ABI unbroken), and prody backtracks to the 2.3.1 compatible with all of them. Corrections found by a
+#     local import-scan of their source (rule 7), NOT guesswork:
+#       - biotite: their pin ==1.0.1 LACKS biotite.interface.rdkit.from_mol (added in >=1.2.0)  -> 1.2.0
+#       - prody + addict: imported by ProteinMPNN/invfold but ABSENT from requirements.txt       -> append
+#     flash_attn is deliberately NOT added: every use_flash/use_deepspeed_evo_attention/use_lma config
+#     defaults false and is never set true (verified in configs), so its 20-30min nvcc compile buys nothing.
+import re, pathlib
+_req = pathlib.Path("/content/ODesign/requirements.txt")
+_lines = [l for l in _req.read_text().splitlines()
+          if not re.match(r"^(biotite|prody|addict)([=<>!~ ]|$)", l.strip())]
+_req.write_text("\n".join(_lines + ["biotite==1.2.0", "prody", "addict"]) + "\n")
+print("requirements.txt corrected: biotite==1.2.0, +prody, +addict (flash_attn skipped by design)")
+# ODesign's stack is frozen for Py3.10 (rdkit==2023.3.1 / torch==2.3.1 have NO 3.12 wheels; Colab is 3.12).
+# Build a Python-3.10 venv with uv and install the CORRECTED stack THERE; Colab's own Python is left
+# untouched (no restart prompt). NO condacolab (rule 7). [~6-9 min]
 !pip install -q uv
 !uv venv --python 3.10 --seed /content/odv
-!/content/odv/bin/pip install -q -r requirements.txt -f https://data.pyg.org/whl/torch-2.3.1+cu121.html
-# THREE corrections to ODesign's under-specified requirements.txt (found by a local import-scan, not guesswork):
-#  - prody + addict: absent entirely (ProteinMPNN/invfold modules import them -> import-time crash).
-#  - biotite: pinned ==1.0.1, but their code imports biotite.interface.rdkit.from_mol, which only exists in
-#    >=1.2.0. 1.2.0's deps (biotraj/numpy/networkx/packaging) are all already satisfied by the frozen reqs,
-#    so it's a clean drop-in with NO numpy churn (numpy stays 1.26.3 -> torch 2.3.1/rdkit 2023.3.1 unbroken).
-# flash_attn is DELIBERATELY NOT installed: every attention config (use_flash/use_deepspeed_evo_attention/
-# use_lma) defaults false and is never set true, so the 20-30min nvcc compile would buy nothing.
-!/content/odv/bin/pip install -q prody addict "biotite==1.2.0"'''
+!/content/odv/bin/pip install -q -r requirements.txt -f https://data.pyg.org/whl/torch-2.3.1+cu121.html'''
 
 C_GPU_POST = r'''# --- GPU GUARD (check the 3.10 VENV's torch sees CUDA; fail LOUD before spending time) ---
 import subprocess
