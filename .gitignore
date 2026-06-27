@@ -60,6 +60,9 @@ data/refs/cds/
 # Cloned external tools (ProteinMPNN etc.) — not project artifacts
 .tools/
 
+# ODesign run: loose-extracted CIFs (the full set is archived in outputs.zip, which IS tracked)
+runs/rung30_kras_g12d/odesign/_extract/
+
 # Off-target scan: human transcriptome (large, re-fetchable). Track the RESULT json only.
 data/offtarget/
 
